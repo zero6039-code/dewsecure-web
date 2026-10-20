@@ -10,16 +10,15 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '22'
-          
+          node-version: '22'  # 强制指定使用 Node 22
+
       - name: Install Worker Dependencies
         run: cd worker-api && npm install
-        
-      # 我们使用 verbose 模式，让 Wrangler 输出最详细的错误信息
+
       - name: Deploy API
         run: cd worker-api && npx wrangler deploy --verbose
         env:
