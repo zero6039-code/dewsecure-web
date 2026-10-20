@@ -19,11 +19,9 @@ jobs:
       - name: Install Worker Dependencies
         run: cd worker-api && npm install
         
-      - name: Install Wrangler
-        run: npm install -g wrangler
-        
-      - name: Deploy to Cloudflare Workers
-        run: cd worker-api && wrangler deploy
+      # 我们使用 verbose 模式，让 Wrangler 输出最详细的错误信息
+      - name: Deploy API
+        run: cd worker-api && npx wrangler deploy --verbose
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}

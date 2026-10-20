@@ -8,7 +8,3 @@ bucket_name = "dewsecure-models"
 
 [vars]
 MOCK_AUTH_ENABLED = "true"
-
-# 明确指定 assets 目录，防止 Wrangler 往上扫描到根目录的 node_modules
-[assets]
-directory = "./src"
