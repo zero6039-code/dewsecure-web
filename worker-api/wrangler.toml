@@ -1,0 +1,14 @@
+name = "dewsecure-api"
+main = "src/worker.js"
+compatibility_date = "2024-09-23"
+
+[[r2_buckets]]
+binding = "R2_BUCKET"
+bucket_name = "dewsecure-models"
+
+[vars]
+MOCK_AUTH_ENABLED = "true"
+
+# 明确指定 assets 目录，防止 Wrangler 往上扫描到根目录的 node_modules
+[assets]
+directory = "./src"

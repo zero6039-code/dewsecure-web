@@ -1,83 +1,61 @@
-// i18n.js —— 配合防 FOUC 方案
-window.currentLang = 'en';
+window.currentLang = 'zh';
 window.fallbackTranslations = null;
 
 async function initFallback() {
     try {
-        const response = await fetch('/locales/en.json');
+        const response = await fetch('/locales/zh.json');
         if (response.ok) {
             window.fallbackTranslations = await response.json();
-            console.log("[i18n] 基础包初始化成功");
         }
-    } catch(e) {
-        console.error("[i18n] 基础包初始化失败", e);
-    }
+    } catch(e) {}
 }
 
 async function loadLanguage(lang) {
+    if (!['zh', 'en', 'ms'].includes(lang)) {
+        alert("该语言正在开发中，目前仅支持中文、英文和马来文。");
+        return;
+    }
+
     try {
-        console.log(`[i18n] 正在请求语言包: /locales/${lang}.json`);
-        
         const response = await fetch(`/locales/${lang}.json`);
         if (!response.ok) throw new Error(`无法加载语言文件: ${lang}`);
         const translations = await response.json();
 
-        // ★ 关键：立即更新全局翻译对象，让 app.js 中的 t() 函数能获取最新翻译
         window.fallbackTranslations = translations;
-
-        // 更新页面标题
-        if (translations["page_title"]) {
-            document.title = translations["page_title"];
-        }
-
-        // 更新所有带 data-i18n 的元素
+        
         document.querySelectorAll("[data-i18n]").forEach(element => {
             const key = element.getAttribute("data-i18n");
-            let targetText = translations[key] || (window.fallbackTranslations && window.fallbackTranslations[key]);
+            let targetText = translations[key];
             if (targetText !== undefined && targetText !== null) {
-                if (element.tagName.toLowerCase() === 'option') {
-                    element.textContent = targetText;   // 只更新文本，保留原有的 value
+                if (/<[a-z="']/i.test(targetText)) {
+                    element.innerHTML = targetText;
                 } else {
-                    if (/<[a-z="']/i.test(targetText)) {
-                        element.innerHTML = targetText;
-                    } else {
-                        element.textContent = targetText;
-                    }
+                    element.textContent = targetText;
                 }
             }
         });
 
-        // 更新 placeholder 属性
         document.querySelectorAll("[data-i18n-placeholder]").forEach(element => {
             const key = element.getAttribute("data-i18n-placeholder");
-            let targetAttrText = translations[key] || (window.fallbackTranslations && window.fallbackTranslations[key]);
+            let targetAttrText = translations[key];
             if (targetAttrText) {
                 element.setAttribute("placeholder", targetAttrText);
             }
         });
 
-        // 持久化语言偏好
         localStorage.setItem("preferred_lang", lang);
         window.currentLang = lang;
         updateDropdownUI(lang);
-
-        if (typeof triggerStatsCounter === "function") {
-            triggerStatsCounter();
-        }
-
-        // 移除防闪烁类，显示所有翻译文本
+        
         document.documentElement.classList.remove("i18n-loading");
         document.documentElement.setAttribute("data-i18n-ready", "true");
-        console.log(`[i18n] 语言已成功切换至: ${lang}`);
 
-        // ★ 关键：通知其他模块（如扫描工具）语言已变更，触发重新渲染
+        // ★ 派发事件，通知主页 JS 刷新动态文本
         window.dispatchEvent(new Event('languageChanged'));
 
     } catch (error) {
-        console.error("国际化架构加载失败:", error);
-        // 失败时也必须显示页面，移除类
+        console.error("国际化加载失败:", error);
         document.documentElement.classList.remove("i18n-loading");
-        document.documentElement.setAttribute("data-i18n-ready", "true");
     }
 }
 
@@ -91,41 +69,18 @@ function updateDropdownUI(activeLang) {
     });
 }
 
-// 立即执行初始化（不再依赖 DOMContentLoaded，配合 defer 或放在 body 底部）
 (async () => {
     await initFallback();
-    
-    let defaultLang = localStorage.getItem("preferred_lang");
-    if (!defaultLang) {
-        defaultLang = 'en';
-        localStorage.setItem("preferred_lang", 'en');
-    }
+    let defaultLang = localStorage.getItem("preferred_lang") || 'zh';
+    if (!['zh', 'en', 'ms'].includes(defaultLang)) defaultLang = 'zh';
     
     await loadLanguage(defaultLang);
 
-    // 绑定语言切换事件
     document.querySelectorAll(".lang-option").forEach(option => {
         option.addEventListener("click", (e) => {
             e.preventDefault();
             e.stopPropagation();
-            const selectedLang = option.getAttribute("data-lang");
-            if (selectedLang !== window.currentLang) {
-                loadLanguage(selectedLang);
-            } else {
-                // 可选：即使相同也重新加载，保证最新翻译
-                loadLanguage(selectedLang);
-            }
+            loadLanguage(option.getAttribute("data-lang"));
         });
     });
-})();
-
-// 然后再加载默认语言
-(async () => {
-    await initFallback();
-    let defaultLang = localStorage.getItem("preferred_lang");
-    if (!defaultLang) {
-        defaultLang = 'en';
-        localStorage.setItem("preferred_lang", 'en');
-    }
-    await loadLanguage(defaultLang);
 })();

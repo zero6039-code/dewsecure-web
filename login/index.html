@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark" class="i18n-loading">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DewSecure - Log In</title>
+    <link rel="stylesheet" href="/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .i18n-loading [data-i18n] { visibility: hidden !important; }
+        .login-layout { display: flex; min-height: calc(100vh - 80px); width: 100%; }
+        .login-left { flex: 1; display: flex; flex-direction: column; justify-content: center; padding: 10%; background: radial-gradient(circle at 0% 50%, rgba(88, 166, 255, 0.08) 0%, transparent 60%); border-right: 1px solid rgba(255, 255, 255, 0.03); }
+        .login-right { flex: 1; display: flex; align-items: center; justify-content: center; padding: 40px; }
+        .login-card { width: 100%; max-width: 420px; background: rgba(22, 27, 34, 0.4); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 24px; padding: 40px; backdrop-filter: blur(24px); }
+        .login-left h1 { font-size: 48px; color: #fff; margin-bottom: 20px; font-weight: 800; line-height: 1.2; }
+        .login-left p { font-size: 18px; color: #8b949e; line-height: 1.6; max-width: 400px; }
+        .login-card h2 { font-size: 24px; color: #fff; margin-bottom: 8px; }
+        .login-card p.sub { font-size: 14px; color: #8b949e; margin-bottom: 30px; }
+        .input-group { margin-bottom: 20px; }
+        .input-group label { display: block; font-size: 13px; color: #c9d1d9; margin-bottom: 8px; }
+        .input-wrapper { position: relative; }
+        .input-wrapper i { position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: #8b949e; }
+        .input-wrapper input { width: 100%; height: 48px; padding: 0 16px 0 44px; background: rgba(0, 0, 0, 0.2); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 12px; color: #fff; outline: none; transition: 0.3s; }
+        .input-wrapper input:focus { border-color: #58a6ff; }
+        .btn-login { width: 100%; height: 48px; background: #fff; color: #000; border-radius: 12px; font-size: 16px; font-weight: 700; cursor: pointer; border: none; margin-top: 10px; transition: 0.3s; }
+        .btn-login:hover { background: #e6edf3; }
+        .divider { display: flex; align-items: center; text-align: center; margin: 30px 0; color: #8b949e; font-size: 13px; }
+        .divider::before, .divider::after { content: ''; flex: 1; border-bottom: 1px solid rgba(255,255,255,0.1); }
+        .divider::before { margin-right: 15px; } .divider::after { margin-left: 15px; }
+        .oauth-btns { display: flex; gap: 15px; }
+        .oauth-btn { flex: 1; height: 48px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 18px; cursor: pointer; transition: 0.2s; }
+        .oauth-btn:hover { background: rgba(255,255,255,0.1); }
+        .trial-badge { margin-top: 25px; padding: 12px; background: rgba(88,166,255,0.1); border-radius: 8px; text-align: center; font-size: 13px; color: #58a6ff; }
+        @media (max-width: 900px) { .login-layout { flex-direction: column; } .login-left { border-right: none; border-bottom: 1px solid rgba(255,255,255,0.03); padding: 60px 20px; text-align: center; } .login-left p { margin: 0 auto; } .login-right { padding: 40px 20px; } }
+    </style>
+</head>
+<body>
+    <header>
+        <a href="/index.html" class="logo"><img src="/DewSecure.png" alt="DewSecure" style="height:32px; margin-right:10px;"> DewSecure</a>
+        <nav>
+            <a href="/index.html" data-i18n="nav_home">首页</a>
+            <a href="/pricing.html" data-i18n="nav_pricing">定价</a>
+            <a href="/pentest/" target="_blank" data-i18n="nav_pentest">安全审计</a>
+            <a href="/update/" data-i18n="nav_update">更新日志</a>
+            <a href="/guide/" data-i18n="nav_guide">使用指南</a>
+            <a href="/about/" data-i18n="nav_about">关于我们</a>
+            <a href="/login/" class="active" data-i18n="nav_login">登录</a>
+        </nav>
+        <div class="lang-switch">
+            <button class="lang-toggle-btn" style="background:none;border:none;color:#cbd5e1;font-size:24px;cursor:pointer;padding:0;">🌐</button>
+            <ul class="lang-dropdown">
+                <li data-lang="zh" class="lang-option">中文 (简体)</li>
+                <li data-lang="en" class="lang-option">English</li>
+                <li data-lang="ms" class="lang-option">Bahasa Melayu</li>
+            </ul>
+        </div>
+    </header>
+
+    <div class="login-layout">
+        <div class="login-left">
+            <h1 data-i18n="login_hero_title">掌控你的数字生活。</h1>
+            <p data-i18n="login_hero_desc">登录以同步您的跨设备白名单、拉取最新 AI 防护模型，并管理您的安全订阅。您的数据始终在本地加密。</p>
+        </div>
+        <div class="login-right">
+            <div class="login-card">
+                <h2 data-i18n="login_welcome">欢迎回来</h2>
+                <p class="sub" data-i18n="login_sub">登录或创建一个新账号以继续。</p>
+                <div class="input-group">
+                    <label data-i18n="login_email_label">电子邮件地址</label>
+                    <div class="input-wrapper">
+                        <i class="fa-regular fa-envelope"></i>
+                        <input type="email" data-i18n-placeholder="login_email_ph" placeholder="name@example.com">
+                    </div>
+                </div>
+                <button class="btn-login" data-i18n="login_btn">使用邮箱登录 (OTP)</button>
+                <div class="divider" data-i18n="login_or">或者继续使用</div>
+                <div class="oauth-btns">
+                    <div class="oauth-btn"><i class="fa-brands fa-google"></i></div>
+                    <div class="oauth-btn"><i class="fa-brands fa-github"></i></div>
+                    <div class="oauth-btn"><i class="fa-brands fa-ethereum"></i></div>
+                </div>
+                <div class="trial-badge" data-i18n="login_trial">🎁 首次注册即赠 30 天高级版体验</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.querySelector('.lang-switch').addEventListener('mouseenter', () => {
+            const dd = document.querySelector('.lang-dropdown');
+            dd.style.opacity = '1'; dd.style.visibility = 'visible'; dd.style.transform = 'translateY(0)';
+        });
+        document.querySelector('.lang-switch').addEventListener('mouseleave', () => {
+            const dd = document.querySelector('.lang-dropdown');
+            dd.style.opacity = '0'; dd.style.visibility = 'hidden'; dd.style.transform = 'translateY(10px)';
+        });
+    </script>
+    <script src="/js/i18n.js"></script>
+</body>
+</html>

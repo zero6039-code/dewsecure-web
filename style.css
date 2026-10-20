@@ -1,0 +1,687 @@
+
+html {
+    overflow-y: scroll !important;
+    scrollbar-gutter: stable !important;
+}
+
+/* 全新无瑕的 CSS Grid 布局：绝对三等分，中间永不偏移 */
+header {
+    display: grid !important;
+    grid-template-columns: 1fr auto 1fr !important;
+    align-items: center !important;
+    padding: 0 40px !important;
+    height: 80px !important;
+    position: fixed !important;
+    top: 0 !important; left: 0 !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+    background: rgba(5, 5, 5, 0.6) !important;
+    backdrop-filter: blur(24px) !important;
+    -webkit-backdrop-filter: blur(24px) !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+    z-index: 9999 !important;
+}
+
+header .logo {
+    justify-self: start !important;
+    display: flex !important;
+    align-items: center !important;
+    text-decoration: none !important;
+}
+
+header nav {
+    justify-self: center !important;
+    display: flex !important;
+    gap: 24px !important;
+    margin: 0 !important;
+}
+
+header .lang-switch {
+    justify-self: end !important;
+    display: flex !important;
+    align-items: center !important;
+    position: relative !important;
+}
+
+/* 小屏幕自适应换行 (保留) */
+@media (max-width: 1100px) {
+    header {
+        display: flex !important;
+        flex-wrap: wrap !important;
+        height: auto !important;
+        padding: 15px 20px !important;
+    }
+    header .logo { order: 1; width: 50%; justify-content: flex-start; }
+    header .lang-switch { order: 2; width: 50%; justify-content: flex-end; }
+    header nav {
+        order: 3;
+        width: 100% !important;
+        justify-content: center !important;
+        margin-top: 15px !important;
+    }
+    body { padding-top: 140px !important; }
+}
+/* ==========================================
+   DewSecure 纯净化全局样式 (V2.0)
+   ========================================== */
+
+/* 1. 基础变量与重置 */
+:root {
+    --bg-color: #050505;
+    --text-main: #f0f6fc;
+    --text-muted: #8b949e;
+    --accent-color: #58a6ff;
+    --border-color: rgba(255, 255, 255, 0.08);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+
+body {
+    background-color: var(--bg-color);
+    color: var(--text-main);
+    line-height: 1.6;
+    overflow-x: hidden;
+    padding-top: 80px; /* 为固定导航栏留出空间 */
+    background-image: 
+        radial-gradient(circle at 15% 0%, rgba(88, 166, 255, 0.15) 0%, transparent 40%),
+        radial-gradient(circle at 85% 30%, rgba(139, 92, 246, 0.12) 0%, transparent 40%);
+    background-attachment: fixed;
+    background-repeat: no-repeat;
+}
+
+/* 2. 绝对的 Header 标准 Flex 布局 (大屏居中，小屏换行) */
+
+
+
+
+
+
+
+
+
+
+
+
+/* 小屏适配：Logo 和地球固定两边，导航掉下去 */
+@media (max-width: 1050px) {
+    
+    
+    
+    
+    body { padding-top: 130px; }
+}
+
+/* 3. 通用容器与卡片 (解决页面挤压和重叠) */
+.container-narrow {
+    max-width: 1000px;
+    margin: 40px auto;
+    padding: 0 20px;
+}
+.container-wide {
+    max-width: 1200px;
+    margin: 40px auto;
+    padding: 0 20px;
+}
+
+.card {
+    background: rgba(22, 27, 34, 0.5);
+    border: 1px solid var(--border-color);
+    border-radius: 24px;
+    padding: 40px;
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+}
+
+/* 4. 极简按钮 */
+.btn-primary {
+    background: #fff;
+    color: #000;
+    padding: 10px 24px;
+    border-radius: 100px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.3s;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    cursor: pointer;
+}
+.btn-primary:hover { box-shadow: 0 0 20px rgba(255, 255, 255, 0.4); transform: scale(1.02); }
+.btn-outline {
+    border: 1px solid var(--border-color);
+    color: var(--text-main);
+    padding: 10px 24px;
+    border-radius: 100px;
+    text-decoration: none;
+    background: rgba(255,255,255,0.03);
+    transition: all 0.3s;
+}
+.btn-outline:hover { background: rgba(255,255,255,0.1); }
+
+/* 5. 下拉菜单基础 */
+.lang-switch { position: relative; }
+.lang-dropdown {
+    position: absolute;
+    top: 100%; right: 0;
+    background: rgba(20, 20, 40, 0.9);
+    backdrop-filter: blur(12px);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    min-width: 150px;
+    padding: 8px 0;
+    list-style: none;
+    margin-top: 10px;
+    opacity: 0; visibility: hidden; transform: translateY(10px);
+    transition: all 0.25s;
+    z-index: 200;
+}
+.lang-switch:hover .lang-dropdown { opacity: 1; visibility: visible; transform: translateY(0); }
+.lang-dropdown li { padding: 10px 20px; font-size: 14px; color: var(--text-muted); cursor: pointer; }
+.lang-dropdown li:hover { background: rgba(255,255,255,0.1); color: #fff; }
+
+/* ======== 恢复主页专属排版 ======== */
+
+/* 1. 首屏 Hero 区域 */
+.hero {
+    min-height: calc(100vh - 80px);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 100px 20px 60px 20px; /* 增加顶部间距，确保半屏不重叠 */
+    position: relative;
+    z-index: 10;
+}
+
+.hero h1 {
+    font-size: 64px;
+    font-weight: 800;
+    margin-top: 40px; /* 新增：增加顶部呼吸感 */
+    margin-bottom: 24px;
+    letter-spacing: -2px;
+    background: linear-gradient(180deg, #fff 0%, #a1a1aa 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    line-height: 1.2;
+}
+
+.hero p {
+    font-size: 20px;
+    color: var(--text-muted);
+    max-width: 680px;
+    margin-bottom: 40px;
+}
+
+/* 2. 下载交互区 */
+.ds-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 30px;
+    width: 100%;
+    max-width: 900px;
+}
+
+.ds-icons {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 30px;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.ds-icon {
+    width: 55px;
+    height: 55px;
+    border-radius: 14px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 26px;
+    color: #8b949e;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+.ds-icon:hover { transform: scale(1.1) translateY(-3px); color: #fff; background: rgba(255, 255, 255, 0.1); }
+.ds-icon.active { color: #fff; background: rgba(88, 166, 255, 0.2); border-color: #58a6ff; box-shadow: 0 0 15px rgba(88, 166, 255, 0.3); transform: scale(1.05); }
+
+.ds-box {
+    text-align: center;
+    background: rgba(22, 27, 34, 0.5);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 24px;
+    padding: 40px 50px;
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    width: 100%;
+    min-width: 650px;
+    min-height: 260px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.ds-t { font-size: 28px; font-weight: 800; color: #fff; margin-bottom: 12px; transition: opacity 0.2s; }
+.ds-d { font-size: 16px; color: #8b949e; line-height: 1.6; margin-bottom: 30px; min-height: 50px; transition: opacity 0.2s; }
+
+.ds-btn {
+    display: inline-flex;
+    align-items: center;
+    background: #fff;
+    color: #000;
+    padding: 8px 24px 8px 8px;
+    border-radius: 100px;
+    text-decoration: none;
+    font-weight: 700;
+    font-size: 16px;
+    transition: all 0.3s;
+}
+.ds-btn:hover { transform: scale(1.05); box-shadow: 0 0 30px rgba(255, 255, 255, 0.3); }
+.ds-btn-ic { width: 40px; height: 40px; background: #0d1117; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-right: 15px; color: #fff; font-size: 20px; }
+
+/* 3. 功能特性网格与毛玻璃卡片 */
+.features {
+    padding: 100px 40px;
+    position: relative;
+    z-index: 10;
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 24px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.card {
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid var(--border-color);
+    border-radius: 24px;
+    padding: 40px;
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    background: rgba(255, 255, 255, 0.04);
+    border-color: rgba(255, 255, 255, 0.15);
+}
+
+.card h3 {
+    font-size: 20px;
+    font-weight: 600;
+    margin-bottom: 12px;
+    color: #fff;
+}
+
+.card p {
+    color: var(--text-muted);
+    font-size: 15px;
+    line-height: 1.6;
+}
+
+/* 4. 响应式适配 (手机端取消强行高度限制) */
+@media (max-width: 768px) {
+    .hero h1 { font-size: 42px; }
+    .hero p { font-size: 16px; }
+    .ds-box { min-width: 100%; padding: 30px 20px; }
+    .features { padding: 60px 20px; }
+}
+
+/* ======== 1. 强制恢复极光背景 ======== */
+body {
+    background-color: #050505 !important;
+    background-image: 
+        radial-gradient(circle at 15% 0%, rgba(88, 166, 255, 0.15) 0%, transparent 40%),
+        radial-gradient(circle at 85% 30%, rgba(139, 92, 246, 0.12) 0%, transparent 40%) !important;
+    background-attachment: fixed !important;
+    background-repeat: no-repeat !important;
+}
+
+/* ======== 2. 恢复“我们的透明承诺”卡片 ======== */
+.transparency-card {
+    margin: 40px auto;
+    max-width: 1000px;
+    padding: 24px 32px;
+    background: rgba(88, 166, 255, 0.05);
+    border: 1px solid rgba(88, 166, 255, 0.2);
+    border-radius: 16px;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    text-align: left;
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+}
+
+.transparency-card h4 {
+    color: #58a6ff;
+    font-size: 18px;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.transparency-card p {
+    color: #8b949e;
+    font-size: 14px;
+    line-height: 1.7;
+    margin: 0;
+}
+
+/* ======== 3. 恢复全站底部 Footer 与 GitHub 按钮 ======== */
+.site-footer {
+    margin-top: 80px;
+    padding: 40px 20px;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+}
+
+.footer-github-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    color: #8b949e;
+    text-decoration: none;
+    font-size: 15px;
+    font-weight: 500;
+    transition: all 0.3s;
+    background: rgba(255, 255, 255, 0.03);
+    padding: 10px 20px;
+    border-radius: 100px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(10px);
+}
+
+.footer-github-link:hover {
+    color: #fff;
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.2);
+    transform: translateY(-2px);
+    box-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
+}
+
+.footer-github-link i {
+    font-size: 20px;
+}
+
+.footer-copy {
+    color: #484f58;
+    font-size: 13px;
+    margin: 0;
+}
+
+/* ======== 修复首屏垂直居中导致的顶部遮挡 Bug ======== */
+.hero {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start; /* 改为从顶部开始排列，防止向上溢出 */
+    align-items: center;
+    text-align: center;
+    padding: 80px 20px 60px; /* 顶部留出 80px 的呼吸空间，绝不会顶到导航栏 */
+    min-height: auto; /* 移除强制视口高度限制 */
+}
+
+/* 确保导航栏的层级永远最高 */
+
+
+/* ==========================================
+   定价页专属：功能详细对比表样式恢复
+   ========================================== */
+
+.comparison-section {
+    max-width: 1000px;
+    margin: 80px auto 40px;
+    padding: 0 20px;
+    width: 100%;
+}
+
+.comparison-
+
+.comparison-
+
+.comparison-
+
+.comparison-table {
+    background: rgba(22, 27, 34, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 20px;
+    overflow: hidden;
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+}
+
+/* 表头与对齐 */
+.comp-table-
+.comp-table-
+
+/* 分类标题 */
+.comp-category {
+    background: rgba(255, 255, 255, 0.03);
+    color: #58a6ff;
+    font-size: 16px;
+    font-weight: 700;
+    padding: 16px 30px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* 每一行的网格布局 */
+.comp-row {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 1fr;
+    align-items: center;
+    padding: 20px 30px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    transition: background 0.2s;
+}
+
+.comp-row:hover {
+    background: rgba(255, 255, 255, 0.02);
+}
+
+.comp-row:last-child {
+    border-bottom: none;
+}
+
+/* 左侧功能描述 */
+.comp-feature strong {
+    display: block;
+    color: #e6edf3;
+    font-size: 16px;
+    margin-bottom: 4px;
+}
+
+.comp-feature span {
+    display: block;
+    color: #8b949e;
+    font-size: 13px;
+    margin-top: 4px;
+    line-height: 1.4;
+}
+
+/* 右侧勾叉与文本 */
+.comp-val {
+    text-align: center;
+    font-size: 18px;
+}
+
+.comp-val.yes { color: #3fb950; }
+.comp-val.no { color: #f85149; opacity: 0.6; }
+.comp-val.text-val { color: #c9d1d9; font-size: 14px; font-weight: 500; }
+.comp-val.partial { color: #d29922; font-size: 14px; font-weight: 600; }
+
+/* 移动端适配：隐藏副标题，缩小字体 */
+@media (max-width: 768px) {
+    .comp-row {
+        grid-template-columns: 1.5fr 1fr 1fr 1fr;
+        padding: 16px 15px;
+    }
+    .comp-feature span { display: none; }
+    .comp-feature strong { font-size: 14px; }
+    .comp-val { font-size: 16px; }
+    .comp-val.text-val { font-size: 12px; }
+    .comp-val.partial { font-size: 12px; }
+}
+
+/* 使用 Grid 三等分，保证中间导航绝对居中 */
+
+
+
+
+
+
+
+
+/* 兼容小屏换行，恢复 Flex 布局 */
+@media (max-width: 1050px) {
+    
+}
+
+/* ======== 终极防偏移：强制滚动条占位 ======== */
+html {
+    /* 强制垂直滚动条始终存在，锁定视口宽度，彻底解决跨页面偏移 */
+    overflow-y: scroll !important;
+    /* 兼容现代浏览器的优雅留白 */
+    scrollbar-gutter: stable !important;
+}
+
+/* 强制锁定视口宽度 */
+    padding: 0 40px !important;
+    box-sizing: border-box !important;
+    height: 80px !important;
+}
+
+/* 核心：导航栏脱离文档流，基于屏幕物理中心居中 */
+
+
+/* 保持 Logo 和 地球在最顶层不被遮挡 */
+
+
+/* 小屏幕（半屏）依然完美适配掉到第二行 */
+@media (max-width: 1100px) {
+    
+    
+}
+
+/* 左侧和右侧各占 1 份，把中间的 nav 强行挤在正中间 */
+
+
+
+
+/* 中间导航绝对不被挤压 */
+
+
+/* 小屏换行逻辑（保持不变） */
+@media (max-width: 1100px) {
+    
+    
+}
+
+/* ======== 终极防偏移绝杀（直接覆盖） ======== */
+html {
+    overflow-y: scroll !important;
+    scrollbar-gutter: stable !important;
+}
+
+header {
+    display: grid !important;
+    grid-template-columns: 1fr auto 1fr !important;
+    align-items: center !important;
+    padding: 0 40px !important;
+    height: 80px !important;
+    position: fixed !important;
+    top: 0 !important; left: 0 !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+    background: rgba(5, 5, 5, 0.6) !important;
+    backdrop-filter: blur(24px) !important;
+    -webkit-backdrop-filter: blur(24px) !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+    z-index: 9999 !important;
+}
+
+header .logo {
+    justify-self: start !important;
+    display: flex !important;
+    align-items: center !important;
+    text-decoration: none !important;
+}
+
+header nav {
+    justify-self: center !important;
+    display: flex !important;
+    gap: 24px !important;
+    margin: 0 !important;
+}
+
+header .lang-switch {
+    justify-self: end !important;
+    display: flex !important;
+    align-items: center !important;
+    position: relative !important;
+}
+
+/* 针对其他页面的链接文字颜色修复，防止变成紫色 */
+a { color: inherit; text-decoration: none; }
+
+/* ======== 终极绝杀版 Header（解决一切偏移） ======== */
+html {
+    /* 强制稳定滚动条占位，消灭宽度抖动 */
+    scrollbar-gutter: stable !important;
+    overflow-y: scroll !important;
+}
+
+header {
+    display: grid !important;
+    grid-template-columns: 1fr auto 1fr !important;
+    align-items: center !important;
+    padding: 0 40px !important;
+    height: 80px !important;
+    position: fixed !important;
+    top: 0 !important; left: 0 !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+    background: rgba(5, 5, 5, 0.6) !important;
+    backdrop-filter: blur(24px) !important;
+    -webkit-backdrop-filter: blur(24px) !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+    z-index: 9999 !important;
+}
+
+header .logo {
+    justify-self: start !important;
+    display: flex !important;
+    align-items: center !important;
+    text-decoration: none !important;
+}
+
+header nav {
+    justify-self: center !important;
+    display: flex !important;
+    gap: 24px !important;
+    margin: 0 !important;
+}
+
+header .lang-switch {
+    justify-self: end !important;
+    display: flex !important;
+    align-items: center !important;
+    position: relative !important;
+}
+
+/* 彻底修复链接颜色，防止紫色 */
+a { color: inherit; text-decoration: none; }

@@ -1,0 +1,14 @@
+[
+  {
+    "date": "October 18, 2026",
+    "version": "v1.2.0",
+    "title": "The Commercial Readiness Release",
+    "content": "We are thrilled to announce that DewSecure core engine is now officially in v1.2.0. This update includes our brand new AI model with an impressive F1 score of 0.9185. We've also integrated a seamless Offscreen Document architecture to ensure zero lag while browsing."
+  },
+  {
+    "date": "October 10, 2026",
+    "version": "v1.1.0",
+    "title": "Security Gateway Hardened",
+    "content": "We have completely removed all hardcoded credentials from the client side. All model downloads are now fully protected via a Cloudflare Worker authorization gateway using pre-signed URLs. Security first, always."
+  }
+]

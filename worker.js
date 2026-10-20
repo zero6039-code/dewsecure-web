@@ -2,6 +2,13 @@
 export default {
   async fetch(request, env, ctx) {
     const url = new URL(request.url);
+    // ---- 路由分发逻辑 ----
+    // 如果用户访问 /pentest，转发到 pentest 目录
+    if (url.pathname === '/pentest' || url.pathname.startsWith('/pentest/')) {
+      const assetPath = url.pathname.replace('/pentest', '') || '/index.html';
+      const newUrl = new URL(assetPath, url);
+      return env.ASSETS.fetch(new Request(newUrl, request));
+    }
 
     // ---- 扫描 API ----
     if (url.pathname === '/api/scan') {

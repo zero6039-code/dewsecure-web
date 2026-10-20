@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark" class="i18n-loading">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DewSecure - Changelog</title>
+    <link rel="stylesheet" href="/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .i18n-loading [data-i18n] { visibility: hidden !important; }
+        .update-container {
+            max-width: 800px; margin: 140px auto 60px; padding: 40px;
+            background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 24px; backdrop-filter: blur(20px);
+        }
+        .translate-tip { font-size: 14px; color: #58a6ff; margin-bottom: 40px; background: rgba(88,166,255,0.1); padding: 12px 16px; border-radius: 8px; display: flex; align-items: center; justify-content: space-between; }
+        .translate-tip select { background: #0d1117; color: #fff; border: 1px solid #30363d; padding: 8px 12px; border-radius: 6px; outline: none; cursor: pointer; }
+        .update-container h1 { font-size: 36px; color: #fff; margin-bottom: 30px; }
+        .log-entry { border-bottom: 1px solid rgba(255,255,255,0.08); padding-bottom: 24px; margin-bottom: 24px; }
+        .log-entry:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+        .log-date { font-size: 14px; color: #8b949e; margin-bottom: 8px; font-family: monospace; }
+        .log-title { font-size: 22px; color: #fff; margin-bottom: 12px; font-weight: 700; }
+        .log-content { color: #c9d1d9; font-size: 15px; line-height: 1.7; }
+    </style>
+</head>
+<body>
+    <header>
+        <a href="/index.html" class="logo"><img src="/DewSecure.png" alt="DewSecure" style="height:32px; margin-right:10px;"> DewSecure</a>
+        <nav>
+            <a href="/index.html" data-i18n="nav_home">首页</a>
+            <a href="/pricing.html" data-i18n="nav_pricing">定价</a>
+            <a href="/pentest/" target="_blank" data-i18n="nav_pentest">安全审计</a>
+            <a href="/update/" class="active" data-i18n="nav_update">更新日志</a>
+            <a href="/guide/" data-i18n="nav_guide">使用指南</a>
+            <a href="/about/" data-i18n="nav_about">关于我们</a>
+            <a href="/login/" data-i18n="nav_login">登录</a>
+        </nav>
+        <div class="lang-switch">
+            <button class="lang-toggle-btn" style="background:none;border:none;color:#cbd5e1;font-size:24px;cursor:pointer;padding:0;">🌐</button>
+            <ul class="lang-dropdown">
+                <li data-lang="zh" class="lang-option">中文 (简体)</li>
+                <li data-lang="en" class="lang-option">English</li>
+                <li data-lang="ms" class="lang-option">Bahasa Melayu</li>
+            </ul>
+        </div>
+    </header>
+
+    <div class="update-container">
+        <div class="translate-tip">
+            <span>🌐 Auto-translate (Google):</span>
+            <select id="lang-select" onchange="translatePage(this.value)">
+                <option value="en">English</option>
+                <option value="zh-CN">中文 (简体)</option>
+                <option value="ms">Bahasa Melayu</option>
+            </select>
+        </div>
+        <h1>Changelog & Updates</h1>
+        <div id="changelog-list"></div>
+    </div>
+
+    <script>
+        async function loadChangelog() {
+            try {
+                const res = await fetch('/update/changelog.json');
+                const logs = await res.json();
+                let html = '';
+                logs.forEach(log => {
+                    html += `<div class="log-entry">
+                        <div class="log-date">${log.date} - ${log.version}</div>
+                        <div class="log-title">${log.title}</div>
+                        <div class="log-content">${log.content}</div>
+                    </div>`;
+                });
+                document.getElementById('changelog-list').innerHTML = html;
+            } catch (e) {
+                document.getElementById('changelog-list').innerHTML = '<p style="color:#ff7b72;">Failed to load.</p>';
+            }
+        }
+        loadChangelog();
+
+        function translatePage(lang) {
+            if (lang === 'en') { window.location.href = '/update/'; return; }
+            if (window.location.href.includes('localhost')) { alert('本地环境无法使用在线翻译。'); return; }
+            window.location.href = `https://translate.google.com/translate?sl=auto&tl=${lang}&u=${encodeURIComponent(window.location.href)}`;
+        }
+
+        document.querySelector('.lang-switch').addEventListener('mouseenter', () => {
+            const dd = document.querySelector('.lang-dropdown');
+            dd.style.opacity = '1'; dd.style.visibility = 'visible'; dd.style.transform = 'translateY(0)';
+        });
+        document.querySelector('.lang-switch').addEventListener('mouseleave', () => {
+            const dd = document.querySelector('.lang-dropdown');
+            dd.style.opacity = '0'; dd.style.visibility = 'hidden'; dd.style.transform = 'translateY(10px)';
+        });
+    </script>
+    <script src="/js/i18n.js"></script>
+</body>
+</html>

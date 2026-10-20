@@ -2,517 +2,165 @@
 <html lang="en" data-theme="dark" class="i18n-loading">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">  
-    <title>DewSecure - Web3 安全审计 | 渗透测试与代码审计服务</title>
-
-    <!-- 🏠 规范链接：告诉搜索引擎最终网址是 https://dewsecure.com/ -->
-    <link rel="canonical" href="https://dewsecure.com/">
-    
-    <!-- ⚡ 立即隐藏所有翻译文本，防止闪现 -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DewSecure</title>
+    <link rel="stylesheet" href="/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        .i18n-loading [data-i18n] {
-            visibility: hidden !important;
-        }
+        .i18n-loading [data-i18n] { visibility: hidden !important; }
+        /* 本地专属防抖和排版样式 */
+        .ds-wrap { display: flex !important; flex-direction: column !important; align-items: center !important; margin-top: 50px !important; width: 100% !important; position: relative !important; z-index: 10 !important; }
+        .ds-icons { display: flex !important; gap: 15px !important; margin-bottom: 30px !important; flex-wrap: wrap !important; justify-content: center !important; }
+        .ds-icon { width: 55px !important; height: 55px !important; border-radius: 14px !important; background: rgba(255, 255, 255, 0.05) !important; border: 1px solid rgba(255, 255, 255, 0.1) !important; display: flex !important; align-items: center !important; justify-content: center !important; font-size: 26px !important; color: #8b949e !important; cursor: pointer !important; transition: all 0.3s !important; }
+        .ds-icon:hover { transform: scale(1.1) translateY(-3px) !important; color: #fff !important; background: rgba(255, 255, 255, 0.1) !important; }
+        .ds-icon.active { color: #fff !important; background: rgba(88, 166, 255, 0.2) !important; border-color: #58a6ff !important; box-shadow: 0 0 15px rgba(88, 166, 255, 0.3) !important; transform: scale(1.05) !important; }
+        .ds-box { height: 320px !important; width: 100% !important; min-width: 650px !important; max-width: 800px !important; position: relative !important; background: rgba(22, 27, 34, 0.5) !important; border: 1px solid rgba(255, 255, 255, 0.1) !important; border-radius: 24px !important; backdrop-filter: blur(24px) !important; -webkit-backdrop-filter: blur(24px) !important; }
+        .ds-t { position: absolute !important; top: 50px !important; left: 5% !important; right: 5% !important; text-align: center !important; font-size: 28px !important; font-weight: 800 !important; color: #fff !important; margin: 0 !important; }
+        .ds-d { position: absolute !important; top: 110px !important; left: 5% !important; right: 5% !important; text-align: center !important; font-size: 16px !important; color: #8b949e !important; line-height: 1.6 !important; margin: 0 !important; }
+        .ds-btn { position: absolute !important; bottom: 40px !important; left: 50% !important; transform: translateX(-50%) !important; display: inline-flex !important; align-items: center !important; background: #fff !important; color: #000 !important; padding: 8px 24px 8px 8px !important; border-radius: 100px !important; text-decoration: none !important; font-weight: 700 !important; font-size: 16px !important; transition: all 0.3s !important; }
+        .ds-btn:hover { box-shadow: 0 0 30px rgba(255, 255, 255, 0.3) !important; background: #e6edf3 !important; }
+        .ds-btn-ic { width: 40px !important; height: 40px !important; background: #0d1117 !important; border-radius: 50% !important; display: flex !important; align-items: center !important; justify-content: center !important; margin-right: 15px !important; color: #fff !important; font-size: 20px !important; }
+        
+        .hero { min-height: calc(100vh - 80px); display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 100px 20px 60px 20px; position: relative; z-index: 10; }
+        .hero h1 { font-size: 64px; font-weight: 800; margin-top: 40px; margin-bottom: 24px; letter-spacing: -2px; background: linear-gradient(180deg, #fff 0%, #a1a1aa 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; line-height: 1.2; }
+        .hero p { font-size: 20px; color: #8b949e; max-width: 680px; margin-bottom: 40px; }
     </style>
-
-    <meta name="description" content="DewSecure 提供专业的 Web3 渗透测试、代码安全审计、形式化验证与漏洞扫描服务。资深安全专家团队，助力企业打造安全闭环。">
-    <meta name="keywords" content="DewSecure, 安全审计, 漏洞扫描, Web安全, 渗透服务,Penetration Testing,Code Auditing">
-    <meta name="author" content="DewSecure Team">
-    <meta name="robots" content="index, follow">
-
-    <meta property="og:type" content="website">
-    <meta property="og:title" content="DewSecure - Web & Blockchain Security">
-    <meta property="og:description" content="提供自动化漏洞扫描与高阶源码安全审计服务。助力企业与去中心化协议打造安全闭环。">
-    <meta property="og:image" content="DewSecure.png">
-    
-    <link rel="icon" type="image/png" href="DewSecure.png" sizes="128x128">
-    
-    <link rel="stylesheet" href="css/style.css">
-    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v6.0.0-beta3/css/all.css" integrity="sha384-5e2ESR8Ycmos6g3gAKr1Jvwye8sW4U1u/cAKulfVJnkakCcMqhOudbtPnvJ+nbv7" crossorigin="anonymous">
-
-    <script type="application/ld+json">
-    {
-        "@context": "https://schema.org",
-        "@type": "ProfessionalService",
-        "name": "DewSecure",
-        "url": "https://dewsecure.com/",
-        "logo": "https://dewsecure.com/DewSecure.png",
-        "description": "DewSecure 提供专业的 Web3 渗透测试、代码安全审计与漏洞扫描服务。",
-        "address": {
-          "@type": "PostalAddress",
-          "addressCountry": "MY"
-    },
-    "areaServed": "Worldwide"
-     }
-    </script>    
 </head>
 <body>
-    <canvas id="bg-canvas" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; pointer-events: none;"></canvas>
-    
-    <div class="container">
-        <header class="header">
-            <div class="header-left">
-                <div class="logo"><img src="DewSecure.png" alt="DewSecure 网络安全"></div>
+    <header>
+        <a href="/index.html" class="logo"><img src="/DewSecure.png" alt="DewSecure" style="height:32px; margin-right:10px;"> DewSecure</a>
+        <nav>
+            <a href="/index.html" class="active" data-i18n="nav_home">首页</a>
+            <a href="/pricing.html" data-i18n="nav_pricing">定价</a>
+            <a href="/pentest/" target="_blank" data-i18n="nav_pentest">安全审计</a>
+            <a href="/update/" data-i18n="nav_update">更新日志</a>
+            <a href="/guide/" data-i18n="nav_guide">使用指南</a>
+            <a href="/about/" data-i18n="nav_about">关于我们</a>
+            <a href="/login/" data-i18n="nav_login">登录</a>
+        </nav>
+        <div class="lang-switch">
+            <button class="lang-toggle-btn" style="background:none;border:none;color:#cbd5e1;font-size:24px;cursor:pointer;padding:0;">🌐</button>
+            <ul class="lang-dropdown">
+                <li data-lang="zh" class="lang-option">中文 (简体)</li>
+                <li data-lang="en" class="lang-option">English</li>
+                <li data-lang="ms" class="lang-option">Bahasa Melayu</li>
+            </ul>
+        </div>
+    </header>
+
+    <section class="hero">
+        <h1 data-i18n="hero_title">你的设备，你的规则。</h1>
+        <p data-i18n="hero_desc">融合设备端 AI 与云端联邦学习的内容优化与安全防护引擎。深度阻断恶意追踪与钓鱼威胁，极速加载，为您重塑纯净、安全、高效的上网体验。</p>
+        
+        <div class="ds-wrap">
+            <div class="ds-icons">
+                <div class="ds-icon active" data-target="chrome" title="Chrome"><i class="fa-brands fa-chrome"></i></div>
+                <div class="ds-icon" data-target="edge" title="Edge"><i class="fa-brands fa-edge"></i></div>
+                <div class="ds-icon" data-target="firefox" title="Firefox"><i class="fa-brands fa-firefox-browser"></i></div>
+                <div class="ds-icon" data-target="safari" title="Safari"><i class="fa-brands fa-safari"></i></div>
+                <div class="ds-icon" data-target="opera" title="Opera"><i class="fa-brands fa-opera"></i></div>
+                <div class="ds-icon" data-target="yandex" title="Yandex"><i class="fa-brands fa-yandex"></i></div>
+                <div class="ds-icon" data-target="android" title="Android"><i class="fa-brands fa-android"></i></div>
             </div>
 
-            <nav class="nav-menu" style="margin-left: -20px;">
-                <div class="nav-item">
-                    <span data-i18n="nav_solution">解决方案</span>
-                    <div class="mega-dropdown">
-                        <div class="dropdown-intro">
-                            <h3 data-i18n="sol_intro_title">解决方案</h3>
-                            <p data-i18n="sol_intro_desc">为您中小企业网站或个人网站提供安全和合规解决方案与风险管理。</p>
-                        </div>
-                        
-                        <div class="dropdown-grid">
-                            <a href="#" class="dropdown-link">
-                                <div class="icon-box"><i class="fa-solid fa-code"></i></div>
-                                <div class="text-box">
-                                    <span class="title" data-i18n="sol_item1_title">代码审核</span>
-                                    <span class="desc" data-i18n="sol_item1_desc">人工 + AI深度审查</span>
-                                </div>
-                            </a>
-
-                            <a href="#" class="dropdown-link">
-                                <div class="icon-box"><i class="fa-solid fa-crosshairs"></i></div>
-                                <div class="text-box">
-                                    <span class="title" data-i18n="sol_item2_title">渗透测试</span>
-                                    <span class="desc" data-i18n="sol_item2_desc">模拟深度攻击</span>
-                                </div>
-                            </a>
-
-                            <a href="#" class="dropdown-link">
-                                <div class="icon-box"><i class="fa-solid fa-calculator"></i></div>
-                                <div class="text-box">
-                                    <span class="title" data-i18n="sol_item3_title">形式化验证</span>
-                                    <span class="desc" data-i18n="sol_item3_desc">经数学验证的代码</span>
-                                </div>
-                            </a>
-
-                            <a href="#" class="dropdown-link">
-                                <div class="icon-box"><i class="fa-solid fa-file-invoice"></i></div>
-                                <div class="text-box">
-                                    <span class="title" data-i18n="sol_item4_title">审计报告</span>
-                                    <span class="desc" data-i18n="sol_item4_desc">生成审计报告和修复建议</span>
-                                </div>
-                            </a>
-
-                            <a href="#" class="dropdown-link">
-                                <div class="icon-box"><i class="fa-solid fa-comments"></i></div>
-                                <div class="text-box">
-                                    <span class="title" data-i18n="sol_item5_title">安全咨询服务</span>
-                                    <span class="desc" data-i18n="sol_item5_desc">了解详情</span>
-                                </div>
-                            </a>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- 服务详情（静态表格 + data-i18n） -->
-                <div class="nav-item service-detail">
-                    <span data-i18n="nav_service_detail">服务详情</span>
-                    <div class="mega-dropdown">
-                        <div class="dropdown-intro">
-                            <h3 data-i18n="service_detail_title">服务详情</h3>
-                            <p data-i18n="service_detail_desc">全面的安全服务对比，助您选择最适合的方案。</p>
-                        </div>
-                        <div style="padding: 0; overflow-x: hidden;">
-                            <table>
-                                <thead>
-                                    <tr>
-                                        <th style="width: 12%;" data-col="1" data-i18n="sd_th1">服务项目</th>
-                                        <th style="width: 22%;" data-col="2" data-i18n="sd_th2">基础健康体检 (基础扫描与排查)</th>
-                                        <th style="width: 22%;" data-col="3" data-i18n="sd_th3">黑盒测试 (外部边界盲测)</th>
-                                        <th style="width: 22%;" data-col="4" data-i18n="sd_th4">灰盒测试 🔥 核心推荐 (内部业务逻辑穿透)</th>
-                                        <th style="width: 22%;" data-col="5" data-i18n="sd_th5">白盒代码审计 (源码级深度审查)</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td data-i18n="sd_row1_label">起步价 (USD)</td>
-                                        <td data-i18n="sd_row1_c1">$200+</td>
-                                        <td data-i18n="sd_row1_c2">$1,000+</td>
-                                        <td data-i18n="sd_row1_c3">$800+ (按核心业务流计费)</td>
-                                        <td data-i18n="sd_row1_c4">$1,500+</td>
-                                    </tr>
-                                    <tr>
-                                        <td data-i18n="sd_row2_label">目标客群与场景</td>
-                                        <td data-i18n="sd_row2_c1">适合上线前做的最后一道检测，轻量/静态站点，做快速安全基线排查</td>
-                                        <td data-i18n="sd_row2_c2">模拟外部真实黑客，测试外围防线与未授权漏洞</td>
-                                        <td data-i18n="sd_row2_c3">核心推荐：针对 SaaS/API，深度排查越权与业务逻辑漏洞</td>
-                                        <td data-i18n="sd_row2_c4">针对金融级或强合规项目，进行源码级深度审计</td>
-                                    </tr>
-                                    <tr>
-                                        <td data-i18n="sd_row3_label">价格说明</td>
-                                        <td data-i18n="sd_row3_c1">零账号 / 自动化扫描结合基础排查</td>
-                                        <td data-i18n="sd_row3_c2">视外围资产暴露面、子域名与系统防护复杂度浮动</td>
-                                        <td data-i18n="sd_row3_c3">严格按业务流数量计费 (例: 1条流$800, 3条流$1800)</td>
-                                        <td data-i18n="sd_row3_c4">视代码量、语言复杂度及架构深度浮动</td>
-                                    </tr>
-                                    <tr>
-                                        <td data-i18n="sd_row4_label">测试权限与前置条件</td>
-                                        <td data-i18n="sd_row4_c1">零背景、无账号</td>
-                                        <td data-i18n="sd_row4_c2">零背景、无账号、纯外围盲测</td>
-                                        <td data-i18n="sd_row4_c3">提供测试账号矩阵(普通/管理) + API 文档</td>
-                                        <td data-i18n="sd_row4_c4">提供完整源码、数据库结构、内部文档</td>
-                                    </tr>
-                                    <tr>
-                                        <td data-i18n="sd_row5_label">漏洞扫描 (SAST/DAST)</td>
-                                        <td data-i18n="sd_row5_c1">✅ 自动化扫描 + 人工排误报</td>
-                                        <td data-i18n="sd_row5_c2">✅ 资产搜集 , 深度外围扫描与边界突破</td>
-                                        <td data-i18n="sd_row5_c3">✅ 轻量外围辅助扫描 (20%) + 核心内部测试 (80%)</td>
-                                        <td data-i18n="sd_row5_c4">✅ 静态代码分析 (SAST) + 人工逐行深度审计</td>
-                                    </tr>
-                                    <tr>
-                                        <td data-i18n="sd_row6_label">高级逻辑漏洞测试</td>
-                                        <td data-i18n="sd_row6_c1">仅排查表层与公开漏洞</td>
-                                        <td data-i18n="sd_row6_c2">外部盲打 (二阶/盲注/未授权访问/不涉及深度业务逻辑)</td>
-                                        <td data-i18n="sd_row6_c3">✅ 80% 专注并发、支付、BOLA/IDOR 越权与矩阵测试</td>
-                                        <td data-i18n="sd_row6_c4">✅ 架构级风险、代码审计，深层反序列化与隐蔽漏洞挖掘</td>
-                                    </tr>
-                                    <tr>
-                                        <td data-i18n="sd_row7_label">代码级修复片段与指南</td>
-                                        <td data-i18n="sd_row7_c1">✅ 基础修改建议</td>
-                                        <td data-i18n="sd_row7_c2">✅ 提供精准 Patch 片段 / 防御策略</td>
-                                        <td data-i18n="sd_row7_c3">✅ 提供精准 Patch 片段 (开发极度友好)</td>
-                                        <td data-i18n="sd_row7_c4">✅ 提供精准至特定代码行的 Patch 片段</td>
-                                    </tr>
-                                    <tr>
-                                        <td data-i18n="sd_row8_label">复测验证 (闭环服务)</td>
-                                        <td data-i18n="sd_row8_c1">❌ (一次性交付，不含复测)</td>
-                                        <td data-i18n="sd_row8_c2">✅ 含 1 次免费验证复测</td>
-                                        <td data-i18n="sd_row8_c3">✅ 含 1 次免费验证复测</td>
-                                        <td data-i18n="sd_row8_c4">✅ 含 1 次免费验证复测</td>
-                                    </tr>
-                                    <tr>
-                                        <td data-i18n="sd_row9_label">商业信任增信工具</td>
-                                        <td data-i18n="sd_row9_c1">❌</td>
-                                        <td data-i18n="sd_row9_c2">✅ 允许展示测试认证</td>
-                                        <td data-i18n="sd_row9_c3">✅ 允许展示测试认证</td>
-                                        <td data-i18n="sd_row9_c4">✅ 允许展示测试认证</td>
-                                    </tr>
-                                    <tr>
-                                        <td data-i18n="sd_row10_label">最终交付物</td>
-                                        <td data-i18n="sd_row10_c1">红黑榜体检清单</td>
-                                        <td data-i18n="sd_row10_c2">专业边界安全漏洞评估报告</td>
-                                        <td data-i18n="sd_row10_c3">深度业务逻辑安全渗透报告</td>
-                                        <td data-i18n="sd_row10_c4">专业源码级安全合规审计报告</td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                            <p style="margin-top: 12px; color: #cbd5e1; line-height: 1.5; font-size: 0.85rem;" data-i18n="sd_footer_note">
-                                起步价 (USD)仅做参考，最终报价将基于实际系统的 API 接口数量、用户角色维度及业务复杂度进行精准评估，请联系获取完整报价单。
-                            </p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="nav-item">
-                    <span data-i18n="nav_company">关于公司</span>
-                    <div class="mega-dropdown">
-                        <div class="dropdown-intro" style="width: 100%; max-width: 500px; border-right: none; padding-right: 0;">
-                            <h3 data-i18n="comp_intro_title">关于公司</h3>
-                            <p style="color: #cbd5e1; line-height: 1.8; margin-top: 8px;" data-i18n="comp_intro_desc">DewSecure 是一家由资深行业专家创立的顶尖 Web3 安全平台，集深度渗透测试、高级源代码审计与全方位安全解决方案于一体，并且持有 CPTS 专业渗透证书。凭借在各大漏洞赏金平台上的长期活跃表现，以及为众多项目提供渗透测试与高阶代码审计服务的丰富经验，DewSecure 积累了深厚的实战专长。面对人工智能重塑安全边界与全球网络安全格局所带来的前所未有的复杂挑战，DewSecure 始终坚守阵地，致力于捍卫数字世界的安全防线。</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="nav-item">
-                    <span data-i18n="nav_disclaimer">免责声明</span>
-                    <div class="mega-dropdown">
-                        <div class="dropdown-intro" style="width: 100%; max-width: 200px;">
-                            <h3 data-i18n="disc_intro_title">免责声明</h3>
-                            <p data-i18n="disc_intro_desc">DewSecure 安全服务法律合规与服务性质责任限制说明。</p>
-                        </div>
-                        
-                        <div class="disclaimer-grid">
-                            <div class="disclaimer-item">
-                                <h4 data-i18n="disc_t1">1. 服务性质声明</h4>
-                                <p data-i18n="disc_d1">DewSecure 提供的渗透测试、代码审计及安全咨询服务，旨在帮助客户发现和修复潜在安全风险。所有测试均在客户书面授权范围内进行，并严格遵循行业标准与合规要求。</p>
-                            </div>
-                            <div class="disclaimer-item">
-                                <h4 data-i18n="disc_t2">2. 技术局限性</h4>
-                                <p data-i18n="disc_d2">尽管 DewSecure 采取专业的技术手段与严谨的评估流程，但由于网络攻击手段的不断演变及系统环境的复杂性，我们无法保证经过测试的系统在未来绝对不存在任何安全漏洞或风险。</p>
-                            </div>
-                            <div class="disclaimer-item">
-                                <h4 data-i18n="disc_t3">3. 第三方责任</h4>
-                                <p data-i18n="disc_d3">本服务涉及的测试过程可能涉及对客户系统、数据或网络的访问。DewSecure 不对因第三方产品、服务或客户未及时修补漏洞而导致的任何损失承担责任。</p>
-                            </div>
-                            <div class="disclaimer-item">
-                                <h4 data-i18n="disc_t4">4. 网站内容</h4>
-                                <p data-i18n="disc_d4">本网站所含信息仅供一般参考，不构成专业法律或技术建议。DewSecure 保留随时修改或更新网站内容的权利，无需另行通知。</p>
-                            </div>
-                            <div class="disclaimer-item">
-                                <h4 data-i18n="disc_t5">5. 知识产权</h4>
-                                <p data-i18n="disc_d5">DewSecure 在服务过程中产生的报告、工具、方法论等智力成果，知识产权归属 DewSecure 所有，除非另有书面约定。</p>
-                            </div>
-                            <div class="disclaimer-item">
-                                <h4 data-i18n="disc_t6">6. 责任限制</h4>
-                                <p data-i18n="disc_d6">在适用法律允许的最大范围内，DewSecure 不对因使用或无法使用本服务而造成的任何间接、附带、特殊或惩罚性损害承担责任，无论该损害是否基于合同、侵权或其他法律理论。</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </nav>
-
-            <div class="header-right">
-                <div class="nav-stats">
-                    <div class="counter-runner" id="stats-counter" data-target="189"></div>
-                    <span class="label" data-i18n="stats_label">项目审计</span>
-                </div>
-
-                <div class="lang-switch">
-                    <button id="lang-toggle" class="lang-toggle-btn" aria-label="Language Switcher">🌐</button>
-                    <ul id="lang-dropdown" class="lang-dropdown">
-                        <li data-lang="en" class="lang-option">English</li>
-                        <li data-lang="zh" class="lang-option active">中文</li>
-                        <li data-lang="ms" class="lang-option">Bahasa Melayu</li>
-                    </ul>
-                </div>
-            </div>
-        </header>
-
-        <main class="placeholder-message">
-             <div class="hero-content">
-                 <h1 class="hero-title" data-i18n="hero_title">专注 Web3 的网页渗透与代码审计</h1>
-                 <p class="hero-desc" data-i18n="hero_desc">DewSecure 是由精英专家团队打造的顶级 Web3 安全平台，集成了深度渗透测试、高级源代码审计和全面的安全架构。将您的审计工作委托给我们，确保您的项目和网络生态系统在强大可靠的环境中持续蓬勃发展。</p>
-                 
-                 <div class="hero-action delayed-btn">
-                     <a href="#contact" class="btn-cyber-red" data-i18n="hero_btn_quote">咨询专家</a>
-                 </div>
-
-                 <!-- 扫描工具（多语言） -->
-                 <div class="quick-scanner delayed-scanner">
-                     <div class="scanner-card">
-                         <h3 class="scanner-title" data-i18n="scan_title">🔍 快速安全检测</h3>
-                         <p class="scanner-desc" data-i18n="scan_desc">输入网站 URL，立即检测常见安全配置（HTTPS、安全头等）</p>
-                         
-                         <div class="scanner-input-group">
-                             <input type="text" id="scan-url-input" data-i18n-placeholder="scan_placeholder" placeholder="https://example.com" aria-label="网站 URL">
-                         </div>
-
-                         <div class="scanner-compliance">
-                             <label class="compliance-label">
-                                 <input type="checkbox" id="compliance-check">
-                                 <span data-i18n="scan_compliance">使用本工具即表示您已获得目标网站的明确授权，并承诺仅将其用于合规的安全健康体检，且自行承担因扫描行为产生的一切法律责任。</span>
-                             </label>
-                             <p class="policy-link-row">
-                                 <span data-i18n="scan_policy_prefix">请先阅读并同意</span> <a href="#" id="show-policy" data-i18n="scan_policy_link">《服务条款》</a>
-                             </p>
-                         </div>
-
-                         <div class="scanner-action-row">
-                             <button id="scan-btn" disabled>
-                                 <i class="fa-solid fa-magnifying-glass"></i> <span data-i18n="scan_btn">扫描</span>
-                             </button>
-                             <span id="scan-status" style="display:none;" data-i18n="scan_loading">⏳ 正在扫描...</span>
-                         </div>
-                         
-                         <div id="scan-result" class="scan-result-box" style="display:none;"></div>
-                     </div>
-                 </div>
-            </div>
-        </main>
-    </div>
-
-    <!-- 咨询报价弹窗（已删除定价矩阵表格，并更新表单） -->
-    <div id="quote-modal" class="cyber-modal-overlay">
-        <div class="cyber-modal-wrapper">
-            <button class="modal-close-btn" id="modal-close-btn" aria-label="Close Modal">&times;</button>
-            
-            <div class="modal-left-box">
-                <div class="brand-header">
-                    <img src="DewSecure.png" class="brand-logo-img" alt="Logo">
-                    <span data-i18n="page_title" class="brand-logo-text">DewSecure</span>
-                </div>
-                
-                <div class="matrix-title" data-i18n="modal_matrix_slogan">技术为器，<span class="highlight-red">诚信为道。</span></div>
-                
-                <div class="binary-matrix-stream aligned-right">
-                    <div class="matrix-row"><span>01111110</span><span>10011010</span><span>10011101</span><span>11001101</span></div>
-                    <div class="matrix-row"><span>00011111</span><span>01101001</span><span>00111111</span><span>10101111</span></div>
-                    <div class="matrix-row"><span>10100101</span><span>01000110</span><span>01110101</span><span>11001011</span></div>
-                    <div class="matrix-row"><span>01011101</span><span>01111010</span><span>01001001</span><span>11011000</span></div>
-                    <div class="matrix-row"><span>00111110</span><span>01101000</span><span>11111001</span><span>11101101</span></div>
-                    <div class="matrix-row"><span>11001011</span><span>11011000</span><span>10010111</span><span>11001100</span></div>
-                    <div class="matrix-row"><span>00111101</span><span>01000101</span><span>10011010</span><span>00110101</span></div>
-                    <div class="matrix-row"><span>00000110</span><span>00001011</span><span>00000010</span><span>11001011</span></div>
-                    <div class="matrix-row"><span>11011000</span><span>11111001</span><span>01000110</span><span>11100010</span></div>
-                    <div class="matrix-row"><span>10011010</span><span>10100001</span><span>11101101</span><span>10011010</span></div>
-                </div>
-            </div>
-
-            <div class="modal-right-box">
-                <div class="modal-form-scroll-body">
-                    <h2 data-i18n="modal_title">立刻保护您的项目</h2>
-                    
-                    <form id="quote-form" novalidate>
-                        <input type="text" id="fax" style="display:none" tabindex="-1" autocomplete="off">
-                        <div class="form-grid-row">
-                            <div class="form-group">
-                                <label class="required-label" data-i18n="form_lbl_company">项目/公司</label>
-                                <input type="text" id="form-company" placeholder="项目或公司名称" data-i18n-placeholder="form_plh_company">
-                                <div class="error-msg" id="err-company" data-i18n="err_required">该字段不能为空</div>
-                            </div>
-
-                            <div class="form-group">
-                                <label class="required-label" data-i18n="form_lbl_email">电子邮件</label>
-                                <input type="email" id="form-email" placeholder="输入您的工作电子邮件" data-i18n-placeholder="form_plh_email">
-                                <div class="error-msg" id="err-email" data-i18n="err_email">请输入有效的电子邮件地址</div>
-                            </div>
-                        </div> 
-
-                        <div class="form-grid-row">
-                            <div class="form-group" style="grid-column: 1 / -1;">
-                                <label data-i18n="form_lbl_target">目标网站</label>
-                                <input type="text" id="form-target-url" placeholder="example.com" data-i18n-placeholder="form_plh_target">
-                            </div>
-                        </div>
-
-                        <div class="form-grid-row">
-                            <div class="form-group">
-                                <label data-i18n="form_lbl_name">全名</label>
-                                <input type="text" id="form-name" placeholder="输入您的全名" data-i18n-placeholder="form_plh_name">
-                            </div>
-
-                            <div class="form-group">
-                                <label class="required-label" data-i18n="form_lbl_contact">联系方式</label>
-                                <div class="contact-input-wrapper custom-single-channel">
-                                    <span class="whatsapp-badge"><i class="fa-brands fa-whatsapp"></i> WhatsApp</span>
-                                    <input type="text" id="form-contact-val" placeholder="例如: 123456789" data-i18n-placeholder="form_plh_contact">
-                                </div>
-                                <div class="error-msg" id="err-contact" data-i18n="err_required">该字段不能为空</div>
-                            </div>
-                        </div>
-
-                        <div class="form-grid-row">
-                            <div class="form-group">
-                                <label data-i18n="form_lbl_role">职位名称</label>
-                                <input type="text" id="form-role" placeholder="输入您的职位名称" data-i18n-placeholder="form_plh_role">
-                            </div>
-
-                            <div class="form-group">
-                                <label data-i18n="form_lbl_service">服务意向</label>
-                                <select id="form-service">
-                                    <option value="" data-i18n="form_opt_default">选择意向服务</option>
-                                    <option value="basic_health" data-i18n="service_basic_health">基础健康体检</option>
-                                    <option value="blackbox" data-i18n="service_blackbox">黑盒测试</option>
-                                    <option value="greybox" data-i18n="service_greybox">灰盒测试 (🔥 核心推荐)</option>
-                                    <option value="whitebox" data-i18n="service_whitebox">白盒代码审计</option>
-                                    <option value="outsource" data-i18n="service_outsource">接受外包订单</option>
-                                    <option value="partner" data-i18n="service_partner">合作伙伴</option>
-                                    <option value="other" data-i18n="service_other">其他</option>
-                                </select>
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <label data-i18n="form_lbl_info">其他信息</label>
-                            <textarea id="form-info" rows="3" maxlength="2000" placeholder="请详细介绍您的项目。分享项目详情，相关链接或任何疑问。（2000字以内）" data-i18n-placeholder="form_plh_info"></textarea>
-                        </div>
-
-                        <div class="form-actions-wrapper">
-                            <p class="form-footer-notice" data-i18n="form_notice">您的资料并不会保存或记录在任何地方。DewSecure 安全专家将审阅您的请求，并尽快与您联系。</p>
-                            <div class="form-submit-row">
-                                <button type="submit" class="btn-submit-quote">
-                                    <span data-i18n="hero_btn_quote">咨询专家</span> <i class="fa-solid fa-arrow-right"></i>
-                                </button>
-                            </div>
-                        </div>
-                    </form>
-                </div>
+            <div class="ds-box">
+                <h2 id="ds-title" class="ds-t">重塑纯净、安全的上网体验</h2>
+                <p id="ds-desc" class="ds-d">融合原生拦截与设备端 AI 引擎，毫秒级阻断恶意追踪与钓鱼威胁。</p>
+                <a href="#" id="ds-btn" class="ds-btn">
+                    <div class="ds-btn-ic" id="ds-btn-icon"><i class="fa-brands fa-chrome"></i></div>
+                    <span id="ds-btn-text">下载 Chrome 扩展</span>
+                </a>
             </div>
         </div>
-    </div>
+    </section>
 
-    <!-- 扫描结果弹窗（黑客风格） -->
-    <div id="scan-modal" class="cyber-modal-overlay scan-modal-overlay">
-        <div class="cyber-modal-wrapper scan-modal-wrapper">
-            <button class="modal-close-btn scan-modal-close" aria-label="Close">&times;</button>
-            <div class="scan-modal-body">
-                <h2 class="scan-modal-title" data-i18n="scan_result_title">[ SYSTEM SCAN RESULT ]</h2>
-                <div id="scan-modal-content"></div>
+    <section class="features">
+        <div class="grid">
+            <div class="card"><h3 data-i18n="feat_title_1">🧠 智能安全引擎</h3><p data-i18n="feat_desc_1">内置 11 万条精准防御规则，结合设备端 AI 模型，精准拦截恶意钓鱼、追踪器及潜在威胁。</p></div>
+            <div class="card"><h3 data-i18n="feat_title_2">🛡️ 隐私数据不出设备</h3><p data-i18n="feat_desc_2">所有 URL 分析均在本地沙箱完成，零数据上传，我们不收集您的浏览记录，彻底杜绝隐私泄露。</p></div>
+            <div class="card"><h3 data-i18n="feat_title_3">⚡ 极致性能体验</h3><p data-i18n="feat_desc_3">毫秒级本地响应，大幅减少不必要的网络请求，不卡顿、不白屏，让网页加载速度肉眼可见地提升。</p></div>
+            <div class="card"><h3 data-i18n="feat_title_4">🧹 告别视觉噪音</h3><p data-i18n="feat_desc_4">彻底清理弹窗、横幅与视频广告，让你专注网页的核心内容，回归纯粹的浏览体验。</p></div>
+            <div class="card"><h3 data-i18n="feat_title_5">🛡️ 防钓鱼与木马拦截</h3><p data-i18n="feat_desc_5">实时识别并阻断钓鱼网站、恶意重定向以及木马病毒广告，为你构筑坚不可摧的安全防线。</p></div>
+            <div class="card"><h3 data-i18n="feat_title_6">🍪 智能 Cookie 管家</h3><p data-i18n="feat_desc_6">智能拦截烦人的 Cookie 同意横幅，同时精准放行必要配置，确保网站功能正常运转，拒绝一刀切。</p></div>
+            <div class="card"><h3 data-i18n="feat_title_7">⛏️ 拦截恶意挖矿</h3><p data-i18n="feat_desc_7">阻止恶意网页利用您的设备静默挖掘加密货币，节省 CPU 算力与电量消耗，让设备保持冷静流畅。</p></div>
+        </div>
+        
+        <div class="transparency-card">
+            <div style="font-size: 28px;">🛡️</div>
+            <div>
+                <h4 data-i18n="trans_home_title">🤝 我们的透明承诺</h4>
+                <p data-i18n="trans_home_desc">网络环境瞬息万变，恶意追踪技术持续进化，我们无法保证 100% 的绝对拦截率。受限于平台底层机制，部分应用内广告（如 YouTube App）暂无法拦截。但 DewSecure 会通过 AI 持续学习进化，竭尽全力为您提供最强悍的过滤体验。</p>
             </div>
         </div>
-    </div>
-    
-    <!-- 服务条款弹窗（三语内容块） -->
-    <div id="policy-modal" class="cyber-modal-overlay policy-modal-overlay">
-        <div class="cyber-modal-wrapper policy-modal-wrapper">
-            <button class="modal-close-btn policy-modal-close" aria-label="Close">&times;</button>
-            <div class="policy-modal-body">
-                <h2 class="policy-modal-title" data-i18n="policy_modal_title">[ 安全审计工具使用声明 ]</h2>
-                <!-- 中文版本 -->
-                <div class="policy-content-lang" data-lang-policy="zh">
-                    <p>本工具旨在协助进行 Web 应用安全基线审计。为确保审计行为的合法性、合规性及非破坏性，所有使用者及本工具的运行须严格遵守以下条款：</p>
-                    <h4>1. 行为原则 (Principles of Operation)</h4>
-                    <p>本工具采用只读模式 (Read-Only Mode)，仅执行 HTTP HEAD 或 GET 请求。工具严格禁止执行以下任何操作：</p>
-                    <ul>
-                        <li>任何形式的写入、修改、删除、POST/PUT/DELETE 请求。</li>
-                        <li>任何形式的暴力破解、密码枚举或利用漏洞的主动探测。</li>
-                        <li>任何导致目标服务器资源饱和、性能下降或拒绝服务 (DoS) 的高并发请求。</li>
-                    </ul>
-                    <h4>2. 合规边界 (Compliance Boundaries)</h4>
-                    <p><strong>授权限定：</strong>本工具仅允许在使用者拥有明确授权的资产上运行。严禁对第三方系统进行未经授权的扫描。</p>
-                    <p><strong>隐私保护：</strong>本工具不存储、不传输任何用户敏感数据（包括但不限于 Cookies、Authorization Tokens、PII 信息）。扫描日志应进行脱敏处理，移除所有包含会话信息的原始响应头。</p>
-                    <p><strong>合规责任：</strong>工具产生的所有审计结果仅供内部安全评审参考。使用者需对审计结果的合法使用负责，不得利用审计发现的信息从事任何非法活动。</p>
-                    <h4>3. 免责声明 (Disclaimer)</h4>
-                    <p>本工具提供的所有安全配置评估（如 CSP 评分、Header 完整性分析）基于行业通用标准（如 OWASP ASVS）。工具提供的结果仅供参考，不作为唯一的安全合规性证明。因网络环境波动或系统配置复杂性导致的误报，开发者概不负责。</p>
-                    <h4>4. 协作联系 (Contact)</h4>
-                    <p>若在使用本工具过程中发现任何误报、异常或潜在风险，请及时通过安全反馈渠道与我们取得联系。</p>
-                </div>
-                <!-- 英文版本 -->
-                <div class="policy-content-lang" data-lang-policy="en" style="display:none;">
-                    <p>This tool is designed to assist with web application security baseline audits. To ensure the legality, compliance, and non-destructive nature of the auditing process, all users and the operation of this tool must strictly adhere to the following terms:</p>
-                    <h4>1. Principles of Operation</h4>
-                    <p>This tool operates in read-only mode, executing only HTTP HEAD or GET requests. The tool is strictly prohibited from performing any of the following:</p>
-                    <ul>
-                        <li>Any form of write, modify, delete, POST/PUT/DELETE requests.</li>
-                        <li>Any form of brute force, password enumeration, or active exploitation of vulnerabilities.</li>
-                        <li>Any high-concurrency requests that could cause resource saturation, performance degradation, or denial of service (DoS) on the target server.</li>
-                    </ul>
-                    <h4>2. Compliance Boundaries</h4>
-                    <p><strong>Authorization Limit:</strong> This tool may only be run on assets for which the user has explicit authorization. Unauthorized scanning of third-party systems is strictly prohibited.</p>
-                    <p><strong>Privacy Protection:</strong> This tool does not store or transmit any user-sensitive data (including but not limited to Cookies, Authorization Tokens, PII). Scan logs should be sanitized to remove all original response headers containing session information.</p>
-                    <p><strong>Compliance Responsibility:</strong> All audit results generated by the tool are for internal security review only. Users are responsible for the legal use of the audit findings and must not engage in any illegal activities using the information discovered.</p>
-                    <h4>3. Disclaimer</h4>
-                    <p>All security configuration assessments provided by this tool (such as CSP scores, header integrity analysis) are based on industry-standard criteria (e.g., OWASP ASVS). The results are for reference only and do not serve as the sole proof of security compliance. The developer is not responsible for false positives caused by network fluctuations or system configuration complexity.</p>
-                    <h4>4. Contact</h4>
-                    <p>If you encounter any false positives, anomalies, or potential risks while using this tool, please contact us through our security feedback channel promptly.</p>
-                </div>
-                <!-- 马来文版本 -->
-                <div class="policy-content-lang" data-lang-policy="ms" style="display:none;">
-                    <p>Alat ini direka untuk membantu audit garis dasar keselamatan aplikasi web. Untuk memastikan kesahihan, pematuhan, dan sifat tidak merosakkan proses audit, semua pengguna dan pengendalian alat ini mestilah mematuhi syarat-syarat berikut dengan ketat:</p>
-                    <h4>1. Prinsip Operasi</h4>
-                    <p>Alat ini beroperasi dalam mod baca sahaja, melaksanakan permintaan HTTP HEAD atau GET sahaja. Alat ini dilarang sama sekali melakukan perkara berikut:</p>
-                    <ul>
-                        <li>Sebarang bentuk permintaan tulis, ubah suai, hapus, POST/PUT/DELETE.</li>
-                        <li>Sebarang bentuk brute force, penghitungan kata laluan, atau eksploitasi kerentanan secara aktif.</li>
-                        <li>Sebarang permintaan konkuren tinggi yang boleh menyebabkan ketepuan sumber, penurunan prestasi, atau penafian perkhidmatan (DoS) pada pelayan sasaran.</li>
-                    </ul>
-                    <h4>2. Sempadan Pematuhan</h4>
-                    <p><strong>Had Kebenaran:</strong> Alat ini hanya boleh dijalankan pada aset yang pengguna mempunyai kebenaran yang jelas. Pengimbasan tanpa kebenaran ke atas sistem pihak ketiga adalah dilarang sama sekali.</p>
-                    <p><strong>Perlindungan Privasi:</strong> Alat ini tidak menyimpan atau menghantar sebarang data sensitif pengguna (termasuk tetapi tidak terhad kepada Kuki, Token Kebenaran, PII). Log imbasan hendaklah dibersihkan untuk membuang semua tajuk respons asal yang mengandungi maklumat sesi.</p>
-                    <p><strong>Tanggungjawab Pematuhan:</strong> Semua hasil audit yang dihasilkan oleh alat adalah untuk semakan keselamatan dalaman sahaja. Pengguna bertanggungjawab ke atas penggunaan undang-undang hasil audit dan tidak boleh terlibat dalam sebarang aktiviti haram menggunakan maklumat yang ditemui.</p>
-                    <h4>3. Penafian</h4>
-                    <p>Semua penilaian konfigurasi keselamatan yang disediakan oleh alat ini (seperti skor CSP, analisis integriti tajuk) adalah berdasarkan kriteria standard industri (mis., OWASP ASVS). Hasilnya adalah untuk rujukan sahaja dan tidak berfungsi sebagai bukti tunggal pematuhan keselamatan. Pemaju tidak bertanggungjawab ke atas positif palsu yang disebabkan oleh turun naik rangkaian atau kerumitan konfigurasi sistem.</p>
-                    <h4>4. Hubungi</h4>
-                    <p>Sekiranya anda menghadapi sebarang positif palsu, anomali, atau risiko yang berpotensi semasa menggunakan alat ini, sila hubungi kami melalui saluran maklum balas keselamatan kami dengan segera.</p>
-                </div>
-            </div>
-        </div>
-    </div>
+    </section>
 
-    <div hidden>
-        <span id="alert-success" data-i18n="alert_success">提交成功！DewSecure 团队将尽快与您取得联系。</span>
-        <span id="alert-email-error" data-i18n="alert_error_email">请检查邮箱地址是否正确。</span>
-        <span id="alert-network-error" data-i18n="alert_error_network">网络错误，请稍后再试。</span>
-        <span id="auto-reply-subject" data-i18n="auto_reply_subject">DewSecure 收到您的咨询</span>
-        <span id="auto-reply-message" data-i18n="auto_reply_message">尊敬的客户，您好！我们已经收到您的咨询请求，我们的团队会尽快查看并回复您。感谢您的等待。</span>
-    </div>
+    <footer class="site-footer">
+        <a href="https://github.com/zero6039-code/dewsecure-web" target="_blank" class="footer-github-link">
+            <i class="fa-brands fa-github"></i>
+            <span data-i18n="footer_link">在 GitHub 上查看开源代码</span>
+        </a>
+        <p class="footer-copy">
+            <span data-i18n="footer_text">核心引擎开源，数据绝不出户。</span><br>
+            &copy; 2026 DewSecure. All rights reserved.
+        </p>
+    </footer>
 
-    <script src="js/bg-canvas.js"></script>
-    <script src="js/i18n.js"></script>
-    <script src="js/app.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const browserUrls = { chrome: 'https://chromewebstore.google.com/', edge: 'https://microsoftedge.microsoft.com/', firefox: 'https://addons.mozilla.org/', safari: '#', opera: '#', yandex: '#', android: '#' };
+            const browserIcons = { chrome: 'fa-chrome', edge: 'fa-edge', firefox: 'fa-firefox-browser', safari: 'fa-safari', opera: 'fa-opera', yandex: 'fa-yandex', android: 'fa-android' };
+
+            const icons = document.querySelectorAll('.ds-icon');
+            const titleEl = document.getElementById('ds-title');
+            const descEl = document.getElementById('ds-desc');
+            const btnIconEl = document.getElementById('ds-btn-icon');
+            const btnTextEl = document.getElementById('ds-btn-text');
+            const btnEl = document.getElementById('ds-btn');
+            let currentTarget = 'chrome'; 
+
+            function renderBrowserData(target) {
+                currentTarget = target;
+                const t = window.fallbackTranslations || {};
+                if (!t['dl_' + target + '_title']) return;
+
+                titleEl.textContent = t['dl_' + target + '_title'];
+                descEl.textContent = t['dl_' + target + '_desc'];
+                btnIconEl.innerHTML = '<i class="fa-brands ' + browserIcons[target] + '"></i>';
+                btnTextEl.textContent = t['dl_btn_' + target] || ('Download for ' + target);
+                btnEl.href = browserUrls[target];
+            }
+
+            icons.forEach(icon => {
+                icon.addEventListener('click', () => {
+                    icons.forEach(l => l.classList.remove('active'));
+                    icon.classList.add('active');
+                    renderBrowserData(icon.getAttribute('data-target'));
+                });
+            });
+
+            setTimeout(() => { if (icons.length > 0) icons[0].click(); }, 50);
+
+            btnEl.addEventListener('click', (e) => {
+                if (btnEl.getAttribute('href') === '#') {
+                    e.preventDefault();
+                    alert("商店链接即将上线！");
+                }
+            });
+
+            document.querySelector('.lang-switch').addEventListener('mouseenter', () => {
+                const dd = document.querySelector('.lang-dropdown');
+                dd.style.opacity = '1'; dd.style.visibility = 'visible'; dd.style.transform = 'translateY(0)';
+            });
+            document.querySelector('.lang-switch').addEventListener('mouseleave', () => {
+                const dd = document.querySelector('.lang-dropdown');
+                dd.style.opacity = '0'; dd.style.visibility = 'hidden'; dd.style.transform = 'translateY(10px)';
+            });
+
+            window.addEventListener('languageChanged', () => {
+                renderBrowserData(currentTarget);
+            });
+        });
+    </script>
+    <script src="/js/i18n.js"></script>
 </body>
 </html>

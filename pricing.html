@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark" class="i18n-loading">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DewSecure - Pricing</title>
+    <link rel="stylesheet" href="/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .i18n-loading [data-i18n] { visibility: hidden !important; }
+        .pricing-wrapper { min-height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 140px 20px 80px; }
+        .pricing-title { font-size: 48px; font-weight: 800; color: #fff; margin-bottom: 60px; letter-spacing: -1px; }
+        .pricing-grid { display: flex; gap: 30px; justify-content: center; flex-wrap: wrap; max-width: 1200px; width: 100%; }
+        .price-card { flex: 1; min-width: 300px; max-width: 360px; background: rgba(22, 27, 34, 0.4); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 24px; padding: 40px; backdrop-filter: blur(24px); text-align: center; transition: transform 0.3s ease, border-color 0.3s ease; position: relative; }
+        .price-card:hover { transform: translateY(-8px); border-color: rgba(255, 255, 255, 0.2); }
+        .price-card.highlight { border-color: #58a6ff; box-shadow: 0 0 40px rgba(88, 166, 255, 0.15); background: rgba(22, 27, 34, 0.6); }
+        .price-card.highlight:hover { border-color: #58a6ff; }
+        .price-card h3 { font-size: 22px; color: #fff; margin-bottom: 10px; }
+        .price-amount { font-size: 42px; font-weight: 800; color: #fff; margin-bottom: 20px; }
+        .price-amount span { font-size: 16px; color: #8b949e; font-weight: 400; }
+        .price-desc { font-size: 14px; color: #8b949e; line-height: 1.6; margin-bottom: 30px; min-height: 68px; }
+        .price-features { list-style: none; text-align: left; margin-bottom: 30px; color: #c9d1d9; font-size: 15px; padding-left: 0; }
+        .price-features li { margin-bottom: 12px; display: flex; align-items: flex-start; gap: 10px; }
+        .price-features li i { color: #58a6ff; margin-top: 4px; }
+        .btn-pricing { display: block; width: 100%; padding: 14px; border-radius: 100px; font-size: 16px; font-weight: 700; text-decoration: none; text-align: center; transition: all 0.3s; cursor: pointer; border: none; }
+        .btn-free { background: rgba(255, 255, 255, 0.05); color: #fff; border: 1px solid rgba(255, 255, 255, 0.1); }
+        .btn-free:hover { background: rgba(255, 255, 255, 0.1); }
+        .btn-pro { background: #58a6ff; color: #000; }
+        .btn-pro:hover { background: #79b8ff; box-shadow: 0 0 20px rgba(88, 166, 255, 0.4); }
+        .btn-fam { background: #fff; color: #000; }
+        .btn-fam:hover { background: #e6edf3; }
+        
+        /* Tooltip */
+        .tooltip-container { position: relative; display: inline-block; margin-left: 6px; cursor: help; }
+        .tooltip-icon { color: #58a6ff !important; font-size: 16px !important; margin-left: 6px; vertical-align: middle; transition: all 0.2s ease; }
+        .tooltip-container:hover .tooltip-icon { color: #79b8ff !important; transform: scale(1.15); text-shadow: 0 0 10px rgba(88, 166, 255, 0.5); }
+        .tooltip-content { visibility: hidden; opacity: 0; width: 300px; background: rgba(13, 17, 23, 0.95); backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.15); color: #c9d1d9; text-align: left; border-radius: 12px; padding: 16px; position: absolute; z-index: 100; bottom: 150%; left: 50%; transform: translateX(-50%) translateY(10px); transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1); font-size: 13px; line-height: 1.6; box-shadow: 0 10px 30px rgba(0,0,0,0.5); pointer-events: none; }
+        .tooltip-container:hover .tooltip-content { visibility: visible; opacity: 1; transform: translateX(-50%) translateY(0); }
+        .tooltip-content h5 { color: #58a6ff; font-size: 14px; margin-bottom: 8px; margin-top: 0;}
+        
+        /* Table */
+        .comparison-section { max-width: 1000px; margin: 80px auto 40px; width: 100%; }
+        .comparison-header { text-align: center; margin-bottom: 40px; }
+        .comparison-header h2 { font-size: 32px; color: #fff; font-weight: 800; margin-bottom: 10px; }
+        .comparison-header p { color: #8b949e; font-size: 16px; }
+        .comparison-table { background: rgba(22, 27, 34, 0.3); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 20px; overflow: hidden; backdrop-filter: blur(24px); }
+        .comp-category { background: rgba(255, 255, 255, 0.03); color: #58a6ff; font-size: 16px; font-weight: 700; padding: 16px 30px; border-bottom: 1px solid rgba(255, 255, 255, 0.08); border-top: 1px solid rgba(255, 255, 255, 0.08); }
+        .comp-row { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; align-items: center; padding: 20px 30px; border-bottom: 1px solid rgba(255, 255, 255, 0.05); transition: background 0.2s; }
+        .comp-row:hover { background: rgba(255, 255, 255, 0.02); }
+        .comp-row:last-child { border-bottom: none; }
+        .comp-feature strong { display: block; color: #e6edf3; font-size: 16px; margin-bottom: 4px; }
+        .comp-feature span { display: block; color: #8b949e; font-size: 13px; margin-top: 4px; line-height: 1.4; }
+        .comp-val { text-align: center; font-size: 18px; }
+        .comp-val.yes { color: #3fb950; }
+        .comp-val.no { color: #f85149; opacity: 0.6; }
+        .comp-val.text-val { color: #c9d1d9; font-size: 14px; font-weight: 500; }
+        .comp-val.partial { color: #d29922; font-size: 14px; font-weight: 600; }
+        .comp-table-header { background: rgba(0, 0, 0, 0.2); border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important; padding: 15px 30px !important; }
+        .comp-table-header .comp-val { font-size: 18px; font-weight: 700; color: #fff !important; }
+        @media (max-width: 768px) { .comp-row { grid-template-columns: 1.5fr 1fr 1fr 1fr; padding: 16px 15px; } .comp-feature span { display: none; } .comp-feature strong { font-size: 14px; } .comp-val { font-size: 16px; } .comp-val.text-val { font-size: 12px; } }
+    </style>
+</head>
+<body>
+    <header>
+        <a href="/index.html" class="logo"><img src="/DewSecure.png" alt="DewSecure" style="height:32px; margin-right:10px;"> DewSecure</a>
+        <nav>
+            <a href="/index.html" data-i18n="nav_home">首页</a>
+            <a href="/pricing.html" class="active" data-i18n="nav_pricing">定价</a>
+            <a href="/pentest/" target="_blank" data-i18n="nav_pentest">安全审计</a>
+            <a href="/update/" data-i18n="nav_update">更新日志</a>
+            <a href="/guide/" data-i18n="nav_guide">使用指南</a>
+            <a href="/about/" data-i18n="nav_about">关于我们</a>
+            <a href="/login/" data-i18n="nav_login">登录</a>
+        </nav>
+        <div class="lang-switch">
+            <button class="lang-toggle-btn" style="background:none;border:none;color:#cbd5e1;font-size:24px;cursor:pointer;padding:0;">🌐</button>
+            <ul class="lang-dropdown">
+                <li data-lang="zh" class="lang-option">中文 (简体)</li>
+                <li data-lang="en" class="lang-option">English</li>
+                <li data-lang="ms" class="lang-option">Bahasa Melayu</li>
+            </ul>
+        </div>
+    </header>
+
+    <div class="pricing-wrapper">
+        <h2 class="pricing-title" data-i18n="pricing_title">选择适合您的方案</h2>
+        <div class="pricing-grid">
+            <div class="price-card">
+                <h3 data-i18n="free_plan">免费版</h3>
+                <div class="price-amount">$0<span> / <span data-i18n="forever">永久</span></span></div>
+                <p class="price-desc" data-i18n="free_desc">完全免费。已能净化大部分网页内容，无需登录也可以使用，无任何强制订阅。注册并登录账号后，即可立即激活 30 天高级版。如果满足日常需求，您完全可以永远不花钱使用。</p>
+                <ul class="price-features">
+                    <li><i class="fa-solid fa-check"></i> <span data-i18n="free_feat1">110,000+ 拦截规则</span></li>
+                    <li><i class="fa-solid fa-check"></i> <span data-i18n="free_feat2">基础防追踪与弹窗清理</span></li>
+                </ul>
+                <a href="/index.html" class="btn-pricing btn-free" data-i18n="free_btn">免费安装</a>
+            </div>
+
+            <div class="price-card highlight">
+                <h3 data-i18n="pro_plan">高级版 (Pro)</h3>
+                <div class="price-amount">$11.99<span> / <span data-i18n="year">年</span></span></div>
+                <p class="price-desc" data-i18n="pro_desc">为追求极致体验的用户打造。解锁完整 AI 拦截与全平台无缝同步。</p>
+                <ul class="price-features">
+                    <li><i class="fa-solid fa-check"></i> <span data-i18n="pro_feat1">完整规则 + 无限 AI 防护</span></li>
+                    <li><i class="fa-solid fa-check"></i> <div><span data-i18n="pro_feat2">跨设备同步 (最多 3 台)</span><div class="tooltip-container"><i class="fa-solid fa-circle-question tooltip-icon"></i><div class="tooltip-content"><h5 data-i18n="tooltip_title">如何区分设备？</h5><p data-i18n="tooltip_desc">同一台 PC 上的浏览器 A 和浏览器 B 算作 2 台。手机 Android A + PC 浏览器 A 算作 2 台。跨设备使用时，只需在设备 B 的插件中输入您的邀请链接激活即可。超出限制时，可在后台一键解绑。</p></div></div></div></li>
+                </ul>
+                <button class="btn-pricing btn-pro" data-i18n="pro_btn">升级到高级版</button>
+            </div>
+
+            <div class="price-card">
+                <h3 data-i18n="fam_plan">家庭版</h3>
+                <div class="price-amount">$29.99<span> / <span data-i18n="year">年</span></span></div>
+                <p class="price-desc" data-i18n="fam_desc">守护全家人的数字安全。支持高达 9 台设备同时在线。</p>
+                <ul class="price-features">
+                    <li><i class="fa-solid fa-check"></i> <span data-i18n="fam_feat1">Pro 版所有功能</span></li>
+                    <li><i class="fa-solid fa-check"></i> <div><span data-i18n="fam_feat2">跨设备同步 (最多 9 台)</span><div class="tooltip-container"><i class="fa-solid fa-circle-question tooltip-icon"></i><div class="tooltip-content"><h5 data-i18n="tooltip_title">如何区分设备？</h5><p data-i18n="tooltip_desc">同一台 PC 上的浏览器 A 和浏览器 B 算作 2 台。手机 Android A + PC 浏览器 A 算作 2 台。跨设备使用时，只需在设备 B 的插件中输入您的邀请链接激活即可。超出限制时，可在后台一键解绑。</p></div></div></div></li>
+                </ul>
+                <button class="btn-pricing btn-fam" data-i18n="fam_btn">升级到家庭版</button>
+            </div>
+        </div>
+
+        <div class="comparison-section">
+            <div class="comparison-header">
+                <h2 data-i18n="comp_table_title">功能详细对比</h2>
+                <p data-i18n="comp_table_sub">选择最适合您的数字安全护盾。</p>
+            </div>
+            <div class="comparison-table">
+                <div class="comp-row comp-table-header">
+                    <div class="comp-feature"></div>
+                    <div class="comp-val text-val" data-i18n="comp_table_free">免费版</div>
+                    <div class="comp-val text-val" data-i18n="comp_table_pro">高级版</div>
+                    <div class="comp-val text-val" data-i18n="comp_table_fam">家庭版</div>
+                </div>
+                <div class="comp-category" data-i18n="comp_cat_core">核心拦截能力</div>
+                <div class="comp-row"><div class="comp-feature"><strong data-i18n="comp_dnr">DNR 规则拦截</strong><span data-i18n="comp_dnr_desc">利用浏览器原生 API，极速拦截已知恶意域名与广告</span></div><div class="comp-val yes"><i class="fa-solid fa-check"></i></div><div class="comp-val yes"><i class="fa-solid fa-check"></i></div><div class="comp-val yes"><i class="fa-solid fa-check"></i></div></div>
+                <div class="comp-row"><div class="comp-feature"><strong data-i18n="comp_clickjack">防点击劫持（防弹窗）</strong><span data-i18n="comp_clickjack_desc">阻止恶意网站用透明层骗取点击，从源头阻断弹窗</span></div><div class="comp-val yes"><i class="fa-solid fa-check"></i></div><div class="comp-val yes"><i class="fa-solid fa-check"></i></div><div class="comp-val yes"><i class="fa-solid fa-check"></i></div></div>
+                <div class="comp-row"><div class="comp-feature"><strong data-i18n="comp_block_tracker">阻止基础追踪</strong><span data-i18n="comp_block_tracker_desc">拦截各类常规跟踪脚本和隐形追踪像素</span></div><div class="comp-val yes"><i class="fa-solid fa-check"></i></div><div class="comp-val yes"><i class="fa-solid fa-check"></i></div><div class="comp-val yes"><i class="fa-solid fa-check"></i></div></div>
+                <div class="comp-row"><div class="comp-feature"><strong data-i18n="comp_antiblock">反反拦截保护</strong><span data-i18n="comp_antiblock_desc">隐藏拦截器特征，防止网站检测到插件后拒绝提供内容</span></div><div class="comp-val yes"><i class="fa-solid fa-check"></i></div><div class="comp-val yes"><i class="fa-solid fa-check"></i></div><div class="comp-val yes"><i class="fa-solid fa-check"></i></div></div>
+                <div class="comp-row"><div class="comp-feature"><strong data-i18n="comp_cookie_btn">智能 Cookie 管家</strong><span data-i18n="comp_cookie_desc">自动隐藏烦人的 Cookie 同意横幅，保持页面清爽</span></div><div class="comp-val yes"><i class="fa-solid fa-check"></i></div><div class="comp-val yes"><i class="fa-solid fa-check"></i></div><div class="comp-val yes"><i class="fa-solid fa-check"></i></div></div>
+                <div class="comp-row"><div class="comp-feature"><strong data-i18n="comp_placeholder">隐藏广告占位符</strong><span data-i18n="comp_placeholder_desc">彻底移除广告被拦截后留下的难看空白区域，保持排版整洁</span></div><div class="comp-val yes"><i class="fa-solid fa-check"></i></div><div class="comp-val yes"><i class="fa-solid fa-check"></i></div><div class="comp-val yes"><i class="fa-solid fa-check"></i></div></div>
+                <div class="comp-row"><div class="comp-feature"><strong data-i18n="comp_social_tracker">拦截社交追踪</strong><span data-i18n="comp_social_tracker_desc">切断 Facebook/Twitter 等社交平台嵌入网页的隐形追踪</span></div><div class="comp-val yes"><i class="fa-solid fa-check"></i></div><div class="comp-val yes"><i class="fa-solid fa-check"></i></div><div class="comp-val yes"><i class="fa-solid fa-check"></i></div></div>
+                <div class="comp-category" data-i18n="comp_cat_pro" style="color: #d29922;">高级版</div>
+                <div class="comp-row"><div class="comp-feature"><strong data-i18n="comp_ai_4class">AI 智能实时检测（四分类）</strong><span data-i18n="comp_ai_4class_desc">本地毫秒级推理，主动识别规则库未收录的新型广告与威胁</span></div><div class="comp-val no"><i class="fa-solid fa-xmark"></i></div><div class="comp-val yes"><i class="fa-solid fa-check"></i></div><div class="comp-val yes"><i class="fa-solid fa-check"></i></div></div>
+                <div class="comp-row"><div class="comp-feature"><strong data-i18n="comp_phishing_alert">钓鱼/挖矿实时预警</strong><span data-i18n="comp_phishing_alert_desc">遇到高危网站或静默挖矿脚本时，即时阻断并发出安全警告</span></div><div class="comp-val no"><i class="fa-solid fa-xmark"></i></div><div class="comp-val yes"><i class="fa-solid fa-check"></i></div><div class="comp-val yes"><i class="fa-solid fa-check"></i></div></div>
+                <div class="comp-row"><div class="comp-feature"><strong data-i18n="comp_ai_model_update">AI 模型云端热更新</strong><span data-i18n="comp_ai_model_update_desc">每周自动拉取最新 AI 模型，持续对抗不断变异的恶意脚本</span></div><div class="comp-val no"><i class="fa-solid fa-xmark"></i></div><div class="comp-val yes"><i class="fa-solid fa-check"></i></div><div class="comp-val yes"><i class="fa-solid fa-check"></i></div></div>
+                <div class="comp-row"><div class="comp-feature"><strong data-i18n="comp_custom_rules">跨设备云端同步</strong><span data-i18n="comp_custom_rules_desc">您的白名单、自定义规则与拦截记录可在多台设备间无缝同步</span></div><div class="comp-val no"><i class="fa-solid fa-xmark"></i></div><div class="comp-val yes"><i class="fa-solid fa-check"></i></div><div class="comp-val yes"><i class="fa-solid fa-check"></i></div></div>
+                <div class="comp-category" data-i18n="comp_cat_dev">设备与体验</div>
+                <div class="comp-row"><div class="comp-feature"><strong data-i18n="comp_dev_count">设备数量限制</strong></div><div class="comp-val text-val" data-i18n="comp_dev_count_free">无限（本地）</div><div class="comp-val text-val" data-i18n="comp_dev_count_pro">最多 3 台</div><div class="comp-val text-val" data-i18n="comp_dev_count_fam">最多 9 台</div></div>
+                <div class="comp-row"><div class="comp-feature"><strong data-i18n="comp_support">支持优先级</strong></div><div class="comp-val text-val" data-i18n="comp_support_free">社区支持</div><div class="comp-val text-val" data-i18n="comp_support_pro">优先邮件支持</div><div class="comp-val text-val" data-i18n="comp_support_fam">优先邮件支持</div></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.querySelector('.lang-switch').addEventListener('mouseenter', () => {
+            const dd = document.querySelector('.lang-dropdown');
+            dd.style.opacity = '1'; dd.style.visibility = 'visible'; dd.style.transform = 'translateY(0)';
+        });
+        document.querySelector('.lang-switch').addEventListener('mouseleave', () => {
+            const dd = document.querySelector('.lang-dropdown');
+            dd.style.opacity = '0'; dd.style.visibility = 'hidden'; dd.style.transform = 'translateY(10px)';
+        });
+    </script>
+    <script src="/js/i18n.js"></script>
+</body>
+</html>
