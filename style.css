@@ -714,3 +714,79 @@ header .logo img {
     width: auto !important;
     object-fit: contain !important;
 }
+
+/* 开启硬件加速，提升毛玻璃渲染流畅度 */
+header, .card, .price-card, .update-container, .login-card, .accordion-card {
+    will-change: transform, backdrop-filter;
+    transform: translateZ(0); /* 强制开启 GPU 渲染 */
+}
+
+/* ======== Logo 再次极限放大 ======== */
+header .logo {
+    font-size: 38px !important; /* 文字加大 */
+    font-weight: 900 !important;
+    letter-spacing: -1.5px !important;
+    gap: 16px !important;
+}
+header .logo img {
+    height: 60px !important; /* 图标加到 60px */
+}
+
+/* 手机端 Logo 稍微缩一点，防止把导航栏撑爆 */
+@media (max-width: 768px) {
+    header .logo {
+        font-size: 26px !important;
+        gap: 10px !important;
+    }
+    header .logo img {
+        height: 40px !important;
+    }
+}
+
+/* ==========================================
+   手机端 (Mobile) 专属深度优化补丁
+   ========================================== */
+@media (max-width: 768px) {
+    /* 1. 全局内边距缩小，给内容留出更多空间 */
+    body {
+        padding-top: 110px !important; 
+    }
+
+    /* 2. 首屏主标题与描述缩小 */
+    .hero h1 { font-size: 36px !important; margin-top: 20px !important; }
+    .hero p { font-size: 16px !important; padding: 0 15px; }
+
+    /* 3. 主页下载区适配 */
+    .ds-box {
+        min-width: 95% !important; /* 取消 PC 端的 650px 最小宽度限制 */
+        height: auto !important;
+        min-height: 300px !important;
+        padding: 30px 20px !important;
+    }
+    .ds-t { font-size: 22px !important; top: 40px !important; }
+    .ds-d { font-size: 14px !important; top: 90px !important; height: 60px !important; }
+    .ds-btn { bottom: 30px !important; }
+    .ds-icons { gap: 10px !important; margin-bottom: 20px !important;}
+    .ds-icon { width: 45px !important; height: 45px !important; font-size: 20px !important;}
+
+    /* 4. 定价页卡片全宽 */
+    .price-card {
+        min-width: 100% !important;
+        margin-bottom: 20px !important;
+    }
+
+    /* 5. 对比表：隐藏副标题，防止挤成一坨 */
+    .comp-feature span { display: none !important; }
+    .comp-feature strong { font-size: 13px !important; }
+    .comp-val.text-val { font-size: 12px !important; }
+    .comp-row { padding: 15px 10px !important; }
+
+    /* 6. 登录页：取消左右布局，强制上下堆叠 */
+    .login-layout { flex-direction: column !important; }
+    .login-left { padding: 40px 20px !important; text-align: center !important; border-right: none !important; border-bottom: 1px solid rgba(255,255,255,0.05); }
+    .login-left h1 { font-size: 32px !important; }
+    .login-right { padding: 30px 20px !important; }
+    
+    /* 7. 页脚调整 */
+    .site-footer { flex-direction: column !important; gap: 10px !important; text-align: center; }
+}
