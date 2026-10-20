@@ -3,7 +3,7 @@ name: Deploy API Worker
 on:
   push:
     branches: [ main ]
-  workflow_dispatch: # 允许手动在 GitHub 页面点击触发
+  workflow_dispatch:
 
 jobs:
   deploy:
@@ -20,8 +20,8 @@ jobs:
         run: cd worker-api && npm install
 
       - name: Deploy API
-        run: cd worker-api && npx wrangler deploy
+        # 强制加上 --config wrangler.toml，确保它只读当前目录的配置
+        run: cd worker-api && npx wrangler deploy --config wrangler.toml
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-# Trigger new run
