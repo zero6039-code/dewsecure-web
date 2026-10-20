@@ -685,3 +685,17 @@ header .lang-switch {
 
 /* 彻底修复链接颜色，防止紫色 */
 a { color: inherit; text-decoration: none; }
+
+/* ======== Logo 最终放大微调 ======== */
+header .logo {
+    font-size: 28px !important;
+    font-weight: 800 !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 12px !important;
+}
+header .logo img {
+    height: 42px !important; 
+    width: auto !important;
+    object-fit: contain !important;
+}
