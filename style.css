@@ -790,3 +790,65 @@ header .logo img {
     /* 7. 页脚调整 */
     .site-footer { flex-direction: column !important; gap: 10px !important; text-align: center; }
 }
+
+/* ==========================================
+   终极手机端修复 (解决导航栏竖排与挤压)
+   ========================================== */
+@media (max-width: 768px) {
+    /* 1. 强制重排 Header，变成两行 */
+    header {
+        display: flex !important;
+        flex-wrap: wrap !important;
+        justify-content: space-between !important;
+        padding: 10px 15px !important;
+        height: auto !important;
+        min-height: 100px !important;
+    }
+
+    /* 2. 手机端 Logo 强制缩小 */
+    header .logo {
+        font-size: 22px !important;
+        gap: 8px !important;
+        width: auto !important;
+    }
+    header .logo img {
+        height: 32px !important;
+    }
+    
+    /* 3. 地球图标归位 */
+    header .lang-switch {
+        margin-left: auto !important;
+        margin-top: 8px !important;
+    }
+
+    /* 4. 导航栏：强制换行并居中，绝对禁止竖排文字 */
+    header nav {
+        width: 100% !important; /* 占满第二行 */
+        display: flex !important;
+        flex-wrap: wrap !important;
+        justify-content: center !important;
+        gap: 10px 15px !important; /* 上下 10px，左右 15px */
+        margin-top: 10px !important;
+        padding-top: 10px !important;
+        border-top: 1px solid rgba(255, 255, 255, 0.05) !important;
+    }
+
+    /* 强制文字横向显示，消除竖排 */
+    header nav a {
+        white-space: nowrap !important; 
+        font-size: 14px !important;
+    }
+
+    /* 5. 调整 body 的 padding，给两行的 Header 留出空间 */
+    body {
+        padding-top: 130px !important;
+    }
+}
+
+/* ==========================================
+   全局性能优化：字体加载不阻塞页面
+   ========================================== */
+@font-face {
+    font-family: 'FontAwesome';
+    font-display: swap;
+}
