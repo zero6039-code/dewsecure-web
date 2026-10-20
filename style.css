@@ -699,3 +699,18 @@ header .logo img {
     width: auto !important;
     object-fit: contain !important;
 }
+
+/* ======== 终极 Logo 放大 ======== */
+header .logo {
+    font-size: 34px !important; /* 文字再放大 */
+    font-weight: 900 !important;
+    letter-spacing: -1px !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 14px !important;
+}
+header .logo img {
+    height: 52px !important; /* 图标放大到 52px */
+    width: auto !important;
+    object-fit: contain !important;
+}
