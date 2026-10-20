@@ -117,7 +117,8 @@
         const SUPABASE_URL = 'https://uvbaioqqjqseapcancvi.supabase.co'; 
         const SUPABASE_ANON_KEY = 'sb_publishable_xiiA-yt_jRKkzRdkYkoWJA_CVZjNjq8';
         
-        const supabase = window.supabase.createClient(YOUR_SUPABASE_URL, YOUR_SUPABASE_ANON_KEY);
+        // 修改变量名，避免和 CDN 全局变量冲突
+        const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
         // ==========================================
         // 2. 语言切换动画逻辑 (保留原本)
