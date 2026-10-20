@@ -6,6 +6,7 @@
     <title>DewSecure - Log In</title>
     <link rel="stylesheet" href="/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         .i18n-loading [data-i18n] { visibility: hidden !important; }
         .login-layout { display: flex; min-height: calc(100vh - 80px); width: 100%; }
@@ -24,6 +25,7 @@
         .input-wrapper input:focus { border-color: #58a6ff; }
         .btn-login { width: 100%; height: 48px; background: #fff; color: #000; border-radius: 12px; font-size: 16px; font-weight: 700; cursor: pointer; border: none; margin-top: 10px; transition: 0.3s; }
         .btn-login:hover { background: #e6edf3; }
+        .btn-login:disabled { opacity: 0.5; cursor: not-allowed; }
         .divider { display: flex; align-items: center; text-align: center; margin: 30px 0; color: #8b949e; font-size: 13px; }
         .divider::before, .divider::after { content: ''; flex: 1; border-bottom: 1px solid rgba(255,255,255,0.1); }
         .divider::before { margin-right: 15px; } .divider::after { margin-left: 15px; }
@@ -31,6 +33,8 @@
         .oauth-btn { flex: 1; height: 48px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 18px; cursor: pointer; transition: 0.2s; }
         .oauth-btn:hover { background: rgba(255,255,255,0.1); }
         .trial-badge { margin-top: 25px; padding: 12px; background: rgba(88,166,255,0.1); border-radius: 8px; text-align: center; font-size: 13px; color: #58a6ff; }
+        .hidden { display: none !important; }
+        .error-msg { color: #f85149; font-size: 13px; margin-top: 5px; display: none; }
         @media (max-width: 900px) { .login-layout { flex-direction: column; } .login-left { border-right: none; border-bottom: 1px solid rgba(255,255,255,0.03); padding: 60px 20px; text-align: center; } .login-left p { margin: 0 auto; } .login-right { padding: 40px 20px; } }
     </style>
     <link rel="icon" type="image/png" href="/DewSecure.png">
@@ -64,28 +68,60 @@
         </div>
         <div class="login-right">
             <div class="login-card">
-                <h2 data-i18n="login_welcome">欢迎回来</h2>
-                <p class="sub" data-i18n="login_sub">登录或创建一个新账号以继续。</p>
-                <div class="input-group">
-                    <label data-i18n="login_email_label">电子邮件地址</label>
-                    <div class="input-wrapper">
-                        <i class="fa-regular fa-envelope"></i>
-                        <input type="email" data-i18n-placeholder="login_email_ph" placeholder="name@example.com">
+                <!-- 步骤 1：输入邮箱 -->
+                <div id="step-email">
+                    <h2 data-i18n="login_welcome">欢迎回来</h2>
+                    <p class="sub" data-i18n="login_sub">登录或创建一个新账号以继续。</p>
+                    <div class="input-group">
+                        <label data-i18n="login_email_label">电子邮件地址</label>
+                        <div class="input-wrapper">
+                            <i class="fa-regular fa-envelope"></i>
+                            <input type="email" id="emailInput" data-i18n-placeholder="login_email_ph" placeholder="name@example.com">
+                        </div>
+                        <div id="emailError" class="error-msg"></div>
                     </div>
+                    <button class="btn-login" id="btnSendOtp" data-i18n="login_btn">使用邮箱登录 (OTP)</button>
+                    
+                    <div class="divider" data-i18n="login_or">或者继续使用</div>
+                    <div class="oauth-btns">
+                        <div class="oauth-btn"><i class="fa-brands fa-google"></i></div>
+                        <div class="oauth-btn"><i class="fa-brands fa-github"></i></div>
+                        <div class="oauth-btn"><i class="fa-brands fa-ethereum"></i></div>
+                    </div>
+                    <div class="trial-badge" data-i18n="login_trial">🎁 首次注册即赠 30 天高级版体验</div>
                 </div>
-                <button class="btn-login" data-i18n="login_btn">使用邮箱登录 (OTP)</button>
-                <div class="divider" data-i18n="login_or">或者继续使用</div>
-                <div class="oauth-btns">
-                    <div class="oauth-btn"><i class="fa-brands fa-google"></i></div>
-                    <div class="oauth-btn"><i class="fa-brands fa-github"></i></div>
-                    <div class="oauth-btn"><i class="fa-brands fa-ethereum"></i></div>
+
+                <!-- 步骤 2：输入验证码 (默认隐藏) -->
+                <div id="step-otp" class="hidden">
+                    <h2>输入验证码</h2>
+                    <p class="sub">我们已向 <strong id="displayEmail"></strong> 发送了 6 位验证码。</p>
+                    <div class="input-group">
+                        <label>6 位验证码</label>
+                        <div class="input-wrapper">
+                            <i class="fa-solid fa-shield-halved"></i>
+                            <input type="text" id="otpInput" maxlength="6" placeholder="123456" style="letter-spacing: 4px;">
+                        </div>
+                        <div id="otpError" class="error-msg"></div>
+                    </div>
+                    <button class="btn-login" id="btnVerifyOtp">验证并登录</button>
+                    <button class="btn-login" id="btnBack" style="background:transparent; color:#8b949e; margin-top:10px;">返回重新输入邮箱</button>
                 </div>
-                <div class="trial-badge" data-i18n="login_trial">🎁 首次注册即赠 30 天高级版体验</div>
             </div>
         </div>
     </div>
 
     <script>
+        // ==========================================
+        // 1. 配置 Supabase 凭证（请替换为你自己的）
+        // ==========================================
+        const SUPABASE_URL = 'YOUR_SUPABASE_URL'; 
+        const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY';
+        
+        const supabase = window.supabase.createClient(https://uvbaioqqjqseapcancvi.supabase.co, sb_publishable_xiiA-yt_jRKkzRdkYkoWJA_CVZjNjq8);
+
+        // ==========================================
+        // 2. 语言切换动画逻辑 (保留原本)
+        // ==========================================
         document.querySelector('.lang-switch').addEventListener('mouseenter', () => {
             const dd = document.querySelector('.lang-dropdown');
             dd.style.opacity = '1'; dd.style.visibility = 'visible'; dd.style.transform = 'translateY(0)';
@@ -94,6 +130,119 @@
             const dd = document.querySelector('.lang-dropdown');
             dd.style.opacity = '0'; dd.style.visibility = 'hidden'; dd.style.transform = 'translateY(10px)';
         });
+
+        // ==========================================
+        // 3. 核心 OTP 交互逻辑
+        // ==========================================
+        const stepEmail = document.getElementById('step-email');
+        const stepOtp = document.getElementById('step-otp');
+        const emailInput = document.getElementById('emailInput');
+        const btnSendOtp = document.getElementById('btnSendOtp');
+        const btnVerifyOtp = document.getElementById('btnVerifyOtp');
+        const btnBack = document.getElementById('btnBack');
+        const otpInput = document.getElementById('otpInput');
+        
+        let currentEmail = '';
+        let countdown = 0;
+        let timerInterval = null;
+
+        // 发送验证码
+        btnSendOtp.addEventListener('click', async () => {
+            const email = emailInput.value.trim();
+            if (!email || !email.includes('@')) {
+                showError('emailError', '请输入有效的邮箱地址');
+                return;
+            }
+
+            btnSendOtp.disabled = true;
+            btnSendOtp.textContent = '正在发送...';
+
+            try {
+                const { data, error } = await supabase.auth.signInWithOtp({
+                    email: email,
+                    options: { shouldCreateUser: true } // 允许自动注册
+                });
+
+                if (error) throw error;
+
+                // 切换 UI
+                currentEmail = email;
+                document.getElementById('displayEmail').textContent = email;
+                stepEmail.classList.add('hidden');
+                stepOtp.classList.remove('hidden');
+                startCountdown();
+                
+            } catch (err) {
+                showError('emailError', err.message || '发送失败，请稍后再试');
+                btnSendOtp.disabled = false;
+                btnSendOtp.textContent = '使用邮箱登录 (OTP)';
+            }
+        });
+
+        // 验证 OTP 验证码
+        btnVerifyOtp.addEventListener('click', async () => {
+            const token = otpInput.value.trim();
+            if (token.length !== 6) {
+                showError('otpError', '请输入 6 位验证码');
+                return;
+            }
+
+            btnVerifyOtp.disabled = true;
+            btnVerifyOtp.textContent = '正在验证...';
+
+            try {
+                const { data, error } = await supabase.auth.verifyOtp({
+                    email: currentEmail,
+                    token: token,
+                    type: 'email'
+                });
+
+                if (error) throw error;
+
+                // 登录成功，Token 已自动存入 localStorage
+                // 重定向到 Dashboard
+                window.location.href = '/dashboard.html';
+
+            } catch (err) {
+                showError('otpError', '验证码错误或已过期');
+                btnVerifyOtp.disabled = false;
+                btnVerifyOtp.textContent = '验证并登录';
+            }
+        });
+
+        // 返回上一步
+        btnBack.addEventListener('click', () => {
+            stepOtp.classList.add('hidden');
+            stepEmail.classList.remove('hidden');
+            otpInput.value = '';
+            clearInterval(timerInterval);
+            btnSendOtp.disabled = false;
+            btnSendOtp.textContent = '使用邮箱登录 (OTP)';
+        });
+
+        // 显示错误信息
+        function showError(id, msg) {
+            const el = document.getElementById(id);
+            el.textContent = msg;
+            el.style.display = 'block';
+            setTimeout(() => { el.style.display = 'none'; }, 4000);
+        }
+
+        // 60 秒防爆破倒计时
+        function startCountdown() {
+            countdown = 60;
+            btnSendOtp.disabled = true;
+            timerInterval = setInterval(() => {
+                if (countdown <= 0) {
+                    clearInterval(timerInterval);
+                    btnSendOtp.disabled = false;
+                    btnSendOtp.textContent = '重新发送验证码';
+                } else {
+                    btnSendOtp.textContent = `重新发送 (${countdown}s)`;
+                    countdown--;
+                }
+            }, 1000);
+        }
     </script>
     <script src="/js/i18n.js"></script>
 </body>
