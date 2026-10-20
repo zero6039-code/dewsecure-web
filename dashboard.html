@@ -46,7 +46,7 @@
         <div style="max-width: 1200px; margin: 0 auto; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center;">
             <a href="/index.html" class="logo" style="color:#fff; font-weight:800; font-size:20px; text-decoration:none;"><img src="/DewSecure.png" style="height:24px; vertical-align:middle;"> DewSecure</a>
             <div>
-                <span id="userEmail" style="margin-right: 15px; color:#8b949e; font-size:14px;"></span>
+                <span id="userEmail" style="margin-right: 15px; color:#8b949e; font-size:14px;">加载中...</span>
                 <button class="btn btn-danger" id="btnLogout">退出登录</button>
             </div>
         </div>
@@ -123,34 +123,50 @@
         let currentProfile = null;
 
         async function initDashboard() {
-            // 1. 检查登录状态
-            const { data: { session }, error } = await supabase.auth.getSession();
-            if (error || !session) {
+            try {
+                // 1. 检查登录状态 ✅ 已修复为 supabaseClient
+                const { data: { session }, error } = await supabaseClient.auth.getSession();
+                if (error || !session) {
+                    window.location.href = '/login.html';
+                    return;
+                }
+                currentUser = session.user;
+                document.getElementById('userEmail').textContent = currentUser.email;
+
+                // 2. 获取 Profile 数据 ✅ 已修复为 supabaseClient
+                const { data: profile, error: profileErr } = await supabaseClient
+                    .from('profiles')
+                    .select('*')
+                    .eq('id', currentUser.id)
+                    .single();
+                
+                if (profileErr) throw profileErr;
+                currentProfile = profile;
+
+                // 3. 渲染数据
+                renderProfileStatus(profile);
+                fetchNotifications();
+
+                // 4. 绑定按钮事件 ✅ 已修复为 supabaseClient
+                document.getElementById('btnLogout').onclick = async () => { 
+                    await supabaseClient.auth.signOut(); 
+                    window.location.href = '/'; 
+                };
+                document.getElementById('btnGenInvite').onclick = generateInvite;
+                document.getElementById('btnCancelSub').onclick = () => document.getElementById('cancelModal').classList.add('active');
+                document.getElementById('btnCloseModal').onclick = () => document.getElementById('cancelModal').classList.remove('active');
+                document.getElementById('btnConfirmCancel').onclick = submitCancelSubscription;
+
+                document.getElementById('mainContent').style.display = 'grid';
+            } catch (err) {
+                console.error("Dashboard 初始化错误:", err);
+                alert("加载数据失败，请重新登录。");
                 window.location.href = '/login.html';
-                return;
             }
-            currentUser = session.user;
-            document.getElementById('userEmail').textContent = currentUser.email;
-
-            // 2. 获取 Profile 数据
-            const { data: profile } = await supabase.from('profiles').select('*').eq('id', currentUser.id).single();
-            currentProfile = profile;
-
-            // 3. 渲染数据
-            renderProfileStatus(profile);
-            fetchNotifications();
-
-            // 4. 绑定按钮事件
-            document.getElementById('btnLogout').onclick = async () => { await supabase.auth.signOut(); window.location.href = '/'; };
-            document.getElementById('btnGenInvite').onclick = generateInvite;
-            document.getElementById('btnCancelSub').onclick = () => document.getElementById('cancelModal').classList.add('active');
-            document.getElementById('btnCloseModal').onclick = () => document.getElementById('cancelModal').classList.remove('active');
-            document.getElementById('btnConfirmCancel').onclick = submitCancelSubscription;
-
-            document.getElementById('mainContent').style.display = 'grid';
         }
 
         function renderProfileStatus(profile) {
+            if (!profile) return;
             const tierBadge = document.getElementById('tierBadge');
             const daysLeftEl = document.getElementById('daysLeft');
             const expireDateEl = document.getElementById('expireDate');
@@ -175,7 +191,6 @@
                 tierBadge.className = 'status-badge status-pro';
                 
                 if (expireDate && expireDate > now) {
-                    // 算上今天，不足一天算一天 (向上取整)
                     const diffTime = Math.abs(expireDate - now);
                     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); 
                     daysLeftEl.textContent = `${diffDays} 天`;
@@ -186,7 +201,6 @@
                     btnCancel.classList.remove('hidden');
                     btnUpgrade.textContent = '续费 / 延长订阅';
                 } else {
-                    // 已过期但没降级（容错处理）
                     daysLeftEl.textContent = '已过期';
                     btnCancel.classList.add('hidden');
                     btnUpgrade.classList.remove('hidden');
@@ -200,7 +214,8 @@
             btn.textContent = '生成中...';
 
             try {
-                const { data, error } = await supabase.rpc('generate_invitation_code');
+                // ✅ 已修复为 supabaseClient
+                const { data, error } = await supabaseClient.rpc('generate_invitation_code');
                 if (error) throw error;
                 
                 document.getElementById('myInviteCode').textContent = data;
@@ -221,7 +236,8 @@
         }
 
         async function fetchNotifications() {
-            const { data, error } = await supabase
+            // ✅ 已修复为 supabaseClient
+            const { data, error } = await supabaseClient
                 .from('notifications')
                 .select('*')
                 .order('created_at', { ascending: false });
@@ -248,24 +264,26 @@
             btn.disabled = true;
             btn.textContent = '处理中...';
 
-            // 💡 核心逻辑说明：
-            // 真实环境中，这里需要调用后端 Worker，由 Worker 发起 Stripe API 请求取消订阅，
-            // 然后把 subscriptions 表中的 cancel_at_period_end 设为 true。
-            // 由于目前还没接入 Stripe 真实接口，这里先做 UI 演示和原因收集。
-            
-            // 模拟保存反馈
-            await supabase.from('reports').insert({
-                user_id: currentUser.id,
-                reporter_email: currentUser.email,
-                report_type: 'other',
-                url: 'Cancel Subscription Flow',
-                description: `[取消订阅原因] ${reason || '用户未填写'}`
-            });
+            try {
+                // ✅ 已修复为 supabaseClient
+                await supabaseClient.from('reports').insert({
+                    user_id: currentUser.id,
+                    reporter_email: currentUser.email,
+                    report_type: 'other',
+                    url: 'Cancel Subscription Flow',
+                    description: `[取消订阅原因] ${reason || '用户未填写'}`
+                });
 
-            alert('您的取消请求已记录。订阅将在当前周期结束后失效。');
-            document.getElementById('cancelModal').classList.remove('active');
-            document.getElementById('btnCancelSub').classList.add('hidden');
-            document.getElementById('btnUpgrade').classList.remove('hidden');
+                alert('您的取消请求已记录。订阅将在当前周期结束后失效。');
+                document.getElementById('cancelModal').classList.remove('active');
+                document.getElementById('btnCancelSub').classList.add('hidden');
+                document.getElementById('btnUpgrade').classList.remove('hidden');
+            } catch (err) {
+                alert('提交失败: ' + err.message);
+            } finally {
+                btn.disabled = false;
+                btn.textContent = '确认取消';
+            }
         }
 
         initDashboard();
