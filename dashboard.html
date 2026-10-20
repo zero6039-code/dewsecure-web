@@ -160,8 +160,12 @@
                 document.getElementById('mainContent').style.display = 'grid';
             } catch (err) {
                 console.error("Dashboard 初始化错误:", err);
-                alert("加载数据失败，请重新登录。");
-                window.location.href = '/login.html';
+                // 把具体的错误信息弹出来，方便你排查
+                alert("加载失败: " + (err.message || err.error_description || "未知错误"));
+                // ⚠️ 注意：如果只是网络问题或权限问题，不一定要立刻踢回登录页。
+                // 但如果是未登录（JWT过期），才需要跳走。
+                if (err.message === 'JWT expired' || err.code === 'PGRST301') {
+                    window.location.href = '/login.html';
             }
         }
 
