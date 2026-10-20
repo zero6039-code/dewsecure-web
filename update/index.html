@@ -6,15 +6,53 @@
     <title>DewSecure - Changelog</title>
     <link rel="stylesheet" href="/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&family=Noto+Sans+JP:wght@400;700&family=Noto+Sans+Thai:wght@400;700&display=swap" rel="stylesheet">
     <style>
         .i18n-loading [data-i18n] { visibility: hidden !important; }
+        body, .translatable-content, .translatable-content * {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Noto Sans KR", "Noto Sans JP", "Noto Sans Thai", sans-serif !important;
+        }
+
         .update-container {
             max-width: 800px; margin: 100px auto 60px; padding: 40px;
             background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.08);
             border-radius: 24px; backdrop-filter: blur(20px);
         }
-        .translate-tip { font-size: 14px; color: #58a6ff; margin-bottom: 40px; background: rgba(88,166,255,0.1); padding: 12px 16px; border-radius: 8px; display: flex; align-items: center; justify-content: space-between; }
-        .translate-tip select { background: #0d1117; color: #fff; border: 1px solid #30363d; padding: 8px 12px; border-radius: 6px; outline: none; cursor: pointer; }
+        .translate-tip {
+            display: flex; justify-content: space-between; align-items: center;
+            font-size: 14px; color: #58a6ff; margin-bottom: 40px; 
+            background: rgba(88,166,255,0.1); padding: 12px 16px; border-radius: 8px; 
+            border: 1px solid rgba(88,166,255,0.2);
+        }
+        
+        /* 彻底隐藏 Google 的原生组件 */
+        #google_translate_element { display: none !important; }
+
+        /* 强化我们自己写的下拉框，抵抗 Firefox 默认样式 */
+        #my-lang-select {
+            background-color: #0d1117 !important; 
+            color: #fff !important; 
+            border: 1px solid #30363d !important;
+            padding: 8px 30px 8px 12px !important; 
+            border-radius: 6px !important; 
+            outline: none !important; 
+            cursor: pointer !important;
+            font-size: 14px !important; 
+            font-family: inherit !important;
+            -webkit-appearance: none !important;
+            -moz-appearance: none !important;
+            appearance: none !important;
+            background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23cbd5e1%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E") !important;
+            background-repeat: no-repeat !important; 
+            background-position: right 10px top 50% !important;
+            background-size: 10px auto !important;
+            width: 150px !important;
+        }
+
+        /* 强制干掉白条 */
+        body > .skiptranslate { display: none !important; }
+        body { top: 0px !important; position: static !important; margin-top: 0px !important; }
+
         .update-container h1 { font-size: 36px; color: #fff; margin-bottom: 30px; }
         .log-entry { border-bottom: 1px solid rgba(255,255,255,0.08); padding-bottom: 24px; margin-bottom: 24px; }
         .log-entry:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
@@ -24,7 +62,7 @@
     </style>
 </head>
 <body>
-    <header>
+    <header class="notranslate">
         <a href="/index.html" class="logo"><img src="/DewSecure.png" alt="DewSecure" style="height:32px; margin-right:10px;"> DewSecure</a>
         <nav>
             <a href="/index.html" data-i18n="nav_home">首页</a>
@@ -46,22 +84,96 @@
     </header>
 
     <div class="update-container">
-        <div class="translate-tip">
-            <span>🌐 Auto-translate (Google):</span>
-            <select id="lang-select" onchange="translatePage(this.value)">
+        <div class="translate-tip notranslate">
+            <span style="display: flex; align-items: center; gap: 8px;">
+                <i class="fa-solid fa-language" style="font-size: 20px;"></i> 
+                Select Language:
+            </span>
+            <!-- 我们自己控制的下拉框，填入几十种常用语言 -->
+            <select id="my-lang-select">
                 <option value="en">English</option>
-                <option value="zh-CN">中文 (简体)</option>
-                <option value="ms">Bahasa Melayu</option>
+                <option value="zh-CN">Chinese (Simplified)</option>
+                <option value="zh-TW">Chinese (Traditional)</option>
+                <option value="ja">Japanese</option>
+                <option value="ko">Korean</option>
+                <option value="fr">French</option>
+                <option value="de">German</option>
+                <option value="es">Spanish</option>
+                <option value="pt">Portuguese</option>
+                <option value="ru">Russian</option>
+                <option value="it">Italian</option>
+                <option value="tr">Turkish</option>
+                <option value="vi">Vietnamese</option>
+                <option value="th">Thai</option>
+                <option value="id">Indonesian</option>
+                <option value="ar">Arabic</option>
+                <option value="hi">Hindi</option>
+                <option value="ms">Malay</option>
+                <option value="nl">Dutch</option>
+                <option value="pl">Polish</option>
             </select>
+            <div id="google_translate_element"></div>
         </div>
-        <h1>Changelog & Updates</h1>
-        <div id="changelog-list"></div>
+        
+        <div class="translatable-content">
+            <h1>Changelog & Updates</h1>
+            <div id="changelog-list">
+                <p style="color: #8b949e;">Loading updates...</p>
+            </div>
+        </div>
     </div>
 
-    <script>
+    <script type="text/javascript">
+        function googleTranslateElementInit() {
+            new google.translate.TranslateElement({
+                pageLanguage: 'en',
+                // 这里放入全量支持代码
+                includedLanguages: 'en,zh-CN,zh-TW,ja,ko,fr,de,es,pt,ru,it,tr,vi,th,id,ar,hi,ms,nl,pl,sv,da,fi,no,cs,el,he,hu,ro,sk,uk',
+                layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
+                autoDisplay: false
+            }, 'google_translate_element');
+        }
+
+        // 同步当前的语言状态到下拉框
+        function syncLangState() {
+            const hash = window.location.hash;
+            const match = hash.match(/googtrans\(en\|(\w+)\)/);
+            if (match && match[1]) {
+                document.getElementById('my-lang-select').value = match[1];
+            } else {
+                // 如果没有 hash，读取 Cookie
+                const cookieMatch = document.cookie.match(/googtrans=\/en\/(\w+)/);
+                if (cookieMatch && cookieMatch[1] && cookieMatch[1] !== 'en') {
+                    document.getElementById('my-lang-select').value = cookieMatch[1];
+                } else {
+                    document.getElementById('my-lang-select').value = 'en';
+                }
+            }
+        }
+
+        window.addEventListener('load', syncLangState);
+
+        // 核心触发逻辑：清除 Cookie + 强制 Hash 刷新
+        document.getElementById('my-lang-select').addEventListener('change', function() {
+            const lang = this.value;
+            
+            // 1. 暴力清除 Google 翻译残留的 Cookie 缓存
+            document.cookie = "googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+            document.cookie = "googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; domain=" + window.location.hostname + "; path=/;";
+            
+            // 2. 如果选英文，强制刷新并清除 Hash。如果选其他，设置对应 Hash
+            if (lang === 'en') {
+                window.location.hash = 'googtrans(en|en)';
+                window.location.reload();
+            } else {
+                window.location.hash = `googtrans(en|${lang})`;
+                window.location.reload();
+            }
+        });
+
         async function loadChangelog() {
             try {
-                const res = await fetch('/update/changelog.json');
+                const res = await fetch('changelog.json');
                 const logs = await res.json();
                 let html = '';
                 logs.forEach(log => {
@@ -73,26 +185,20 @@
                 });
                 document.getElementById('changelog-list').innerHTML = html;
             } catch (e) {
-                document.getElementById('changelog-list').innerHTML = '<p style="color:#ff7b72;">Failed to load.</p>';
+                document.getElementById('changelog-list').innerHTML = '<p style="color:#ff7b72;">Failed to load update data.</p>';
             }
         }
         loadChangelog();
 
-        function translatePage(lang) {
-            if (lang === 'en') { window.location.href = '/update/'; return; }
-            if (window.location.href.includes('localhost')) { alert('本地环境无法使用在线翻译。'); return; }
-            window.location.href = `https://translate.google.com/translate?sl=auto&tl=${lang}&u=${encodeURIComponent(window.location.href)}`;
-        }
-
-        document.querySelector('.lang-switch').addEventListener('mouseenter', () => {
-            const dd = document.querySelector('.lang-dropdown');
-            dd.style.opacity = '1'; dd.style.visibility = 'visible'; dd.style.transform = 'translateY(0)';
-        });
-        document.querySelector('.lang-switch').addEventListener('mouseleave', () => {
-            const dd = document.querySelector('.lang-dropdown');
-            dd.style.opacity = '0'; dd.style.visibility = 'hidden'; dd.style.transform = 'translateY(10px)';
-        });
+        // 防白条下推
+        setInterval(() => {
+            if (document.body.style.top !== '0px') {
+                document.body.style.setProperty('top', '0px', 'important');
+            }
+        }, 300);
     </script>
+    
+    <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
     <script src="/js/i18n.js"></script>
 </body>
 </html>
