@@ -124,7 +124,7 @@
 
         async function initDashboard() {
             try {
-                // 1. 检查登录状态 ✅ 已修复为 supabaseClient
+                // 1. 检查登录状态
                 const { data: { session }, error } = await supabaseClient.auth.getSession();
                 if (error || !session) {
                     window.location.href = '/login.html';
@@ -133,21 +133,31 @@
                 currentUser = session.user;
                 document.getElementById('userEmail').textContent = currentUser.email;
 
-                // 2. 获取 Profile 数据 ✅ 已修复为 supabaseClient
+                // 2. 获取 Profile 数据（使用 maybeSingle 兼容可能为空的情况）
                 const { data: profile, error: profileErr } = await supabaseClient
                     .from('profiles')
                     .select('*')
                     .eq('id', currentUser.id)
-                    .single();
+                    .maybeSingle();
                 
-                if (profileErr) throw profileErr;
-                currentProfile = profile;
+                if (profileErr) {
+                    console.error("获取 Profile 失败:", profileErr);
+                    throw profileErr;
+                }
+
+                // 如果没有数据，用兜底数据防止崩溃
+                if (!profile) {
+                    console.warn("找不到 Profile 数据，使用兜底数据");
+                    currentProfile = { tier: 'free', trial_ends_at: null, invite_success_count: 0 };
+                } else {
+                    currentProfile = profile;
+                }
 
                 // 3. 渲染数据
-                renderProfileStatus(profile);
+                renderProfileStatus(currentProfile);
                 fetchNotifications();
 
-                // 4. 绑定按钮事件 ✅ 已修复为 supabaseClient
+                // 4. 绑定按钮事件
                 document.getElementById('btnLogout').onclick = async () => { 
                     await supabaseClient.auth.signOut(); 
                     window.location.href = '/'; 
@@ -157,15 +167,15 @@
                 document.getElementById('btnCloseModal').onclick = () => document.getElementById('cancelModal').classList.remove('active');
                 document.getElementById('btnConfirmCancel').onclick = submitCancelSubscription;
 
+                // 5. 显示主界面
                 document.getElementById('mainContent').style.display = 'grid';
             } catch (err) {
                 console.error("Dashboard 初始化错误:", err);
-                // 把具体的错误信息弹出来，方便你排查
-                alert("加载失败: " + (err.message || err.error_description || "未知错误"));
-                // ⚠️ 注意：如果只是网络问题或权限问题，不一定要立刻踢回登录页。
-                // 但如果是未登录（JWT过期），才需要跳走。
-                if (err.message === 'JWT expired' || err.code === 'PGRST301') {
+                alert("加载数据失败: " + (err.message || "未知错误，请检查网络或权限。"));
+                // 只有明确未登录或 Token 过期才踢回登录页
+                if (err.message === 'JWT expired' || err.code === 'PGRST301' || !currentUser) {
                     window.location.href = '/login.html';
+                }
             }
         }
 
@@ -218,7 +228,6 @@
             btn.textContent = '生成中...';
 
             try {
-                // ✅ 已修复为 supabaseClient
                 const { data, error } = await supabaseClient.rpc('generate_invitation_code');
                 if (error) throw error;
                 
@@ -240,7 +249,6 @@
         }
 
         async function fetchNotifications() {
-            // ✅ 已修复为 supabaseClient
             const { data, error } = await supabaseClient
                 .from('notifications')
                 .select('*')
@@ -269,7 +277,6 @@
             btn.textContent = '处理中...';
 
             try {
-                // ✅ 已修复为 supabaseClient
                 await supabaseClient.from('reports').insert({
                     user_id: currentUser.id,
                     reporter_email: currentUser.email,
@@ -290,6 +297,7 @@
             }
         }
 
+        // 启动 Dashboard
         initDashboard();
     </script>
 </body>
