@@ -94,12 +94,12 @@
                 <!-- 步骤 2：输入验证码 (默认隐藏) -->
                 <div id="step-otp" class="hidden">
                     <h2>输入验证码</h2>
-                    <p class="sub">我们已向 <strong id="displayEmail"></strong> 发送了 6 位验证码。</p>
+                    <p class="sub">我们已向 <strong id="displayEmail"></strong> 发送了 8 位验证码。</p>
                     <div class="input-group">
                         <label>6 位验证码</label>
                         <div class="input-wrapper">
                             <i class="fa-solid fa-shield-halved"></i>
-                            <input type="text" id="otpInput" maxlength="6" placeholder="123456" style="letter-spacing: 4px;">
+                            <input type="text" id="otpInput" maxlength="8" placeholder="12345678" style="letter-spacing: 4px;">
                         </div>
                         <div id="otpError" class="error-msg"></div>
                     </div>
@@ -184,7 +184,7 @@
         // 验证 OTP 验证码
         btnVerifyOtp.addEventListener('click', async () => {
             const token = otpInput.value.trim();
-            if (token.length !== 6) {
+            if (token.length !== 8) {
                 showError('otpError', '请输入 6 位验证码');
                 return;
             }
