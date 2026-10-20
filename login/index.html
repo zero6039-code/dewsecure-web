@@ -112,16 +112,16 @@
 
     <script>
         // ==========================================
-        // 1. 配置 Supabase 凭证（请替换为你自己的）
+        // 1. 配置 Supabase 凭证
         // ==========================================
         const SUPABASE_URL = 'https://uvbaioqqjqseapcancvi.supabase.co'; 
         const SUPABASE_ANON_KEY = 'sb_publishable_xiiA-yt_jRKkzRdkYkoWJA_CVZjNjq8';
         
-        // 修改变量名，避免和 CDN 全局变量冲突
+        // 统一使用 supabaseClient，避免冲突
         const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
         // ==========================================
-        // 2. 语言切换动画逻辑 (保留原本)
+        // 2. 语言切换动画逻辑
         // ==========================================
         document.querySelector('.lang-switch').addEventListener('mouseenter', () => {
             const dd = document.querySelector('.lang-dropdown');
@@ -159,14 +159,14 @@
             btnSendOtp.textContent = '正在发送...';
 
             try {
-                const { data, error } = await supabase.auth.signInWithOtp({
+                // ✅ 这里修改为了 supabaseClient
+                const { data, error } = await supabaseClient.auth.signInWithOtp({
                     email: email,
-                    options: { shouldCreateUser: true } // 允许自动注册
+                    options: { shouldCreateUser: true }
                 });
 
                 if (error) throw error;
 
-                // 切换 UI
                 currentEmail = email;
                 document.getElementById('displayEmail').textContent = email;
                 stepEmail.classList.add('hidden');
@@ -174,6 +174,7 @@
                 startCountdown();
                 
             } catch (err) {
+                console.error("发送 OTP 错误:", err);
                 showError('emailError', err.message || '发送失败，请稍后再试');
                 btnSendOtp.disabled = false;
                 btnSendOtp.textContent = '使用邮箱登录 (OTP)';
@@ -192,7 +193,8 @@
             btnVerifyOtp.textContent = '正在验证...';
 
             try {
-                const { data, error } = await supabase.auth.verifyOtp({
+                // ✅ 这里修改为了 supabaseClient
+                const { data, error } = await supabaseClient.auth.verifyOtp({
                     email: currentEmail,
                     token: token,
                     type: 'email'
@@ -200,11 +202,11 @@
 
                 if (error) throw error;
 
-                // 登录成功，Token 已自动存入 localStorage
-                // 重定向到 Dashboard
+                // 登录成功
                 window.location.href = '/dashboard.html';
 
             } catch (err) {
+                console.error("验证错误:", err);
                 showError('otpError', '验证码错误或已过期');
                 btnVerifyOtp.disabled = false;
                 btnVerifyOtp.textContent = '验证并登录';
@@ -226,7 +228,7 @@
             const el = document.getElementById(id);
             el.textContent = msg;
             el.style.display = 'block';
-            setTimeout(() => { el.style.display = 'none'; }, 4000);
+            setTimeout(() => { el.style.display = 'none'; }, 5000);
         }
 
         // 60 秒防爆破倒计时
