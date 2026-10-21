@@ -64,11 +64,18 @@
         } else {
             const dashLink = header.querySelector('nav a[href="/dashboard.html"]');
             if (dashLink) dashLink.style.display = 'none';
-            authArea.innerHTML = `<a href="/login.html" style="color: #58a6ff; font-size: 14px; font-weight: 600; white-space: nowrap;">登录</a>`;
+            
+            // 🌟 修复：给登录按钮加上 data-i18n，这样 i18n.js 就能翻译它了！
+            authArea.innerHTML = `<a href="/login.html" data-i18n="nav_login" style="color: #58a6ff; font-size: 14px; font-weight: 600; white-space: nowrap;">登录</a>`;
+            
+            // 🌟 如果此时页面已经有翻译字典，立刻主动翻译一次
+            if (window.fallbackTranslations && window.fallbackTranslations['nav_login']) {
+                const loginBtn = authArea.querySelector('a[data-i18n="nav_login"]');
+                if (loginBtn) loginBtn.textContent = window.fallbackTranslations['nav_login'];
+            }
         }
     }
 
-    // 初次加载及状态改变时渲染
     supabaseClient.auth.onAuthStateChange((event, session) => {
         renderAuthState(session);
     });
