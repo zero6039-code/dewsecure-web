@@ -11,19 +11,6 @@
         body { background: #0d1117; color: #c9d1d9; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif; margin: 0; }
         .i18n-loading [data-i18n] { visibility: hidden !important; }
         
-        /* 导航栏 */
-        header { position: fixed; top:0; width: 100%; background: rgba(13,17,23,0.8); backdrop-filter: blur(12px); z-index: 100; border-bottom: 1px solid rgba(255,255,255,0.05); display: flex; justify-content: center; }
-        .header-inner { max-width: 1200px; width: 100%; padding: 0 20px; height: 70px; display: flex; justify-content: space-between; align-items: center; }
-        .logo { color:#fff; font-weight:800; font-size:20px; text-decoration:none; display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
-        .logo img { height:28px; }
-        .nav-links { display: flex; gap: 24px; flex-wrap: nowrap; margin: 0 auto; /* 让导航居中 */ }
-        .nav-links a { color: #8b949e; text-decoration: none; font-size: 14px; transition: 0.2s; white-space: nowrap; }
-        .nav-links a:hover, .nav-links a.active { color: #fff; }
-        .user-actions { display: flex; align-items: center; gap: 15px; flex-shrink: 0; }
-        .user-email { color:#8b949e; font-size:14px; white-space: nowrap; max-width: 150px; overflow: hidden; text-overflow: ellipsis; }
-        /* 覆盖 auth-nav 插入的右侧容器，让它不要在 Dashboard 里重复出现 */
-        #global-auth-area { display: none !important; }
-        
         /* 布局容器 */
         .dashboard-container { max-width: 1200px; margin: 100px auto 40px; padding: 0 20px; display: grid; grid-template-columns: 2fr 1fr; gap: 24px; }
         .card { background: rgba(22, 27, 34, 0.6); backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 20px; padding: 30px; margin-bottom: 24px; }
@@ -59,35 +46,32 @@
         .card-completed { position: relative; pointer-events: none; }
         .card-completed::after { content: "感谢您的分享！已达奖励上限。请留意通知中心，我们会定期发放福利。"; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(22,27,34,0.85); backdrop-filter: blur(8px); display: flex; align-items: center; justify-content: center; text-align: center; padding: 30px; color: #58a6ff; font-weight: bold; font-size: 16px; border-radius: 20px; z-index: 10; }
 
-        /* ✅ 修复半屏响应式排版 */
+        /* 修复半屏响应式排版 */
         @media (max-width: 900px) {
-            .dashboard-container { grid-template-columns: 1fr; } /* 变成单列上下排布 */
-            .nav-links { display: none; } /* 手机端隐藏中间导航，保持整洁 */
-            .header-inner { padding: 10px 15px; }
-            .user-email { display: none; } /* 手机端邮箱太长，可隐藏 */
+            .dashboard-container { grid-template-columns: 1fr; }
         }
     </style>
 </head>
 <body>
-    <!-- ✅ 统一的主页风格导航栏 -->
+    <!-- 统一使用和主页完全一致的结构，由 auth-nav.js 动态注入右侧状态 -->
     <header>
-        <div class="header-inner">
-            <a href="/index.html" class="logo">
-                <img src="/DewSecure.png" alt="DewSecure"> DewSecure
-            </a>
-            <nav class="nav-links">
-                <a href="/index.html">首页</a>
-                <a href="/pricing.html">定价</a>
-                <a href="/pentest/" target="_blank">安全审计</a>
-                <a href="/update/">更新日志</a>
-                <a href="/guide/">使用指南</a>
-                <a href="/about/">关于我们</a>
-                <a href="/dashboard" class="active">控制台</a>
-            </nav>
-            <div class="user-actions">
-                <span id="userEmail" class="user-email">加载中...</span>
-                <button class="btn btn-danger" id="btnLogout">退出登录</button>
-            </div>
+        <a href="/index.html" class="logo"><img src="/DewSecure.png" alt="DewSecure"> DewSecure</a>
+        <nav>
+            <a href="/index.html" data-i18n="nav_home">首页</a>
+            <a href="/pricing.html" data-i18n="nav_pricing">定价</a>
+            <a href="/pentest/" target="_blank" data-i18n="nav_pentest">安全审计</a>
+            <a href="/update/" data-i18n="nav_update">更新日志</a>
+            <a href="/guide/" data-i18n="nav_guide">使用指南</a>
+            <a href="/about/" data-i18n="nav_about">关于我们</a>
+            <a href="/login/" style="display:none;" data-i18n="nav_login">登录</a>
+        </nav>
+        <div class="lang-switch">
+            <button class="lang-toggle-btn" style="background:none;border:none;color:#cbd5e1;font-size:24px;cursor:pointer;padding:0;">🌐</button>
+            <ul class="lang-dropdown">
+                <li data-lang="zh" class="lang-option">中文 (简体)</li>
+                <li data-lang="en" class="lang-option">English</li>
+                <li data-lang="ms" class="lang-option">Bahasa Melayu</li>
+            </ul>
         </div>
     </header>
 
@@ -163,56 +147,35 @@
 
         async function initDashboard() {
             try {
-                // 1. 检查登录状态
                 const { data: { session }, error } = await supabaseClient.auth.getSession();
                 if (error || !session) {
                     window.location.href = '/login.html';
                     return;
                 }
                 currentUser = session.user;
-                document.getElementById('userEmail').textContent = currentUser.email;
 
-                // 2. 获取 Profile 数据
                 const { data: profile, error: profileErr } = await supabaseClient
                     .from('profiles')
                     .select('*')
                     .eq('id', currentUser.id)
                     .maybeSingle();
                 
-                if (profileErr) {
-                    console.error("获取 Profile 失败:", profileErr);
-                    throw profileErr;
-                }
+                if (profileErr) throw profileErr;
 
-                if (!profile) {
-                    console.warn("找不到 Profile 数据，使用兜底数据");
-                    currentProfile = { tier: 'free', trial_ends_at: null, invite_success_count: 0 };
-                } else {
-                    currentProfile = profile;
-                }
+                currentProfile = profile || { tier: 'free', trial_ends_at: null, invite_success_count: 0 };
 
-                // 3. 渲染数据
                 await renderProfileStatus(currentProfile); 
                 fetchNotifications();
 
-                // 4. 绑定按钮事件
-                document.getElementById('btnLogout').onclick = async () => { 
-                    await supabaseClient.auth.signOut(); 
-                    window.location.href = '/'; 
-                };
                 document.getElementById('btnGenInvite').onclick = generateInvite;
                 document.getElementById('btnCancelSub').onclick = () => document.getElementById('cancelModal').classList.add('active');
                 document.getElementById('btnCloseModal').onclick = () => document.getElementById('cancelModal').classList.remove('active');
                 document.getElementById('btnConfirmCancel').onclick = submitCancelSubscription;
 
-                // 5. 显示主界面
                 document.getElementById('mainContent').style.display = 'grid';
             } catch (err) {
                 console.error("Dashboard 初始化错误:", err);
                 alert("加载数据失败: " + (err.message || "未知错误，请检查网络或权限。"));
-                if (err.message === 'JWT expired' || err.code === 'PGRST301' || !currentUser) {
-                    window.location.href = '/login.html';
-                }
             }
         }
 
@@ -372,5 +335,6 @@
 
         initDashboard();
     </script>
+    <script src="/js/auth-nav.js"></script>
 </body>
 </html>
