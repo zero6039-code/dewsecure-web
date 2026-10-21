@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="dark" class="i18n-loading">
+<html lang="en" data-theme="dark"> <!-- 移除 i18n-loading，释放所有导航 -->
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,9 +9,8 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         body { background: #0d1117; color: #c9d1d9; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif; margin: 0; }
-        .i18n-loading [data-i18n] { visibility: hidden !important; }
         
-        /* 主内容区，绝不碰 Header */
+        /* 主内容区 */
         .dashboard-container { 
             max-width: 1200px; 
             margin: 40px auto; 
@@ -63,21 +62,20 @@
             .dashboard-container { grid-template-columns: 1fr; }
         }
     </style>
-    <link rel="icon" type="image/png" href="/DewSecure.png">
 </head>
 <body>
-    <!-- 完美克隆主页的 Header 结构 -->
+    <!-- 完全使用原生结构，不写死任何内联样式 -->
     <header>
-        <a href="/index.html" class="logo"><img src="/DewSecure.png" alt="DewSecure" > DewSecure</a>
+        <a href="/index.html" class="logo"><img src="/DewSecure.png" alt="DewSecure"> DewSecure</a>
         <nav>
-            <a href="/index.html" data-i18n="nav_home">首页</a>
-            <a href="/pricing.html" data-i18n="nav_pricing">定价</a>
-            <a href="/pentest/" target="_blank" data-i18n="nav_pentest">安全审计</a>
-            <a href="/update/" data-i18n="nav_update">更新日志</a>
-            <a href="/guide/" data-i18n="nav_guide">使用指南</a>
-            <a href="/about/" data-i18n="nav_about">关于我们</a>
-            <!-- 这个登录按钮会被 JS 自动隐藏，无需担心 -->
-            <a href="/login/" data-i18n="nav_login">登录</a>
+            <a href="/index.html">首页</a>
+            <a href="/pricing.html">定价</a>
+            <a href="/pentest/" target="_blank">安全审计</a>
+            <a href="/update/">更新日志</a>
+            <a href="/guide/">使用指南</a>
+            <a href="/about/">关于我们</a>
+            <a href="/dashboard.html" style="display:none;">控制台</a> <!-- 默认隐藏，登录后由 JS 显示 -->
+            <a href="/login/">登录</a> <!-- 默认显示，由 JS 隐藏 -->
         </nav>
         <div class="lang-switch">
             <button class="lang-toggle-btn" style="background:none;border:none;color:#cbd5e1;font-size:24px;cursor:pointer;padding:0;">🌐</button>
@@ -152,23 +150,24 @@
     </div>
 
     <script>
-        const SUPABASE_URL = 'https://uvbaioqqjqseapcancvi.supabase.co'; 
-        const SUPABASE_ANON_KEY = 'sb_publishable_xiiA-yt_jRKkzRdkYkoWJA_CVZjNjq8';
-        const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
-        let currentUser = null;
-        let currentProfile = null;
-
+        // 直接使用全局挂载的 supabaseClient，删掉多余的 const 声明
         async function initDashboard() {
+            const client = window.supabaseClient;
+            if (!client) {
+                // 如果 auth-nav.js 还没加载完，稍微等一下
+                setTimeout(initDashboard, 50);
+                return;
+            }
+
             try {
-                const { data: { session }, error } = await supabaseClient.auth.getSession();
+                const { data: { session }, error } = await client.auth.getSession();
                 if (error || !session) {
                     window.location.href = '/login.html';
                     return;
                 }
-                currentUser = session.user;
+                const currentUser = session.user;
 
-                const { data: profile, error: profileErr } = await supabaseClient
+                const { data: profile, error: profileErr } = await client
                     .from('profiles')
                     .select('*')
                     .eq('id', currentUser.id)
@@ -176,15 +175,16 @@
                 
                 if (profileErr) throw profileErr;
 
-                currentProfile = profile || { tier: 'free', trial_ends_at: null, invite_success_count: 0 };
+                const currentProfile = profile || { tier: 'free', trial_ends_at: null, invite_success_count: 0 };
 
+                // 渲染界面数据
                 await renderProfileStatus(currentProfile); 
-                fetchNotifications();
+                fetchNotifications(client);
 
-                document.getElementById('btnGenInvite').onclick = generateInvite;
+                document.getElementById('btnGenInvite').onclick = () => generateInvite(client);
                 document.getElementById('btnCancelSub').onclick = () => document.getElementById('cancelModal').classList.add('active');
                 document.getElementById('btnCloseModal').onclick = () => document.getElementById('cancelModal').classList.remove('active');
-                document.getElementById('btnConfirmCancel').onclick = submitCancelSubscription;
+                document.getElementById('btnConfirmCancel').onclick = () => submitCancelSubscription(client, currentUser);
 
                 document.getElementById('mainContent').style.display = 'grid';
             } catch (err) {
@@ -210,7 +210,7 @@
             if (inviteCount >= 12) {
                 document.getElementById('inviteCard').classList.add('card-completed');
             } else {
-                const { data: inviteCode } = await supabaseClient
+                const { data: inviteCode } = await window.supabaseClient
                     .from('invitations')
                     .select('code')
                     .eq('inviter_id', profile.id)
@@ -264,13 +264,13 @@
             }
         }
 
-        async function generateInvite() {
+        async function generateInvite(client) {
             const btn = document.getElementById('btnGenInvite');
             btn.disabled = true;
             btn.textContent = '生成中...';
 
             try {
-                const { data, error } = await supabaseClient.rpc('generate_invitation_code');
+                const { data, error } = await client.rpc('generate_invitation_code');
                 if (error) throw error;
                 
                 document.getElementById('myInviteCode').textContent = data;
@@ -290,8 +290,8 @@
             }
         }
 
-        async function fetchNotifications() {
-            const { data, error } = await supabaseClient
+        async function fetchNotifications(client) {
+            const { data, error } = await client
                 .from('notifications')
                 .select('*')
                 .order('created_at', { ascending: false });
@@ -316,21 +316,21 @@
             });
 
             if (unreadIds.length > 0) {
-                await supabaseClient
+                await client
                     .from('notifications')
                     .update({ is_read: true })
                     .in('id', unreadIds);
             }
         }
 
-        async function submitCancelSubscription() {
+        async function submitCancelSubscription(client, currentUser) {
             const btn = document.getElementById('btnConfirmCancel');
             const reason = document.getElementById('cancelReason').value.trim();
             btn.disabled = true;
             btn.textContent = '处理中...';
 
             try {
-                await supabaseClient.from('reports').insert({
+                await client.from('reports').insert({
                     user_id: currentUser.id,
                     reporter_email: currentUser.email,
                     report_type: 'other',
@@ -350,8 +350,8 @@
             }
         }
 
+        // 启动
         initDashboard();
     </script>
-    <script src="/js/auth-nav.js"></script>
 </body>
 </html>
