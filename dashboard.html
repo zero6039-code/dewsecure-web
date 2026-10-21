@@ -11,60 +11,6 @@
         body { background: #0d1117; color: #c9d1d9; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif; margin: 0; }
         .i18n-loading [data-i18n] { visibility: hidden !important; }
         
-        /* =========================================================
-           暴力接管 Header，防止被全局 style.css 覆盖
-           ========================================================= */
-        header { 
-            display: flex !important; 
-            justify-content: space-between !important; 
-            align-items: center !important; 
-            flex-wrap: nowrap !important;
-            width: 100% !important;
-            height: 70px !important;
-            box-sizing: border-box !important;
-            padding: 0 24px !important;
-            position: fixed !important;
-            top: 0 !important; left: 0 !important; right: 0 !important;
-            background: rgba(13,17,23,0.8) !important; 
-            backdrop-filter: blur(12px) !important; 
-            z-index: 1000 !important; 
-            border-bottom: 1px solid rgba(255,255,255,0.05) !important;
-        }
-        
-        header .logo { display: flex !important; align-items: center !important; flex-shrink: 0 !important; color:#fff; text-decoration: none; font-weight:800; font-size:20px; gap: 8px;}
-        header .logo img { height: 28px; }
-        
-        /* 中间导航：强制显示，绝不能被隐藏 */
-        header nav { 
-            display: flex !important; 
-            align-items: center !important; 
-            gap: 24px !important; 
-            flex-shrink: 1 !important;
-            overflow-x: auto !important; 
-            margin: 0 20px !important;
-        }
-        header nav a { 
-            display: block !important; 
-            color: #8b949e !important; 
-            text-decoration: none !important; 
-            font-size: 14px !important; 
-            white-space: nowrap !important; 
-            transition: 0.2s !important;
-        }
-        header nav a:hover { color: #fff !important; }
-        
-        /* 右侧区域 */
-        header .header-right { 
-            display: flex !important; 
-            align-items: center !important; 
-            gap: 15px !important; 
-            flex-shrink: 0 !important; 
-        }
-        .lang-switch { position: relative; display: flex; align-items: center; }
-
-        /* =========================================================
-           主内容区
-           ========================================================= */
         .dashboard-container { 
             max-width: 1200px; 
             margin: 100px auto 40px; 
@@ -73,16 +19,7 @@
             grid-template-columns: 2fr 1fr; 
             gap: 24px; 
         }
-
-        .card { 
-            background: rgba(22, 27, 34, 0.6); 
-            backdrop-filter: blur(16px); 
-            border: 1px solid rgba(255, 255, 255, 0.08); 
-            border-radius: 20px; 
-            padding: 30px; 
-            margin-bottom: 24px; 
-        }
-
+        .card { background: rgba(22, 27, 34, 0.6); backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 20px; padding: 30px; margin-bottom: 24px; }
         .card h3 { color: #fff; margin-bottom: 20px; font-size: 20px; display: flex; align-items: center; gap: 10px; }
         .status-badge { display: inline-block; padding: 6px 12px; border-radius: 20px; font-size: 13px; font-weight: 600; background: rgba(88,166,255,0.15); color: #58a6ff; border: 1px solid rgba(88,166,255,0.3); }
         .status-pro { background: rgba(255, 196, 0, 0.15); color: #ffc400; border-color: rgba(255, 196, 0, 0.3); }
@@ -115,38 +52,15 @@
 
         @media (max-width: 900px) {
             .dashboard-container { grid-template-columns: 1fr; margin-top: 80px; }
-            header nav { display: none !important; } /* 手机端彻底隐藏中间导航，防挤压 */
         }
     </style>
 </head>
 <body>
-    <!-- 完整的三栏布局，写死防御 -->
-    <header>
-        <a href="/index.html" class="logo"><img src="/DewSecure.png" alt="DewSecure"> DewSecure</a>
-        <nav>
-            <a href="/index.html" data-i18n="nav_home">首页</a>
-            <a href="/pricing.html" data-i18n="nav_pricing">定价</a>
-            <a href="/pentest/" target="_blank" data-i18n="nav_pentest">安全审计</a>
-            <a href="/update/" data-i18n="nav_update">更新日志</a>
-            <a href="/guide/" data-i18n="nav_guide">使用指南</a>
-            <a href="/about/" data-i18n="nav_about">关于我们</a>
-            <a href="/login/" style="display:none;" data-i18n="nav_login">登录</a>
-        </nav>
-        <div class="header-right">
-            <!-- 留出容器给 auth-nav.js 塞入用户信息 -->
-            <div id="global-auth-area" style="display: flex; align-items: center; gap: 12px;"></div>
-            <div class="lang-switch">
-                <button class="lang-toggle-btn" style="background:none;border:none;color:#cbd5e1;font-size:24px;cursor:pointer;padding:0;">🌐</button>
-                <ul class="lang-dropdown">
-                    <li data-lang="zh" class="lang-option">中文 (简体)</li>
-                    <li data-lang="en" class="lang-option">English</li>
-                    <li data-lang="ms" class="lang-option">Bahasa Melayu</li>
-                </ul>
-            </div>
-        </div>
-    </header>
+    <!-- 就留这一个空壳，全交由 auth-nav.js 渲染 -->
+    <header></header>
 
     <div class="dashboard-container" id="mainContent" style="display: none;">
+        <!-- 左侧：状态与邀请 -->
         <div class="left-column">
             <div class="card">
                 <h3><i class="fa-solid fa-shield-halved"></i> 当前订阅状态</h3>
@@ -182,6 +96,7 @@
             </div>
         </div>
 
+        <!-- 右侧：通知中心 -->
         <div class="right-column">
             <div class="card" style="height: 100%;">
                 <h3><i class="fa-solid fa-bell"></i> 通知中心</h3>
@@ -192,6 +107,7 @@
         </div>
     </div>
 
+    <!-- 取消订阅弹窗 -->
     <div class="modal-overlay" id="cancelModal">
         <div class="modal-content">
             <h3>确认取消订阅？</h3>
