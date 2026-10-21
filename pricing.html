@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DewSecure - Pricing</title>
     <link rel="stylesheet" href="/style.css">
-    <link rel="stylesheet" href="https://unpkg.com/swup@4/dist/swup.css"> <!-- 🌟 新增 -->
+    <link rel="stylesheet" href="https://unpkg.com/swup@4/dist/swup.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="icon" type="image/png" href="/DewSecure.png">
 </head>
@@ -31,7 +31,6 @@
         </div>
     </header>
 
-    <!-- 🌟 新增包裹 -->
     <main id="swup" class="transition-fade">
         <div class="pricing-wrapper">
             <h2 class="pricing-title" data-i18n="pricing_title">选择适合您的方案</h2>
@@ -70,6 +69,17 @@
                 </div>
             </div>
 
+            <!-- 🌟 新增：邀请返利营销横幅 -->
+            <div class="invite-promo-banner">
+                <div class="promo-icon">🎁</div>
+                <div class="promo-text">
+                    <h3 data-i18n="pricing_promo_title">邀请好友，共享免费高级版！</h3>
+                    <p data-i18n="pricing_promo_desc">邀请好友注册。当他们完成首次真实付费满 14 天后，您将获得额外 120 天高级版奖励！</p>
+                </div>
+                <button class="btn-promo" onclick="window.location.href='/dashboard.html'" data-i18n="pricing_promo_btn">获取我的专属推广链接</button>
+            </div>
+            <!-- 🌟 新增结束 -->
+
             <div class="comparison-section">
                 <div class="comparison-header">
                     <h2 data-i18n="comp_table_title">功能详细对比</h2>
@@ -102,10 +112,9 @@
             </div>
         </div>
     </main>
-    <!-- 🌟 包裹结束 -->
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="https://unpkg.com/swup@4/dist/swup.min.js"></script> <!-- 🌟 新增 -->
+    <script src="https://unpkg.com/swup@4/dist/swup.min.js"></script>
     <script src="/js/auth-nav.js"></script>
     <script src="/js/app-init.js"></script>
     <script src="/js/i18n.js"></script>
