@@ -195,16 +195,24 @@ window.addEventListener('languageChanged', renderDashboardTexts);
 async function initDashboardLogic() {
     const client = window.supabaseClient;
     if (!client) return;
+
+    const loader = document.getElementById('page-loader');
+    
     try {
         const { data: { session } } = await client.auth.getSession();
-        // 🌟 如果没登录，直接踢回登录页（此时页面是 hidden 的，用户绝对看不到任何闪烁）
+        
         if (!session) { 
             window.location.href = '/login.html';
             return; 
         }
-        // 🌟 核心修复：验证通过，立刻让页面显形！
-        document.querySelector('main').style.display = 'block';
-            
+        
+        // 验证通过，淡出移除遮罩
+        if (loader) {
+            loader.style.transition = 'opacity 0.3s ease';
+            loader.style.opacity = '0';
+            setTimeout(() => loader.remove(), 300);
+        }
+        
         const currentUser = session.user;
         const { data: profile } = await client.from('profiles').select('*').eq('id', currentUser.id).maybeSingle();
         
@@ -250,16 +258,16 @@ async function initDashboardLogic() {
             };
         }
 
-        // 🌟 核心修改：生成并显示专属推广链接
+        // 生成并显示专属推广链接
         const { data: inviteCode } = await client.from('invitations').select('code').eq('inviter_id', dashboardData.id).eq('status', 'pending').limit(1).maybeSingle();
         if (inviteCode?.code) {
             const refLink = window.location.origin + '/pricing.html?ref=' + inviteCode.code;
-            document.getElementById('myInviteCode').textContent = refLink; // 直接显示链接
+            document.getElementById('myInviteCode').textContent = refLink;
             document.getElementById('btnGenInvite').classList.add('hidden');
             const copyBtn = document.getElementById('btnCopyInvite');
             copyBtn.classList.remove('hidden');
             copyBtn.onclick = async () => { 
-                await navigator.clipboard.writeText(refLink); // 复制链接
+                await navigator.clipboard.writeText(refLink);
                 const t = window.fallbackTranslations || {};
                 copyBtn.textContent = t['dash_copied'] || '已复制!'; 
                 setTimeout(() => copyBtn.textContent = t['dash_invite_copy'] || '复制', 2000); 
@@ -329,7 +337,12 @@ async function initDashboardLogic() {
             btn.disabled = false; btn.textContent = t['dash_cancel_yes'] || '确认取消';
         };
 
-    } catch (err) { console.error("Dashboard 初始化失败:", err); }
+    } catch (err) { 
+        console.error("Dashboard 初始化失败:", err); 
+        // 🌟 终极防卡死：报错时也要移除遮罩
+        if (loader) loader.remove();
+        alert("加载数据失败，请刷新重试。");
+    }
 }
 
 document.addEventListener('DOMContentLoaded', () => {
