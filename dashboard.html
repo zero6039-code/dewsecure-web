@@ -46,14 +46,14 @@
         .card-completed { position: relative; pointer-events: none; }
         .card-completed::after { content: "感谢您的分享！已达奖励上限。请留意通知中心，我们会定期发放福利。"; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(22,27,34,0.85); backdrop-filter: blur(8px); display: flex; align-items: center; justify-content: center; text-align: center; padding: 30px; color: #58a6ff; font-weight: bold; font-size: 16px; border-radius: 20px; z-index: 10; }
 
-        /* 修复半屏响应式排版 */
+        /* 响应式调整 */
         @media (max-width: 900px) {
-            .dashboard-container { grid-template-columns: 1fr; }
+            .dashboard-container { grid-template-columns: 1fr; margin-top: 80px; }
         }
     </style>
 </head>
 <body>
-    <!-- 最纯净的 Header，全部交给 auth-nav.js 接管 -->
+    <!-- 纯净版 Header，交给 auth-nav.js 渲染 -->
     <header>
         <a href="/index.html" class="logo"><img src="/DewSecure.png" alt="DewSecure"> DewSecure</a>
         <nav>
@@ -338,7 +338,6 @@
 
         initDashboard();
     </script>
-    <!-- 引入统一的状态管理 -->
     <script src="/js/auth-nav.js"></script>
 </body>
 </html>
