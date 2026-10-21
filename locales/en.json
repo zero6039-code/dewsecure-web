@@ -220,6 +220,7 @@
   "dash_gen_fail": "Failed: ",
   "nav_dashboard": "Dashboard",
   "nav_logout": "Log out",
+  "nav_logout": "Log out",
   "dash_notif_empty": "No new notifications",
   "dash_cancel_processing": "Processing...",
   "dash_cancel_success": "Your cancellation request has been recorded. The subscription will expire at the end of the current period."
