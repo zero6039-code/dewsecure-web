@@ -13,14 +13,14 @@
         
         /* 导航栏 */
         header { position: fixed; top:0; width: 100%; background: rgba(13,17,23,0.8); backdrop-filter: blur(12px); z-index: 100; border-bottom: 1px solid rgba(255,255,255,0.05); }
-        .header-inner { max-width: 1200px; margin: 0 auto; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; }
-        .logo { color:#fff; font-weight:800; font-size:20px; text-decoration:none; display: flex; align-items: center; gap: 8px;}
+        .header-inner { max-width: 1200px; margin: 0 auto; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: nowrap; }
+        .logo { color:#fff; font-weight:800; font-size:20px; text-decoration:none; display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
         .logo img { height:28px; }
-        .nav-links { display: flex; gap: 20px; }
-        .nav-links a { color: #8b949e; text-decoration: none; font-size: 14px; transition: 0.2s; }
+        .nav-links { display: flex; gap: 20px; flex-wrap: nowrap; }
+        .nav-links a { color: #8b949e; text-decoration: none; font-size: 14px; transition: 0.2s; white-space: nowrap; }
         .nav-links a:hover, .nav-links a.active { color: #fff; }
-        .user-actions { display: flex; align-items: center; gap: 15px; }
-        .user-email { color:#8b949e; font-size:14px; }
+        .user-actions { display: flex; align-items: center; gap: 15px; flex-shrink: 0; }
+        .user-email { color:#8b949e; font-size:14px; white-space: nowrap; }
         
         /* 布局容器 */
         .dashboard-container { max-width: 1200px; margin: 100px auto 40px; padding: 0 20px; display: grid; grid-template-columns: 2fr 1fr; gap: 24px; }
