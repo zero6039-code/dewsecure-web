@@ -197,7 +197,14 @@ async function initDashboardLogic() {
     if (!client) return;
     try {
         const { data: { session } } = await client.auth.getSession();
-        if (!session) { window.location.href = '/login.html'; return; }
+        // 🌟 如果没登录，直接踢回登录页（此时页面是 hidden 的，用户绝对看不到任何闪烁）
+        if (!session) { 
+            window.location.href = '/login.html';
+            return; 
+        }
+        // 🌟 核心修复：验证通过，立刻让页面显形！
+        document.querySelector('main').style.display = 'block';
+            
         const currentUser = session.user;
         const { data: profile } = await client.from('profiles').select('*').eq('id', currentUser.id).maybeSingle();
         
