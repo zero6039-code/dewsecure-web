@@ -30,8 +30,13 @@ document.addEventListener('DOMContentLoaded', () => {
             currentTarget = target;
             const t = window.fallbackTranslations || {};
             if (!t['dl_' + target + '_title']) return;
+            
             titleEl.textContent = t['dl_' + target + '_title'];
             descEl.textContent = t['dl_' + target + '_desc'];
+
+            // 🌟 文字渲染完毕后，显示元素
+            descEl.style.opacity = '1';
+            
             btnIconEl.innerHTML = '<i class="fa-brands ' + browserIcons[target] + '"></i>';
             btnTextEl.textContent = t['dl_btn_' + target] || ('Download for ' + target);
             btnEl.href = browserUrls[target];
