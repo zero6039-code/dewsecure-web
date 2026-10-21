@@ -11,49 +11,164 @@
         body { background: #0d1117; color: #c9d1d9; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif; margin: 0; }
         .i18n-loading [data-i18n] { visibility: hidden !important; }
         
-        /* 布局容器 */
-        .dashboard-container { max-width: 1200px; margin: 100px auto 40px; padding: 0 20px; display: grid; grid-template-columns: 2fr 1fr; gap: 24px; }
-        .card { background: rgba(22, 27, 34, 0.6); backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 20px; padding: 30px; margin-bottom: 24px; }
-        .card h3 { color: #fff; margin-bottom: 20px; font-size: 20px; display: flex; align-items: center; gap: 10px; }
-        .status-badge { display: inline-block; padding: 6px 12px; border-radius: 20px; font-size: 13px; font-weight: 600; background: rgba(88,166,255,0.15); color: #58a6ff; border: 1px solid rgba(88,166,255,0.3); }
-        .status-pro { background: rgba(255, 196, 0, 0.15); color: #ffc400; border-color: rgba(255, 196, 0, 0.3); }
-        .data-row { display: flex; justify-content: space-between; padding: 15px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        /* =========================================
+           仅保留主内容区样式，绝不碰 Header 样式
+           ========================================= */
+        
+        .dashboard-container { 
+            max-width: 1200px; 
+            margin: 100px auto 40px; 
+            padding: 0 20px; 
+            display: grid; 
+            grid-template-columns: 2fr 1fr; 
+            gap: 24px; 
+        }
+
+        .card { 
+            background: rgba(22, 27, 34, 0.6); 
+            backdrop-filter: blur(16px); 
+            border: 1px solid rgba(255, 255, 255, 0.08); 
+            border-radius: 20px; 
+            padding: 30px; 
+            margin-bottom: 24px; 
+        }
+
+        .card h3 { 
+            color: #fff; 
+            margin-bottom: 20px; 
+            font-size: 20px; 
+            display: flex; 
+            align-items: center; 
+            gap: 10px; 
+        }
+
+        .status-badge { 
+            display: inline-block; 
+            padding: 6px 12px; 
+            border-radius: 20px; 
+            font-size: 13px; 
+            font-weight: 600; 
+            background: rgba(88,166,255,0.15); 
+            color: #58a6ff; 
+            border: 1px solid rgba(88,166,255,0.3); 
+        }
+
+        .status-pro { 
+            background: rgba(255, 196, 0, 0.15); 
+            color: #ffc400; 
+            border-color: rgba(255, 196, 0, 0.3); 
+        }
+
+        .data-row { 
+            display: flex; 
+            justify-content: space-between; 
+            padding: 15px 0; 
+            border-bottom: 1px solid rgba(255,255,255,0.05); 
+        }
+
         .data-row:last-child { border-bottom: none; }
         .data-label { color: #8b949e; }
         .data-value { color: #fff; font-weight: 600; }
-        .btn { padding: 10px 20px; border-radius: 10px; font-weight: 600; cursor: pointer; border: none; transition: 0.3s; font-size: 14px; }
+
+        .btn { 
+            padding: 10px 20px; 
+            border-radius: 10px; 
+            font-weight: 600; 
+            cursor: pointer; 
+            border: none; 
+            transition: 0.3s; 
+            font-size: 14px; 
+        }
+
         .btn-primary { background: #fff; color: #000; }
         .btn-primary:hover { background: #e6edf3; }
-        .btn-danger { background: rgba(248, 81, 73, 0.1); color: #f85149; border: 1px solid rgba(248, 81, 73, 0.3); padding: 8px 16px; }
+
+        .btn-danger { 
+            background: rgba(248, 81, 73, 0.1); 
+            color: #f85149; 
+            border: 1px solid rgba(248, 81, 73, 0.3); 
+            padding: 8px 16px; 
+        }
         .btn-danger:hover { background: rgba(248, 81, 73, 0.2); }
+
         .invite-box { display: flex; gap: 10px; margin-top: 15px; }
-        .invite-input { flex: 1; background: rgba(0,0,0,0.3); border: 1px dashed rgba(88,166,255,0.5); border-radius: 10px; padding: 12px; color: #58a6ff; font-family: monospace; font-size: 16px; letter-spacing: 2px; text-align: center; }
+        
+        .invite-input { 
+            flex: 1; 
+            background: rgba(0,0,0,0.3); 
+            border: 1px dashed rgba(88,166,255,0.5); 
+            border-radius: 10px; 
+            padding: 12px; 
+            color: #58a6ff; 
+            font-family: monospace; 
+            font-size: 16px; 
+            letter-spacing: 2px; 
+            text-align: center; 
+        }
+
         .notification-list { list-style: none; padding: 0; max-height: 400px; overflow-y: auto; margin: 0; }
-        .notification-item { padding: 15px; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 14px; }
+        
+        .notification-item { 
+            padding: 15px; 
+            border-bottom: 1px solid rgba(255,255,255,0.05); 
+            font-size: 14px; 
+        }
+        
         .notification-item.unread { background: rgba(88,166,255,0.05); }
         .notification-time { font-size: 12px; color: #8b949e; margin-top: 5px; }
         
         /* 弹窗样式 */
-        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); backdrop-filter: blur(8px); display: flex; align-items: center; justify-content: center; z-index: 1000; opacity: 0; pointer-events: none; transition: 0.3s; }
+        .modal-overlay { 
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+            background: rgba(0,0,0,0.7); backdrop-filter: blur(8px); 
+            display: flex; align-items: center; justify-content: center; 
+            z-index: 1000; opacity: 0; pointer-events: none; transition: 0.3s; 
+        }
         .modal-overlay.active { opacity: 1; pointer-events: all; }
-        .modal-content { background: rgba(22, 27, 34, 0.9); border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; padding: 30px; max-width: 450px; width: 90%; }
+        
+        .modal-content { 
+            background: rgba(22, 27, 34, 0.9); 
+            border: 1px solid rgba(255,255,255,0.1); 
+            border-radius: 20px; padding: 30px; 
+            max-width: 450px; width: 90%; 
+        }
+        
         .modal-content h3 { margin-bottom: 15px; color: #fff; }
-        .modal-content textarea { width: 100%; height: 100px; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; padding: 10px; color: #fff; margin-top: 10px; resize: none; outline: none; }
+        
+        .modal-content textarea { 
+            width: 100%; height: 100px; background: rgba(0,0,0,0.3); 
+            border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; 
+            padding: 10px; color: #fff; margin-top: 10px; resize: none; outline: none; 
+        }
+        
         .modal-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px; }
+        
         .hidden { display: none !important; }
         
         /* 满 12 次模糊卡片效果 */
         .card-completed { position: relative; pointer-events: none; }
-        .card-completed::after { content: "感谢您的分享！已达奖励上限。请留意通知中心，我们会定期发放福利。"; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(22,27,34,0.85); backdrop-filter: blur(8px); display: flex; align-items: center; justify-content: center; text-align: center; padding: 30px; color: #58a6ff; font-weight: bold; font-size: 16px; border-radius: 20px; z-index: 10; }
+        .card-completed::after { 
+            content: "感谢您的分享！已达奖励上限。请留意通知中心，我们会定期发放福利。"; 
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%; 
+            background: rgba(22,27,34,0.85); backdrop-filter: blur(8px); 
+            display: flex; align-items: center; justify-content: center; 
+            text-align: center; padding: 30px; color: #58a6ff; 
+            font-weight: bold; font-size: 16px; border-radius: 20px; z-index: 10; 
+        }
 
-        /* 响应式调整 */
+        /* =========================================
+           响应式：内容区变单列
+           ========================================= */
         @media (max-width: 900px) {
-            .dashboard-container { grid-template-columns: 1fr; margin-top: 80px; }
+            .dashboard-container { 
+                grid-template-columns: 1fr; 
+                margin-top: 80px; 
+            }
         }
     </style>
 </head>
 <body>
-    <!-- 纯净版 Header，交给 auth-nav.js 渲染 -->
+    <!-- 纯净 Header，排版完全交给 auth-nav.js 接管 -->
     <header>
         <a href="/index.html" class="logo"><img src="/DewSecure.png" alt="DewSecure"> DewSecure</a>
         <nav>
@@ -147,6 +262,7 @@
 
         async function initDashboard() {
             try {
+                // 1. 检查登录状态
                 const { data: { session }, error } = await supabaseClient.auth.getSession();
                 if (error || !session) {
                     window.location.href = '/login.html';
@@ -154,6 +270,7 @@
                 }
                 currentUser = session.user;
 
+                // 2. 获取 Profile 数据
                 const { data: profile, error: profileErr } = await supabaseClient
                     .from('profiles')
                     .select('*')
@@ -164,14 +281,17 @@
 
                 currentProfile = profile || { tier: 'free', trial_ends_at: null, invite_success_count: 0 };
 
+                // 3. 渲染数据
                 await renderProfileStatus(currentProfile); 
                 fetchNotifications();
 
+                // 4. 绑定事件
                 document.getElementById('btnGenInvite').onclick = generateInvite;
                 document.getElementById('btnCancelSub').onclick = () => document.getElementById('cancelModal').classList.add('active');
                 document.getElementById('btnCloseModal').onclick = () => document.getElementById('cancelModal').classList.remove('active');
                 document.getElementById('btnConfirmCancel').onclick = submitCancelSubscription;
 
+                // 5. 显示主界面
                 document.getElementById('mainContent').style.display = 'grid';
             } catch (err) {
                 console.error("Dashboard 初始化错误:", err);
@@ -193,6 +313,7 @@
             const inviteCount = profile.invite_success_count || 0;
             document.getElementById('inviteCount').textContent = inviteCount;
 
+            // 模糊卡片判断与自动拉取邀请码
             if (inviteCount >= 12) {
                 document.getElementById('inviteCard').classList.add('card-completed');
             } else {
@@ -218,6 +339,7 @@
                 }
             }
 
+            // 时间计算逻辑
             let expireDate = profile.trial_ends_at ? new Date(profile.trial_ends_at) : null;
             const now = new Date();
             
@@ -338,6 +460,7 @@
 
         initDashboard();
     </script>
+    <!-- 引入统一的状态管理与导航布局 -->
     <script src="/js/auth-nav.js"></script>
 </body>
 </html>
