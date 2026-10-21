@@ -1,5 +1,5 @@
 /* ==========================================
-   DewSecure 纯净版全局样式 (V4.0 Swup 无刷新版)
+   DewSecure 纯净版全局样式 (V5.0 终极稳定版)
    ========================================== */
 
 :root {
@@ -13,8 +13,9 @@
 * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
 
 html {
-    overflow-y: scroll;
-    scrollbar-gutter: stable;
+    /* 核心：强制滚动条占位，彻底解决页面切换时的宽度抖动 */
+    overflow-y: scroll !important;
+    scrollbar-gutter: stable !important;
 }
 
 body {
@@ -104,19 +105,6 @@ header .lang-switch {
 .lang-switch:hover .lang-dropdown { opacity: 1; visibility: visible; transform: translateY(0); }
 .lang-dropdown li { padding: 10px 20px; font-size: 14px; color: var(--text-muted); cursor: pointer; }
 .lang-dropdown li:hover { background: rgba(255,255,255,0.1); color: #fff; }
-
-/* ==========================================
-   Swup 无刷新过渡动画
-   ========================================== */
-.transition-fade {
-    transition: 0.3s;
-    opacity: 1;
-}
-html.is-animating .transition-fade {
-    opacity: 0;
-    transform: translateY(10px);
-}
-#swup { min-height: calc(100vh - 80px); }
 
 /* ==========================================
    通用 UI 组件
@@ -267,68 +255,6 @@ body > .skiptranslate { display: none !important; }
 .log-content { color: #c9d1d9; font-size: 15px; line-height: 1.7; }
 
 /* ==========================================
-   登录页专属
-   ========================================== */
-.login-layout { display: flex; min-height: calc(100vh - 80px); width: 100%; }
-.login-left { flex: 1; display: flex; flex-direction: column; justify-content: center; padding: 10%; background: radial-gradient(circle at 0% 50%, rgba(88, 166, 255, 0.08) 0%, transparent 60%); border-right: 1px solid rgba(255, 255, 255, 0.03); }
-.login-right { flex: 1; display: flex; align-items: center; justify-content: center; padding: 40px; }
-.login-card { width: 100%; max-width: 420px; background: rgba(22, 27, 34, 0.4); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 24px; padding: 40px; backdrop-filter: blur(24px); }
-.login-left h1 { font-size: 48px; color: #fff; margin-bottom: 20px; font-weight: 800; line-height: 1.2; }
-.login-left p { font-size: 18px; color: #8b949e; line-height: 1.6; max-width: 400px; }
-.login-card h2 { font-size: 24px; color: #fff; margin-bottom: 8px; }
-.login-card p.sub { font-size: 14px; color: #8b949e; margin-bottom: 30px; }
-.input-group { margin-bottom: 20px; }
-.input-group label { display: block; font-size: 13px; color: #c9d1d9; margin-bottom: 8px; }
-.input-wrapper { position: relative; }
-.input-wrapper i { position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: #8b949e; }
-.input-wrapper input { width: 100%; height: 48px; padding: 0 16px 0 44px; background: rgba(0, 0, 0, 0.2); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 12px; color: #fff; outline: none; transition: 0.3s; }
-.input-wrapper input:focus { border-color: #58a6ff; }
-.btn-login { width: 100%; height: 48px; background: #fff; color: #000; border-radius: 12px; font-size: 16px; font-weight: 700; cursor: pointer; border: none; margin-top: 10px; transition: 0.3s; }
-.btn-login:hover { background: #e6edf3; }
-.btn-login:disabled { opacity: 0.5; cursor: not-allowed; }
-.divider { display: flex; align-items: center; text-align: center; margin: 30px 0; color: #8b949e; font-size: 13px; }
-.divider::before, .divider::after { content: ''; flex: 1; border-bottom: 1px solid rgba(255,255,255,0.1); }
-.divider::before { margin-right: 15px; } .divider::after { margin-left: 15px; }
-.oauth-btns { display: flex; gap: 15px; }
-.oauth-btn { flex: 1; height: 48px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 18px; cursor: pointer; transition: 0.2s; }
-.oauth-btn:hover { background: rgba(255,255,255,0.1); }
-.trial-badge { margin-top: 25px; padding: 12px; background: rgba(88,166,255,0.1); border-radius: 8px; text-align: center; font-size: 13px; color: #58a6ff; }
-.hidden { display: none !important; }
-.error-msg { color: #f85149; font-size: 13px; margin-top: 5px; display: none; }
-
-/* ==========================================
-   Dashboard 专属
-   ========================================== */
-.dashboard-container { max-width: 1200px; margin: 40px auto; padding: 0 20px; display: grid; grid-template-columns: 2fr 1fr; gap: 24px; }
-.status-badge { display: inline-block; padding: 6px 12px; border-radius: 20px; font-size: 13px; font-weight: 600; background: rgba(88,166,255,0.15); color: #58a6ff; border: 1px solid rgba(88,166,255,0.3); }
-.status-pro { background: rgba(255, 196, 0, 0.15); color: #ffc400; border-color: rgba(255, 196, 0, 0.3); }
-.data-row { display: flex; justify-content: space-between; padding: 15px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
-.data-row:last-child { border-bottom: none; }
-.data-label { color: #8b949e; }
-.data-value { color: #fff; font-weight: 600; }
-.btn { padding: 10px 20px; border-radius: 10px; font-weight: 600; cursor: pointer; border: none; transition: 0.3s; font-size: 14px; }
-.btn-primary { background: #fff; color: #000; }
-.btn-primary:hover { background: #e6edf3; }
-.btn-danger { background: rgba(248, 81, 73, 0.1); color: #f85149; border: 1px solid rgba(248, 81, 73, 0.3); padding: 8px 16px; }
-.btn-danger:hover { background: rgba(248, 81, 73, 0.2); }
-.invite-box { display: flex; gap: 10px; margin-top: 15px; }
-.invite-input { flex: 1; background: rgba(0,0,0,0.3); border: 1px dashed rgba(88,166,255,0.5); border-radius: 10px; padding: 12px; color: #58a6ff; font-family: monospace; font-size: 16px; letter-spacing: 2px; text-align: center; }
-.notification-list { list-style: none; padding: 0; max-height: 400px; overflow-y: auto; margin: 0; }
-.notification-item { padding: 15px; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 14px; }
-.notification-item.unread { background: rgba(88,166,255,0.05); }
-.notification-time { font-size: 12px; color: #8b949e; margin-top: 5px; }
-.modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); backdrop-filter: blur(8px); display: flex; align-items: center; justify-content: center; z-index: 1000; opacity: 0; pointer-events: none; transition: 0.3s; }
-.modal-overlay.active { opacity: 1; pointer-events: all; }
-.modal-content { background: rgba(22, 27, 34, 0.9); border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; padding: 30px; max-width: 450px; width: 90%; }
-.modal-content h3 { margin-bottom: 15px; color: #fff; }
-.modal-content textarea { width: 100%; height: 100px; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; padding: 10px; color: #fff; margin-top: 10px; resize: none; outline: none; }
-.modal-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px; }
-.card-completed { position: relative; pointer-events: none; }
-.card-completed::after { content: "感谢您的分享！已达奖励上限。请留意通知中心，我们会定期发放福利。"; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(22,27,34,0.85); backdrop-filter: blur(8px); display: flex; align-items: center; justify-content: center; text-align: center; padding: 30px; color: #58a6ff; font-weight: bold; font-size: 16px; border-radius: 20px; z-index: 10; }
-.skeleton-text { color: #8b949e; font-size: 14px; animation: pulse 1.5s infinite; }
-@keyframes pulse { 0% { opacity: .6; } 50% { opacity: 1; } 100% { opacity: .6; } }
-
-/* ==========================================
    响应式
    ========================================== */
 @media (max-width: 1100px) {
@@ -337,10 +263,6 @@ body > .skiptranslate { display: none !important; }
     header .header-right { order: 2; width: auto; }
     header nav { order: 3; width: 100%; justify-content: center; margin-top: 15px; }
     body { padding-top: 140px !important; }
-}
-
-@media (max-width: 900px) {
-    .dashboard-container { grid-template-columns: 1fr; }
 }
 
 @media (max-width: 768px) {
@@ -358,9 +280,5 @@ body > .skiptranslate { display: none !important; }
     .comp-val { font-size: 16px; }
     .comp-val.text-val { font-size: 12px; }
     .price-card { min-width: 100%; margin-bottom: 20px; }
-    .login-layout { flex-direction: column; }
-    .login-left { padding: 40px 20px; text-align: center; border-right: none; border-bottom: 1px solid rgba(255,255,255,0.05); }
-    .login-left h1 { font-size: 32px; }
-    .login-right { padding: 30px 20px; }
     .site-footer { flex-direction: column; gap: 10px; text-align: center; }
 }
