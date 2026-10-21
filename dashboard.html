@@ -10,6 +10,12 @@
     <link rel="icon" type="image/png" href="/DewSecure.png">
 </head>
 <body>
+    <!-- 🌟 终极防闪烁：全屏加载遮罩 -->
+    <div id="page-loader" style="position: fixed; inset: 0; background: #050505; z-index: 99999; display: flex; align-items: center; justify-content: center;">
+        <div style="width: 40px; height: 40px; border: 4px solid rgba(255,255,255,0.1); border-top-color: #58a6ff; border-radius: 50%; animation: spin 1s linear infinite;"></div>
+    </div>
+    <style>@keyframes spin { 100% { transform: rotate(360deg); } }</style>
+
     <header>
         <a href="/index.html" class="logo"><img src="/DewSecure.png" alt="DewSecure"> DewSecure</a>
         <nav>
@@ -32,7 +38,8 @@
         </div>
     </header>
 
-    <main id="swup" class="transition-fade" style="display: none;">
+    <!-- 🌟 去掉了 display: none; 因为遮罩会挡住它 -->
+    <main id="swup" class="transition-fade">
         <div class="dashboard-container" id="mainContent">
             <div class="left-column">
                 <div class="card">
@@ -57,7 +64,6 @@
 
                 <div class="card" id="inviteCard">
                     <h3><i class="fa-solid fa-gift"></i> <span data-i18n="dash_invite_title">邀请好友，获取奖励</span></h3>
-                    <!-- 🌟 更新文案：提示好友付费14天后发放 -->
                     <p style="color:#8b949e; font-size:14px;" data-i18n="dash_invite_desc">邀请好友注册。当他们完成首次真实付费满 14 天后，您将获得额外 120 天高级版奖励！</p>
                     <div class="invite-box">
                         <div class="invite-input" id="myInviteCode" data-i18n="dash_invite_click">点击下方生成</div>
