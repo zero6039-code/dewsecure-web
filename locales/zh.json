@@ -174,5 +174,7 @@
   "login_email_ph": "name@example.com",
   "login_btn": "使用邮箱登录 (OTP)",
   "login_or": "或者继续使用",
-  "login_trial": "🎁 首次注册即赠 30 天高级版体验"
+  "login_trial": "🎁 首次注册即赠 30 天高级版体验",
+  "nav_dashboard": "控制台",
+  "nav_logout": "退出"
 }
