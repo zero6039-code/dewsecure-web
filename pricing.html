@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DewSecure - Pricing</title>
     <link rel="stylesheet" href="/style.css">
+    <link rel="stylesheet" href="https://unpkg.com/swup@4/dist/swup.css"> <!-- 🌟 新增 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="icon" type="image/png" href="/DewSecure.png">
 </head>
@@ -30,76 +31,81 @@
         </div>
     </header>
 
-    <div class="pricing-wrapper">
-        <h2 class="pricing-title" data-i18n="pricing_title">选择适合您的方案</h2>
-        <div class="pricing-grid">
-            <div class="price-card">
-                <h3 data-i18n="free_plan">免费版</h3>
-                <div class="price-amount">$0<span> / <span data-i18n="forever">永久</span></span></div>
-                <p class="price-desc" data-i18n="free_desc">完全免费。已能净化大部分网页内容，无需登录也可以使用，无任何强制订阅。注册并登录账号后，即可立即激活 30 天高级版。如果满足日常需求，您完全可以永远不花钱使用。</p>
-                <ul class="price-features">
-                    <li><i class="fa-solid fa-check"></i> <span data-i18n="free_feat1">110,000+ 拦截规则</span></li>
-                    <li><i class="fa-solid fa-check"></i> <span data-i18n="free_feat2">基础防追踪与弹窗清理</span></li>
-                </ul>
-                <a href="/index.html" class="btn-pricing btn-free" data-i18n="free_btn">免费安装</a>
-            </div>
-
-            <div class="price-card highlight">
-                <h3 data-i18n="pro_plan">高级版 (Pro)</h3>
-                <div class="price-amount">$11.99<span> / <span data-i18n="year">年</span></span></div>
-                <p class="price-desc" data-i18n="pro_desc">为追求极致体验的用户打造。解锁完整 AI 拦截与全平台无缝同步。</p>
-                <ul class="price-features">
-                    <li><i class="fa-solid fa-check"></i> <span data-i18n="pro_feat1">完整规则 + 无限 AI 防护</span></li>
-                    <li><i class="fa-solid fa-check"></i> <div><span data-i18n="pro_feat2">跨设备同步 (最多 3 台)</span><div class="tooltip-container"><i class="fa-solid fa-circle-question tooltip-icon"></i><div class="tooltip-content"><h5 data-i18n="tooltip_title">如何区分设备？</h5><p data-i18n="tooltip_desc">同一台 PC 上的浏览器 A 和浏览器 B 算作 2 台。手机 Android A + PC 浏览器 A 算作 2 台。跨设备使用时，只需在设备 B 的插件中输入您的邀请链接激活即可。超出限制时，可在后台一键解绑。</p></div></div></div></li>
-                </ul>
-                <button class="btn-pricing btn-pro" data-i18n="pro_btn">升级到高级版</button>
-            </div>
-
-            <div class="price-card">
-                <h3 data-i18n="fam_plan">家庭版</h3>
-                <div class="price-amount">$29.99<span> / <span data-i18n="year">年</span></span></div>
-                <p class="price-desc" data-i18n="fam_desc">守护全家人的数字安全。支持高达 9 台设备同时在线。</p>
-                <ul class="price-features">
-                    <li><i class="fa-solid fa-check"></i> <span data-i18n="fam_feat1">Pro 版所有功能</span></li>
-                    <li><i class="fa-solid fa-check"></i> <div><span data-i18n="fam_feat2">跨设备同步 (最多 9 台)</span><div class="tooltip-container"><i class="fa-solid fa-circle-question tooltip-icon"></i><div class="tooltip-content"><h5 data-i18n="tooltip_title">如何区分设备？</h5><p data-i18n="tooltip_desc">同一台 PC 上的浏览器 A 和浏览器 B 算作 2 台。手机 Android A + PC 浏览器 A 算作 2 台。跨设备使用时，只需在设备 B 的插件中输入您的邀请链接激活即可。超出限制时，可在后台一键解绑。</p></div></div></div></li>
-                </ul>
-                <button class="btn-pricing btn-fam" data-i18n="fam_btn">升级到家庭版</button>
-            </div>
-        </div>
-
-        <div class="comparison-section">
-            <div class="comparison-header">
-                <h2 data-i18n="comp_table_title">功能详细对比</h2>
-                <p data-i18n="comp_table_sub">选择最适合您的数字安全护盾。</p>
-            </div>
-            <div class="comparison-table">
-                <div class="comp-row comp-table-header">
-                    <div class="comp-feature"></div>
-                    <div class="comp-val text-val" data-i18n="comp_table_free">免费版</div>
-                    <div class="comp-val text-val" data-i18n="comp_table_pro">高级版</div>
-                    <div class="comp-val text-val" data-i18n="comp_table_fam">家庭版</div>
+    <!-- 🌟 新增包裹 -->
+    <main id="swup" class="transition-fade">
+        <div class="pricing-wrapper">
+            <h2 class="pricing-title" data-i18n="pricing_title">选择适合您的方案</h2>
+            <div class="pricing-grid">
+                <div class="price-card">
+                    <h3 data-i18n="free_plan">免费版</h3>
+                    <div class="price-amount">$0<span> / <span data-i18n="forever">永久</span></span></div>
+                    <p class="price-desc" data-i18n="free_desc">完全免费。已能净化大部分网页内容，无需登录也可以使用，无任何强制订阅。注册并登录账号后，即可立即激活 30 天高级版。如果满足日常需求，您完全可以永远不花钱使用。</p>
+                    <ul class="price-features">
+                        <li><i class="fa-solid fa-check"></i> <span data-i18n="free_feat1">110,000+ 拦截规则</span></li>
+                        <li><i class="fa-solid fa-check"></i> <span data-i18n="free_feat2">基础防追踪与弹窗清理</span></li>
+                    </ul>
+                    <a href="/index.html" class="btn-pricing btn-free" data-i18n="free_btn">免费安装</a>
                 </div>
-                <div class="comp-category" data-i18n="comp_cat_core">核心拦截能力</div>
-                <div class="comp-row"><div class="comp-feature"><strong data-i18n="comp_dnr">DNR 规则拦截</strong><span data-i18n="comp_dnr_desc">利用浏览器原生 API，极速拦截已知恶意域名与广告</span></div><div class="comp-val yes"><i class="fa-solid fa-check"></i></div><div class="comp-val yes"><i class="fa-solid fa-check"></i></div><div class="comp-val yes"><i class="fa-solid fa-check"></i></div></div>
-                <div class="comp-row"><div class="comp-feature"><strong data-i18n="comp_clickjack">防点击劫持（防弹窗）</strong><span data-i18n="comp_clickjack_desc">阻止恶意网站用透明层骗取点击，从源头阻断弹窗</span></div><div class="comp-val yes"><i class="fa-solid fa-check"></i></div><div class="comp-val yes"><i class="fa-solid fa-check"></i></div><div class="comp-val yes"><i class="fa-solid fa-check"></i></div></div>
-                <div class="comp-row"><div class="comp-feature"><strong data-i18n="comp_block_tracker">阻止基础追踪</strong><span data-i18n="comp_block_tracker_desc">拦截各类常规跟踪脚本和隐形追踪像素</span></div><div class="comp-val yes"><i class="fa-solid fa-check"></i></div><div class="comp-val yes"><i class="fa-solid fa-check"></i></div><div class="comp-val yes"><i class="fa-solid fa-check"></i></div></div>
-                <div class="comp-row"><div class="comp-feature"><strong data-i18n="comp_antiblock">反反拦截保护</strong><span data-i18n="comp_antiblock_desc">隐藏拦截器特征，防止网站检测到插件后拒绝提供内容</span></div><div class="comp-val yes"><i class="fa-solid fa-check"></i></div><div class="comp-val yes"><i class="fa-solid fa-check"></i></div><div class="comp-val yes"><i class="fa-solid fa-check"></i></div></div>
-                <div class="comp-row"><div class="comp-feature"><strong data-i18n="comp_cookie_btn">智能 Cookie 管家</strong><span data-i18n="comp_cookie_desc">自动隐藏烦人的 Cookie 同意横幅，保持页面清爽</span></div><div class="comp-val yes"><i class="fa-solid fa-check"></i></div><div class="comp-val yes"><i class="fa-solid fa-check"></i></div><div class="comp-val yes"><i class="fa-solid fa-check"></i></div></div>
-                <div class="comp-row"><div class="comp-feature"><strong data-i18n="comp_placeholder">隐藏广告占位符</strong><span data-i18n="comp_placeholder_desc">彻底移除广告被拦截后留下的难看空白区域，保持排版整洁</span></div><div class="comp-val yes"><i class="fa-solid fa-check"></i></div><div class="comp-val yes"><i class="fa-solid fa-check"></i></div><div class="comp-val yes"><i class="fa-solid fa-check"></i></div></div>
-                <div class="comp-row"><div class="comp-feature"><strong data-i18n="comp_social_tracker">拦截社交追踪</strong><span data-i18n="comp_social_tracker_desc">切断 Facebook/Twitter 等社交平台嵌入网页的隐形追踪</span></div><div class="comp-val yes"><i class="fa-solid fa-check"></i></div><div class="comp-val yes"><i class="fa-solid fa-check"></i></div><div class="comp-val yes"><i class="fa-solid fa-check"></i></div></div>
-                <div class="comp-category" data-i18n="comp_cat_pro" style="color: #d29922;">高级版</div>
-                <div class="comp-row"><div class="comp-feature"><strong data-i18n="comp_ai_4class">AI 智能实时检测（四分类）</strong><span data-i18n="comp_ai_4class_desc">本地毫秒级推理，主动识别规则库未收录的新型广告与威胁</span></div><div class="comp-val no"><i class="fa-solid fa-xmark"></i></div><div class="comp-val yes"><i class="fa-solid fa-check"></i></div><div class="comp-val yes"><i class="fa-solid fa-check"></i></div></div>
-                <div class="comp-row"><div class="comp-feature"><strong data-i18n="comp_phishing_alert">钓鱼/挖矿实时预警</strong><span data-i18n="comp_phishing_alert_desc">遇到高危网站或静默挖矿脚本时，即时阻断并发出安全警告</span></div><div class="comp-val no"><i class="fa-solid fa-xmark"></i></div><div class="comp-val yes"><i class="fa-solid fa-check"></i></div><div class="comp-val yes"><i class="fa-solid fa-check"></i></div></div>
-                <div class="comp-row"><div class="comp-feature"><strong data-i18n="comp_ai_model_update">AI 模型云端热更新</strong><span data-i18n="comp_ai_model_update_desc">每周自动拉取最新 AI 模型，持续对抗不断变异的恶意脚本</span></div><div class="comp-val no"><i class="fa-solid fa-xmark"></i></div><div class="comp-val yes"><i class="fa-solid fa-check"></i></div><div class="comp-val yes"><i class="fa-solid fa-check"></i></div></div>
-                <div class="comp-row"><div class="comp-feature"><strong data-i18n="comp_custom_rules">跨设备云端同步</strong><span data-i18n="comp_custom_rules_desc">您的白名单、自定义规则与拦截记录可在多台设备间无缝同步</span></div><div class="comp-val no"><i class="fa-solid fa-xmark"></i></div><div class="comp-val yes"><i class="fa-solid fa-check"></i></div><div class="comp-val yes"><i class="fa-solid fa-check"></i></div></div>
-                <div class="comp-category" data-i18n="comp_cat_dev">设备与体验</div>
-                <div class="comp-row"><div class="comp-feature"><strong data-i18n="comp_dev_count">设备数量限制</strong></div><div class="comp-val text-val" data-i18n="comp_dev_count_free">无限（本地）</div><div class="comp-val text-val" data-i18n="comp_dev_count_pro">最多 3 台</div><div class="comp-val text-val" data-i18n="comp_dev_count_fam">最多 9 台</div></div>
-                <div class="comp-row"><div class="comp-feature"><strong data-i18n="comp_support">支持优先级</strong></div><div class="comp-val text-val" data-i18n="comp_support_free">社区支持</div><div class="comp-val text-val" data-i18n="comp_support_pro">优先邮件支持</div><div class="comp-val text-val" data-i18n="comp_support_fam">优先邮件支持</div></div>
+
+                <div class="price-card highlight">
+                    <h3 data-i18n="pro_plan">高级版 (Pro)</h3>
+                    <div class="price-amount">$11.99<span> / <span data-i18n="year">年</span></span></div>
+                    <p class="price-desc" data-i18n="pro_desc">为追求极致体验的用户打造。解锁完整 AI 拦截与全平台无缝同步。</p>
+                    <ul class="price-features">
+                        <li><i class="fa-solid fa-check"></i> <span data-i18n="pro_feat1">完整规则 + 无限 AI 防护</span></li>
+                        <li><i class="fa-solid fa-check"></i> <div><span data-i18n="pro_feat2">跨设备同步 (最多 3 台)</span><div class="tooltip-container"><i class="fa-solid fa-circle-question tooltip-icon"></i><div class="tooltip-content"><h5 data-i18n="tooltip_title">如何区分设备？</h5><p data-i18n="tooltip_desc">同一台 PC 上的浏览器 A 和浏览器 B 算作 2 台。手机 Android A + PC 浏览器 A 算作 2 台。跨设备使用时，只需在设备 B 的插件中输入您的邀请链接激活即可。超出限制时，可在后台一键解绑。</p></div></div></div></li>
+                    </ul>
+                    <button class="btn-pricing btn-pro" data-i18n="pro_btn">升级到高级版</button>
+                </div>
+
+                <div class="price-card">
+                    <h3 data-i18n="fam_plan">家庭版</h3>
+                    <div class="price-amount">$29.99<span> / <span data-i18n="year">年</span></span></div>
+                    <p class="price-desc" data-i18n="fam_desc">守护全家人的数字安全。支持高达 9 台设备同时在线。</p>
+                    <ul class="price-features">
+                        <li><i class="fa-solid fa-check"></i> <span data-i18n="fam_feat1">Pro 版所有功能</span></li>
+                        <li><i class="fa-solid fa-check"></i> <div><span data-i18n="fam_feat2">跨设备同步 (最多 9 台)</span><div class="tooltip-container"><i class="fa-solid fa-circle-question tooltip-icon"></i><div class="tooltip-content"><h5 data-i18n="tooltip_title">如何区分设备？</h5><p data-i18n="tooltip_desc">同一台 PC 上的浏览器 A 和浏览器 B 算作 2 台。手机 Android A + PC 浏览器 A 算作 2 台。跨设备使用时，只需在设备 B 的插件中输入您的邀请链接激活即可。超出限制时，可在后台一键解绑。</p></div></div></div></li>
+                    </ul>
+                    <button class="btn-pricing btn-fam" data-i18n="fam_btn">升级到家庭版</button>
+                </div>
+            </div>
+
+            <div class="comparison-section">
+                <div class="comparison-header">
+                    <h2 data-i18n="comp_table_title">功能详细对比</h2>
+                    <p data-i18n="comp_table_sub">选择最适合您的数字安全护盾。</p>
+                </div>
+                <div class="comparison-table">
+                    <div class="comp-row comp-table-header">
+                        <div class="comp-feature"></div>
+                        <div class="comp-val text-val" data-i18n="comp_table_free">免费版</div>
+                        <div class="comp-val text-val" data-i18n="comp_table_pro">高级版</div>
+                        <div class="comp-val text-val" data-i18n="comp_table_fam">家庭版</div>
+                    </div>
+                    <div class="comp-category" data-i18n="comp_cat_core">核心拦截能力</div>
+                    <div class="comp-row"><div class="comp-feature"><strong data-i18n="comp_dnr">DNR 规则拦截</strong><span data-i18n="comp_dnr_desc">利用浏览器原生 API，极速拦截已知恶意域名与广告</span></div><div class="comp-val yes"><i class="fa-solid fa-check"></i></div><div class="comp-val yes"><i class="fa-solid fa-check"></i></div><div class="comp-val yes"><i class="fa-solid fa-check"></i></div></div>
+                    <div class="comp-row"><div class="comp-feature"><strong data-i18n="comp_clickjack">防点击劫持（防弹窗）</strong><span data-i18n="comp_clickjack_desc">阻止恶意网站用透明层骗取点击，从源头阻断弹窗</span></div><div class="comp-val yes"><i class="fa-solid fa-check"></i></div><div class="comp-val yes"><i class="fa-solid fa-check"></i></div><div class="comp-val yes"><i class="fa-solid fa-check"></i></div></div>
+                    <div class="comp-row"><div class="comp-feature"><strong data-i18n="comp_block_tracker">阻止基础追踪</strong><span data-i18n="comp_block_tracker_desc">拦截各类常规跟踪脚本和隐形追踪像素</span></div><div class="comp-val yes"><i class="fa-solid fa-check"></i></div><div class="comp-val yes"><i class="fa-solid fa-check"></i></div><div class="comp-val yes"><i class="fa-solid fa-check"></i></div></div>
+                    <div class="comp-row"><div class="comp-feature"><strong data-i18n="comp_antiblock">反反拦截保护</strong><span data-i18n="comp_antiblock_desc">隐藏拦截器特征，防止网站检测到插件后拒绝提供内容</span></div><div class="comp-val yes"><i class="fa-solid fa-check"></i></div><div class="comp-val yes"><i class="fa-solid fa-check"></i></div><div class="comp-val yes"><i class="fa-solid fa-check"></i></div></div>
+                    <div class="comp-row"><div class="comp-feature"><strong data-i18n="comp_cookie_btn">智能 Cookie 管家</strong><span data-i18n="comp_cookie_desc">自动隐藏烦人的 Cookie 同意横幅，保持页面清爽</span></div><div class="comp-val yes"><i class="fa-solid fa-check"></i></div><div class="comp-val yes"><i class="fa-solid fa-check"></i></div><div class="comp-val yes"><i class="fa-solid fa-check"></i></div></div>
+                    <div class="comp-row"><div class="comp-feature"><strong data-i18n="comp_placeholder">隐藏广告占位符</strong><span data-i18n="comp_placeholder_desc">彻底移除广告被拦截后留下的难看空白区域，保持排版整洁</span></div><div class="comp-val yes"><i class="fa-solid fa-check"></i></div><div class="comp-val yes"><i class="fa-solid fa-check"></i></div><div class="comp-val yes"><i class="fa-solid fa-check"></i></div></div>
+                    <div class="comp-row"><div class="comp-feature"><strong data-i18n="comp_social_tracker">拦截社交追踪</strong><span data-i18n="comp_social_tracker_desc">切断 Facebook/Twitter 等社交平台嵌入网页的隐形追踪</span></div><div class="comp-val yes"><i class="fa-solid fa-check"></i></div><div class="comp-val yes"><i class="fa-solid fa-check"></i></div><div class="comp-val yes"><i class="fa-solid fa-check"></i></div></div>
+                    <div class="comp-category" data-i18n="comp_cat_pro" style="color: #d29922;">高级版</div>
+                    <div class="comp-row"><div class="comp-feature"><strong data-i18n="comp_ai_4class">AI 智能实时检测（四分类）</strong><span data-i18n="comp_ai_4class_desc">本地毫秒级推理，主动识别规则库未收录的新型广告与威胁</span></div><div class="comp-val no"><i class="fa-solid fa-xmark"></i></div><div class="comp-val yes"><i class="fa-solid fa-check"></i></div><div class="comp-val yes"><i class="fa-solid fa-check"></i></div></div>
+                    <div class="comp-row"><div class="comp-feature"><strong data-i18n="comp_phishing_alert">钓鱼/挖矿实时预警</strong><span data-i18n="comp_phishing_alert_desc">遇到高危网站或静默挖矿脚本时，即时阻断并发出安全警告</span></div><div class="comp-val no"><i class="fa-solid fa-xmark"></i></div><div class="comp-val yes"><i class="fa-solid fa-check"></i></div><div class="comp-val yes"><i class="fa-solid fa-check"></i></div></div>
+                    <div class="comp-row"><div class="comp-feature"><strong data-i18n="comp_ai_model_update">AI 模型云端热更新</strong><span data-i18n="comp_ai_model_update_desc">每周自动拉取最新 AI 模型，持续对抗不断变异的恶意脚本</span></div><div class="comp-val no"><i class="fa-solid fa-xmark"></i></div><div class="comp-val yes"><i class="fa-solid fa-check"></i></div><div class="comp-val yes"><i class="fa-solid fa-check"></i></div></div>
+                    <div class="comp-row"><div class="comp-feature"><strong data-i18n="comp_custom_rules">跨设备云端同步</strong><span data-i18n="comp_custom_rules_desc">您的白名单、自定义规则与拦截记录可在多台设备间无缝同步</span></div><div class="comp-val no"><i class="fa-solid fa-xmark"></i></div><div class="comp-val yes"><i class="fa-solid fa-check"></i></div><div class="comp-val yes"><i class="fa-solid fa-check"></i></div></div>
+                    <div class="comp-category" data-i18n="comp_cat_dev">设备与体验</div>
+                    <div class="comp-row"><div class="comp-feature"><strong data-i18n="comp_dev_count">设备数量限制</strong></div><div class="comp-val text-val" data-i18n="comp_dev_count_free">无限（本地）</div><div class="comp-val text-val" data-i18n="comp_dev_count_pro">最多 3 台</div><div class="comp-val text-val" data-i18n="comp_dev_count_fam">最多 9 台</div></div>
+                    <div class="comp-row"><div class="comp-feature"><strong data-i18n="comp_support">支持优先级</strong></div><div class="comp-val text-val" data-i18n="comp_support_free">社区支持</div><div class="comp-val text-val" data-i18n="comp_support_pro">优先邮件支持</div><div class="comp-val text-val" data-i18n="comp_support_fam">优先邮件支持</div></div>
+                </div>
             </div>
         </div>
-    </div>
+    </main>
+    <!-- 🌟 包裹结束 -->
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://unpkg.com/swup@4/dist/swup.min.js"></script> <!-- 🌟 新增 -->
     <script src="/js/auth-nav.js"></script>
     <script src="/js/app-init.js"></script>
     <script src="/js/i18n.js"></script>
