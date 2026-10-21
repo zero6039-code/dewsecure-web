@@ -1,71 +1,7 @@
-
-html {
-    overflow-y: scroll !important;
-    scrollbar-gutter: stable !important;
-}
-
-/* 全新无瑕的 CSS Grid 布局：绝对三等分，中间永不偏移 */
-header {
-    display: grid !important;
-    grid-template-columns: 1fr auto 1fr !important;
-    align-items: center !important;
-    padding: 0 40px !important;
-    height: 80px !important;
-    position: fixed !important;
-    top: 0 !important; left: 0 !important;
-    width: 100% !important;
-    box-sizing: border-box !important;
-    background: rgba(5, 5, 5, 0.6) !important;
-    backdrop-filter: blur(24px) !important;
-    -webkit-backdrop-filter: blur(24px) !important;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
-    z-index: 9999 !important;
-}
-
-header .logo {
-    justify-self: start !important;
-    display: flex !important;
-    align-items: center !important;
-    text-decoration: none !important;
-}
-
-header nav {
-    justify-self: center !important;
-    display: flex !important;
-    gap: 24px !important;
-    margin: 0 !important;
-}
-
-header .lang-switch {
-    justify-self: end !important;
-    display: flex !important;
-    align-items: center !important;
-    position: relative !important;
-}
-
-/* 小屏幕自适应换行 (保留) */
-@media (max-width: 1100px) {
-    header {
-        display: flex !important;
-        flex-wrap: wrap !important;
-        height: auto !important;
-        padding: 15px 20px !important;
-    }
-    header .logo { order: 1; width: 50%; justify-content: flex-start; }
-    header .lang-switch { order: 2; width: 50%; justify-content: flex-end; }
-    header nav {
-        order: 3;
-        width: 100% !important;
-        justify-content: center !important;
-        margin-top: 15px !important;
-    }
-    body { padding-top: 140px !important; }
-}
 /* ==========================================
-   DewSecure 纯净化全局样式 (V2.0)
+   DewSecure 纯净版全局样式 (V4.0 Swup 无刷新版)
    ========================================== */
 
-/* 1. 基础变量与重置 */
 :root {
     --bg-color: #050505;
     --text-main: #f0f6fc;
@@ -76,12 +12,17 @@ header .lang-switch {
 
 * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
 
+html {
+    overflow-y: scroll;
+    scrollbar-gutter: stable;
+}
+
 body {
     background-color: var(--bg-color);
     color: var(--text-main);
     line-height: 1.6;
     overflow-x: hidden;
-    padding-top: 80px; /* 为固定导航栏留出空间 */
+    padding-top: 80px;
     background-image: 
         radial-gradient(circle at 15% 0%, rgba(88, 166, 255, 0.15) 0%, transparent 40%),
         radial-gradient(circle at 85% 30%, rgba(139, 92, 246, 0.12) 0%, transparent 40%);
@@ -89,78 +30,62 @@ body {
     background-repeat: no-repeat;
 }
 
-/* 2. 绝对的 Header 标准 Flex 布局 (大屏居中，小屏换行) */
+a { color: inherit; text-decoration: none; }
 
-
-
-
-
-
-
-
-
-
-
-
-/* 小屏适配：Logo 和地球固定两边，导航掉下去 */
-@media (max-width: 1050px) {
-    
-    
-    
-    
-    body { padding-top: 130px; }
-}
-
-/* 3. 通用容器与卡片 (解决页面挤压和重叠) */
-.container-narrow {
-    max-width: 1000px;
-    margin: 40px auto;
-    padding: 0 20px;
-}
-.container-wide {
-    max-width: 1200px;
-    margin: 40px auto;
-    padding: 0 20px;
-}
-
-.card {
-    background: rgba(22, 27, 34, 0.5);
-    border: 1px solid var(--border-color);
-    border-radius: 24px;
-    padding: 40px;
+/* ==========================================
+   Header 三列 Grid 布局
+   ========================================== */
+header {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    padding: 0 40px;
+    height: 80px;
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%;
+    box-sizing: border-box;
+    background: rgba(5, 5, 5, 0.6);
     backdrop-filter: blur(24px);
     -webkit-backdrop-filter: blur(24px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    z-index: 9999;
 }
 
-/* 4. 极简按钮 */
-.btn-primary {
-    background: #fff;
-    color: #000;
-    padding: 10px 24px;
-    border-radius: 100px;
-    text-decoration: none;
-    font-weight: 600;
-    transition: all 0.3s;
-    display: inline-flex;
+header .logo {
+    justify-self: start;
+    display: flex;
     align-items: center;
-    justify-content: center;
-    border: none;
-    cursor: pointer;
+    gap: 12px;
+    font-size: 28px;
+    font-weight: 900;
+    letter-spacing: -1px;
 }
-.btn-primary:hover { box-shadow: 0 0 20px rgba(255, 255, 255, 0.4); transform: scale(1.02); }
-.btn-outline {
-    border: 1px solid var(--border-color);
-    color: var(--text-main);
-    padding: 10px 24px;
-    border-radius: 100px;
-    text-decoration: none;
-    background: rgba(255,255,255,0.03);
-    transition: all 0.3s;
-}
-.btn-outline:hover { background: rgba(255,255,255,0.1); }
+header .logo img { height: 42px; width: auto; object-fit: contain; }
 
-/* 5. 下拉菜单基础 */
-.lang-switch { position: relative; }
+header nav {
+    justify-self: center;
+    display: flex;
+    gap: 24px;
+    margin: 0;
+}
+header nav a { color: #8b949e; font-size: 14px; transition: color 0.2s; }
+header nav a:hover, header nav a.active { color: #fff; }
+
+header .header-right {
+    justify-self: end;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+header .lang-switch {
+    display: flex;
+    align-items: center;
+    position: relative;
+}
+
+/* 下拉菜单 */
 .lang-dropdown {
     position: absolute;
     top: 100%; right: 0;
@@ -180,698 +105,262 @@ body {
 .lang-dropdown li { padding: 10px 20px; font-size: 14px; color: var(--text-muted); cursor: pointer; }
 .lang-dropdown li:hover { background: rgba(255,255,255,0.1); color: #fff; }
 
-/* ======== 恢复主页专属排版 ======== */
-
-/* 1. 首屏 Hero 区域 */
-.hero {
-    min-height: calc(100vh - 80px);
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    text-align: center;
-    padding: 100px 20px 60px 20px; /* 增加顶部间距，确保半屏不重叠 */
-    position: relative;
-    z-index: 10;
+/* ==========================================
+   Swup 无刷新过渡动画
+   ========================================== */
+.transition-fade {
+    transition: 0.3s;
+    opacity: 1;
 }
-
-.hero h1 {
-    font-size: 64px;
-    font-weight: 800;
-    margin-top: 40px; /* 新增：增加顶部呼吸感 */
-    margin-bottom: 24px;
-    letter-spacing: -2px;
-    background: linear-gradient(180deg, #fff 0%, #a1a1aa 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    line-height: 1.2;
+html.is-animating .transition-fade {
+    opacity: 0;
+    transform: translateY(10px);
 }
+#swup { min-height: calc(100vh - 80px); }
 
-.hero p {
-    font-size: 20px;
-    color: var(--text-muted);
-    max-width: 680px;
-    margin-bottom: 40px;
-}
-
-/* 2. 下载交互区 */
-.ds-wrap {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    margin-top: 30px;
-    width: 100%;
-    max-width: 900px;
-}
-
-.ds-icons {
-    display: flex;
-    gap: 15px;
-    margin-bottom: 30px;
-    flex-wrap: wrap;
-    justify-content: center;
-}
-
-.ds-icon {
-    width: 55px;
-    height: 55px;
-    border-radius: 14px;
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 26px;
-    color: #8b949e;
-    cursor: pointer;
-    transition: all 0.3s;
-}
-.ds-icon:hover { transform: scale(1.1) translateY(-3px); color: #fff; background: rgba(255, 255, 255, 0.1); }
-.ds-icon.active { color: #fff; background: rgba(88, 166, 255, 0.2); border-color: #58a6ff; box-shadow: 0 0 15px rgba(88, 166, 255, 0.3); transform: scale(1.05); }
-
-.ds-box {
-    text-align: center;
-    background: rgba(22, 27, 34, 0.5);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 24px;
-    padding: 40px 50px;
-    backdrop-filter: blur(24px);
-    -webkit-backdrop-filter: blur(24px);
-    width: 100%;
-    min-width: 650px;
-    min-height: 260px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-}
-
-.ds-t { font-size: 28px; font-weight: 800; color: #fff; margin-bottom: 12px; transition: opacity 0.2s; }
-.ds-d { font-size: 16px; color: #8b949e; line-height: 1.6; margin-bottom: 30px; min-height: 50px; transition: opacity 0.2s; }
-
-.ds-btn {
-    display: inline-flex;
-    align-items: center;
-    background: #fff;
-    color: #000;
-    padding: 8px 24px 8px 8px;
-    border-radius: 100px;
-    text-decoration: none;
-    font-weight: 700;
-    font-size: 16px;
-    transition: all 0.3s;
-}
-.ds-btn:hover { transform: scale(1.05); box-shadow: 0 0 30px rgba(255, 255, 255, 0.3); }
-.ds-btn-ic { width: 40px; height: 40px; background: #0d1117; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-right: 15px; color: #fff; font-size: 20px; }
-
-/* 3. 功能特性网格与毛玻璃卡片 */
-.features {
-    padding: 100px 40px;
-    position: relative;
-    z-index: 10;
-}
-
-.grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-    gap: 24px;
-    max-width: 1200px;
-    margin: 0 auto;
-}
-
+/* ==========================================
+   通用 UI 组件
+   ========================================== */
 .card {
-    background: rgba(255, 255, 255, 0.02);
+    background: rgba(22, 27, 34, 0.5);
     border: 1px solid var(--border-color);
     border-radius: 24px;
     padding: 40px;
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.card:hover {
-    transform: translateY(-5px);
-    background: rgba(255, 255, 255, 0.04);
-    border-color: rgba(255, 255, 255, 0.15);
-}
-
-.card h3 {
-    font-size: 20px;
-    font-weight: 600;
-    margin-bottom: 12px;
-    color: #fff;
-}
-
-.card p {
-    color: var(--text-muted);
-    font-size: 15px;
-    line-height: 1.6;
-}
-
-/* 4. 响应式适配 (手机端取消强行高度限制) */
-@media (max-width: 768px) {
-    .hero h1 { font-size: 42px; }
-    .hero p { font-size: 16px; }
-    .ds-box { min-width: 100%; padding: 30px 20px; }
-    .features { padding: 60px 20px; }
-}
-
-/* ======== 1. 强制恢复极光背景 ======== */
-body {
-    background-color: #050505 !important;
-    background-image: 
-        radial-gradient(circle at 15% 0%, rgba(88, 166, 255, 0.15) 0%, transparent 40%),
-        radial-gradient(circle at 85% 30%, rgba(139, 92, 246, 0.12) 0%, transparent 40%) !important;
-    background-attachment: fixed !important;
-    background-repeat: no-repeat !important;
-}
-
-/* ======== 2. 恢复“我们的透明承诺”卡片 ======== */
-.transparency-card {
-    margin: 40px auto;
-    max-width: 1000px;
-    padding: 24px 32px;
-    background: rgba(88, 166, 255, 0.05);
-    border: 1px solid rgba(88, 166, 255, 0.2);
-    border-radius: 16px;
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    text-align: left;
-    display: flex;
-    gap: 16px;
-    align-items: flex-start;
-}
-
-.transparency-card h4 {
-    color: #58a6ff;
-    font-size: 18px;
-    margin-bottom: 8px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}
-
-.transparency-card p {
-    color: #8b949e;
-    font-size: 14px;
-    line-height: 1.7;
-    margin: 0;
-}
-
-/* ======== 3. 恢复全站底部 Footer 与 GitHub 按钮 ======== */
-.site-footer {
-    margin-top: 80px;
-    padding: 40px 20px;
-    border-top: 1px solid rgba(255, 255, 255, 0.05);
-    text-align: center;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 15px;
-}
-
-.footer-github-link {
-    display: inline-flex;
-    align-items: center;
-    gap: 10px;
-    color: #8b949e;
-    text-decoration: none;
-    font-size: 15px;
-    font-weight: 500;
-    transition: all 0.3s;
-    background: rgba(255, 255, 255, 0.03);
-    padding: 10px 20px;
-    border-radius: 100px;
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    backdrop-filter: blur(10px);
-}
-
-.footer-github-link:hover {
-    color: #fff;
-    background: rgba(255, 255, 255, 0.1);
-    border-color: rgba(255, 255, 255, 0.2);
-    transform: translateY(-2px);
-    box-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
-}
-
-.footer-github-link i {
-    font-size: 20px;
-}
-
-.footer-copy {
-    color: #484f58;
-    font-size: 13px;
-    margin: 0;
-}
-
-/* ======== 修复首屏垂直居中导致的顶部遮挡 Bug ======== */
-.hero {
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start; /* 改为从顶部开始排列，防止向上溢出 */
-    align-items: center;
-    text-align: center;
-    padding: 80px 20px 60px; /* 顶部留出 80px 的呼吸空间，绝不会顶到导航栏 */
-    min-height: auto; /* 移除强制视口高度限制 */
-}
-
-/* 确保导航栏的层级永远最高 */
-
-
-/* ==========================================
-   定价页专属：功能详细对比表样式恢复
-   ========================================== */
-
-.comparison-section {
-    max-width: 1000px;
-    margin: 80px auto 40px;
-    padding: 0 20px;
-    width: 100%;
-}
-
-.comparison-
-
-.comparison-
-
-.comparison-
-
-.comparison-table {
-    background: rgba(22, 27, 34, 0.3);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 20px;
-    overflow: hidden;
     backdrop-filter: blur(24px);
     -webkit-backdrop-filter: blur(24px);
+    transition: all 0.3s ease;
 }
 
-/* 表头与对齐 */
-.comp-table-
-.comp-table-
-
-/* 分类标题 */
-.comp-category {
-    background: rgba(255, 255, 255, 0.03);
-    color: #58a6ff;
-    font-size: 16px;
-    font-weight: 700;
-    padding: 16px 30px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-    border-top: 1px solid rgba(255, 255, 255, 0.08);
+.btn-primary {
+    background: #fff; color: #000; padding: 10px 24px; border-radius: 100px; font-weight: 600;
+    display: inline-flex; align-items: center; justify-content: center; border: none; cursor: pointer; transition: all 0.3s;
 }
+.btn-primary:hover { box-shadow: 0 0 20px rgba(255, 255, 255, 0.4); transform: scale(1.02); }
 
-/* 每一行的网格布局 */
-.comp-row {
-    display: grid;
-    grid-template-columns: 2fr 1fr 1fr 1fr;
-    align-items: center;
-    padding: 20px 30px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-    transition: background 0.2s;
+/* ==========================================
+   主页专属样式
+   ========================================== */
+.hero {
+    min-height: calc(100vh - 80px);
+    display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center;
+    padding: 80px 20px 60px;
 }
+.hero h1 { font-size: 64px; font-weight: 800; margin-bottom: 24px; letter-spacing: -2px; background: linear-gradient(180deg, #fff 0%, #a1a1aa 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+.hero p { font-size: 20px; color: var(--text-muted); max-width: 680px; margin-bottom: 40px; }
 
-.comp-row:hover {
-    background: rgba(255, 255, 255, 0.02);
-}
+.ds-wrap { display: flex; flex-direction: column; align-items: center; margin-top: 30px; width: 100%; max-width: 900px; }
+.ds-icons { display: flex; gap: 15px; margin-bottom: 30px; flex-wrap: wrap; justify-content: center; }
+.ds-icon { width: 55px; height: 55px; border-radius: 14px; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); display: flex; align-items: center; justify-content: center; font-size: 26px; color: #8b949e; cursor: pointer; transition: all 0.3s; }
+.ds-icon:hover { transform: scale(1.1) translateY(-3px); color: #fff; }
+.ds-icon.active { color: #fff; background: rgba(88, 166, 255, 0.2); border-color: #58a6ff; box-shadow: 0 0 15px rgba(88, 166, 255, 0.3); transform: scale(1.05); }
+.ds-box { text-align: center; background: rgba(22, 27, 34, 0.5); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 24px; padding: 40px 50px; backdrop-filter: blur(24px); width: 100%; min-width: 650px; min-height: 260px; display: flex; flex-direction: column; justify-content: center; align-items: center; }
+.ds-t { font-size: 28px; font-weight: 800; color: #fff; margin-bottom: 12px; }
+.ds-d { font-size: 16px; color: #8b949e; line-height: 1.6; margin-bottom: 30px; }
+.ds-btn { display: inline-flex; align-items: center; background: #fff; color: #000; padding: 8px 24px 8px 8px; border-radius: 100px; font-weight: 700; font-size: 16px; transition: all 0.3s; }
+.ds-btn:hover { transform: scale(1.05); box-shadow: 0 0 30px rgba(255, 255, 255, 0.3); }
+.ds-btn-ic { width: 40px; height: 40px; background: #0d1117; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-right: 15px; color: #fff; font-size: 20px; }
 
-.comp-row:last-child {
-    border-bottom: none;
-}
+.features { padding: 100px 40px; }
+.grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 24px; max-width: 1200px; margin: 0 auto; }
+.card:hover { transform: translateY(-5px); background: rgba(255, 255, 255, 0.04); }
+.card h3 { font-size: 20px; font-weight: 600; margin-bottom: 12px; color: #fff; }
+.card p { color: var(--text-muted); font-size: 15px; }
 
-/* 左侧功能描述 */
-.comp-feature strong {
-    display: block;
-    color: #e6edf3;
-    font-size: 16px;
-    margin-bottom: 4px;
-}
+.transparency-card { margin: 40px auto; max-width: 1000px; padding: 24px 32px; background: rgba(88, 166, 255, 0.05); border: 1px solid rgba(88, 166, 255, 0.2); border-radius: 16px; display: flex; gap: 16px; align-items: flex-start; }
+.transparency-card h4 { color: #58a6ff; font-size: 18px; margin-bottom: 8px; }
+.transparency-card p { color: #8b949e; font-size: 14px; margin: 0; }
 
-.comp-feature span {
-    display: block;
-    color: #8b949e;
-    font-size: 13px;
-    margin-top: 4px;
-    line-height: 1.4;
-}
+.site-footer { margin-top: 80px; padding: 40px 20px; border-top: 1px solid rgba(255, 255, 255, 0.05); text-align: center; display: flex; flex-direction: column; align-items: center; gap: 15px; }
+.footer-github-link { display: inline-flex; align-items: center; gap: 10px; color: #8b949e; font-size: 15px; background: rgba(255, 255, 255, 0.03); padding: 10px 20px; border-radius: 100px; border: 1px solid rgba(255, 255, 255, 0.08); transition: all 0.3s; }
+.footer-github-link:hover { color: #fff; background: rgba(255, 255, 255, 0.1); transform: translateY(-2px); }
+.footer-copy { color: #484f58; font-size: 13px; }
 
-/* 右侧勾叉与文本 */
-.comp-val {
-    text-align: center;
-    font-size: 18px;
-}
+/* ==========================================
+   定价页及对比表专属样式
+   ========================================== */
+.pricing-wrapper { min-height: 100vh; display: flex; flex-direction: column; align-items: center; padding: 80px 20px; }
+.pricing-title { font-size: 48px; font-weight: 800; color: #fff; margin-bottom: 60px; letter-spacing: -1px; }
+.pricing-grid { display: flex; gap: 30px; justify-content: center; flex-wrap: wrap; max-width: 1200px; width: 100%; }
+.price-card { flex: 1; min-width: 300px; max-width: 360px; background: rgba(22, 27, 34, 0.4); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 24px; padding: 40px; backdrop-filter: blur(24px); text-align: center; transition: transform 0.3s, border-color 0.3s; position: relative; }
+.price-card:hover { transform: translateY(-8px); border-color: rgba(255, 255, 255, 0.2); }
+.price-card.highlight { border-color: #58a6ff; box-shadow: 0 0 40px rgba(88, 166, 255, 0.15); background: rgba(22, 27, 34, 0.6); }
+.price-card h3 { font-size: 22px; color: #fff; margin-bottom: 10px; }
+.price-amount { font-size: 42px; font-weight: 800; color: #fff; margin-bottom: 20px; }
+.price-amount span { font-size: 16px; color: #8b949e; font-weight: 400; }
+.price-desc { font-size: 14px; color: #8b949e; margin-bottom: 30px; min-height: 68px; }
+.price-features { list-style: none; text-align: left; margin-bottom: 30px; color: #c9d1d9; font-size: 15px; padding-left: 0; }
+.price-features li { margin-bottom: 12px; display: flex; align-items: flex-start; gap: 10px; }
+.price-features li i { color: #58a6ff; margin-top: 4px; }
+.btn-pricing { display: block; width: 100%; padding: 14px; border-radius: 100px; font-size: 16px; font-weight: 700; text-align: center; transition: all 0.3s; cursor: pointer; border: none; }
+.btn-free { background: rgba(255, 255, 255, 0.05); color: #fff; border: 1px solid rgba(255, 255, 255, 0.1); }
+.btn-free:hover { background: rgba(255, 255, 255, 0.1); }
+.btn-pro { background: #58a6ff; color: #000; }
+.btn-pro:hover { background: #79b8ff; box-shadow: 0 0 20px rgba(88, 166, 255, 0.4); }
+.btn-fam { background: #fff; color: #000; }
+.btn-fam:hover { background: #e6edf3; }
 
+.tooltip-container { position: relative; display: inline-block; margin-left: 6px; cursor: help; }
+.tooltip-icon { color: #58a6ff; font-size: 16px; margin-left: 6px; vertical-align: middle; transition: all 0.2s; }
+.tooltip-container:hover .tooltip-icon { color: #79b8ff; transform: scale(1.15); }
+.tooltip-content { visibility: hidden; opacity: 0; width: 300px; background: rgba(13, 17, 23, 0.95); backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.15); color: #c9d1d9; text-align: left; border-radius: 12px; padding: 16px; position: absolute; z-index: 100; bottom: 150%; left: 50%; transform: translateX(-50%) translateY(10px); transition: all 0.3s; font-size: 13px; line-height: 1.6; box-shadow: 0 10px 30px rgba(0,0,0,0.5); pointer-events: none; }
+.tooltip-container:hover .tooltip-content { visibility: visible; opacity: 1; transform: translateX(-50%) translateY(0); }
+.tooltip-content h5 { color: #58a6ff; font-size: 14px; margin-bottom: 8px; margin-top: 0; }
+
+.comparison-section { max-width: 1000px; margin: 80px auto 40px; width: 100%; }
+.comparison-header { text-align: center; margin-bottom: 40px; }
+.comparison-header h2 { font-size: 32px; color: #fff; font-weight: 800; margin-bottom: 10px; }
+.comparison-header p { color: #8b949e; font-size: 16px; }
+.comparison-table { background: rgba(22, 27, 34, 0.3); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 20px; overflow: hidden; backdrop-filter: blur(24px); }
+.comp-category { background: rgba(255, 255, 255, 0.03); color: #58a6ff; font-size: 16px; font-weight: 700; padding: 16px 30px; border-bottom: 1px solid rgba(255, 255, 255, 0.08); border-top: 1px solid rgba(255, 255, 255, 0.08); }
+.comp-row { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; align-items: center; padding: 20px 30px; border-bottom: 1px solid rgba(255, 255, 255, 0.05); transition: background 0.2s; }
+.comp-row:hover { background: rgba(255, 255, 255, 0.02); }
+.comp-row:last-child { border-bottom: none; }
+.comp-feature strong { display: block; color: #e6edf3; font-size: 16px; margin-bottom: 4px; }
+.comp-feature span { display: block; color: #8b949e; font-size: 13px; margin-top: 4px; line-height: 1.4; }
+.comp-val { text-align: center; font-size: 18px; }
 .comp-val.yes { color: #3fb950; }
 .comp-val.no { color: #f85149; opacity: 0.6; }
 .comp-val.text-val { color: #c9d1d9; font-size: 14px; font-weight: 500; }
-.comp-val.partial { color: #d29922; font-size: 14px; font-weight: 600; }
+.comp-table-header { background: rgba(0, 0, 0, 0.2); border-bottom: 1px solid rgba(255, 255, 255, 0.1); padding: 15px 30px; }
+.comp-table-header .comp-val { font-size: 18px; font-weight: 700; color: #fff; }
 
-/* 移动端适配：隐藏副标题，缩小字体 */
+/* ==========================================
+   指南、关于、更新日志专属
+   ========================================== */
+.guide-wrapper { max-width: 1000px; margin: 60px auto; padding: 0 20px; }
+.guide-header { text-align: center; margin-bottom: 60px; }
+.guide-header h1 { font-size: 48px; color: #fff; margin-bottom: 16px; font-weight: 800; }
+.guide-header p { font-size: 20px; color: #8b949e; }
+.accordion-card { background: rgba(22, 27, 34, 0.4); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 16px; margin-bottom: 20px; backdrop-filter: blur(24px); overflow: hidden; transition: all 0.3s; }
+.accordion-header { padding: 24px 30px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; color: #fff; font-weight: 600; }
+.accordion-header h2 { display: flex; align-items: center; gap: 12px; margin: 0; color: #58a6ff; font-size: 22px; }
+.accordion-header .faq-q { color: #fff; font-size: 18px; font-weight: 600; margin: 0; }
+.accordion-icon { transition: transform 0.3s; color: #8b949e; font-size: 18px; }
+.accordion-content { max-height: 0; overflow: hidden; transition: max-height 0.4s ease-out, padding 0.4s ease; padding: 0 30px; background: rgba(0,0,0,0.2); border-top: 1px solid transparent; }
+.accordion-content p, .accordion-content .faq-a { color: #c9d1d9; font-size: 16px; line-height: 1.8; margin-top: 15px; }
+.accordion-card.active .accordion-icon { transform: rotate(180deg); }
+.accordion-card.active .accordion-content { max-height: 1000px; padding: 0 30px 30px; border-top-color: rgba(255,255,255,0.05); }
+.faq-section { margin-top: 80px; }
+.faq-title { font-size: 32px; color: #fff; font-weight: 700; margin-bottom: 30px; text-align: center; display: flex; align-items: center; justify-content: center; gap: 12px; }
+.img-placeholder { width: 100%; height: 250px; background: rgba(255, 255, 255, 0.03); border: 2px dashed rgba(255, 255, 255, 0.15); border-radius: 12px; display: flex; flex-direction: column; align-items: center; justify-content: center; color: #484f58; margin: 20px 0 30px; }
+.img-placeholder i { font-size: 40px; margin-bottom: 10px; }
+
+.about-container { max-width: 800px; margin: 60px auto 80px; padding: 60px; background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 24px; backdrop-filter: blur(24px); }
+.about-header { text-align: center; margin-bottom: 50px; }
+.about-header h1 { font-size: 48px; color: #fff; margin-bottom: 16px; font-weight: 800; background: linear-gradient(180deg, #fff 0%, #a1a1aa 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+.about-header p { font-size: 20px; color: #58a6ff; font-weight: 500; }
+.about-content p { font-size: 16px; color: #c9d1d9; line-height: 1.8; margin-bottom: 24px; text-align: justify; }
+.disclaimer-section { margin-top: 60px; padding-top: 30px; border-top: 1px dashed rgba(255, 255, 255, 0.1); }
+.disclaimer-section h3 { color: #ff7b72; font-size: 20px; margin-bottom: 20px; }
+.disclaimer-section p { color: #8b949e; font-size: 13px; line-height: 1.8; margin-bottom: 16px; background: rgba(255, 255, 255, 0.02); padding: 16px; border-radius: 8px; border-left: 3px solid rgba(255, 123, 114, 0.5); }
+
+.update-container { max-width: 800px; margin: 60px auto; padding: 40px; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.08); border-radius: 24px; backdrop-filter: blur(20px); }
+.translate-tip { display: flex; justify-content: space-between; align-items: center; font-size: 14px; color: #58a6ff; margin-bottom: 40px; background: rgba(88,166,255,0.1); padding: 12px 16px; border-radius: 8px; border: 1px solid rgba(88,166,255,0.2); }
+#google_translate_element { display: none; }
+#my-lang-select { background-color: #0d1117; color: #fff; border: 1px solid #30363d; padding: 8px 30px 8px 12px; border-radius: 6px; outline: none; cursor: pointer; font-size: 14px; appearance: none; background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23cbd5e1%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E"); background-repeat: no-repeat; background-position: right 10px top 50%; background-size: 10px auto; width: 150px; }
+body > .skiptranslate { display: none !important; }
+.update-container h1 { font-size: 36px; color: #fff; margin-bottom: 30px; }
+.log-entry { border-bottom: 1px solid rgba(255,255,255,0.08); padding-bottom: 24px; margin-bottom: 24px; }
+.log-entry:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+.log-date { font-size: 14px; color: #8b949e; margin-bottom: 8px; font-family: monospace; }
+.log-title { font-size: 22px; color: #fff; margin-bottom: 12px; font-weight: 700; }
+.log-content { color: #c9d1d9; font-size: 15px; line-height: 1.7; }
+
+/* ==========================================
+   登录页专属
+   ========================================== */
+.login-layout { display: flex; min-height: calc(100vh - 80px); width: 100%; }
+.login-left { flex: 1; display: flex; flex-direction: column; justify-content: center; padding: 10%; background: radial-gradient(circle at 0% 50%, rgba(88, 166, 255, 0.08) 0%, transparent 60%); border-right: 1px solid rgba(255, 255, 255, 0.03); }
+.login-right { flex: 1; display: flex; align-items: center; justify-content: center; padding: 40px; }
+.login-card { width: 100%; max-width: 420px; background: rgba(22, 27, 34, 0.4); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 24px; padding: 40px; backdrop-filter: blur(24px); }
+.login-left h1 { font-size: 48px; color: #fff; margin-bottom: 20px; font-weight: 800; line-height: 1.2; }
+.login-left p { font-size: 18px; color: #8b949e; line-height: 1.6; max-width: 400px; }
+.login-card h2 { font-size: 24px; color: #fff; margin-bottom: 8px; }
+.login-card p.sub { font-size: 14px; color: #8b949e; margin-bottom: 30px; }
+.input-group { margin-bottom: 20px; }
+.input-group label { display: block; font-size: 13px; color: #c9d1d9; margin-bottom: 8px; }
+.input-wrapper { position: relative; }
+.input-wrapper i { position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: #8b949e; }
+.input-wrapper input { width: 100%; height: 48px; padding: 0 16px 0 44px; background: rgba(0, 0, 0, 0.2); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 12px; color: #fff; outline: none; transition: 0.3s; }
+.input-wrapper input:focus { border-color: #58a6ff; }
+.btn-login { width: 100%; height: 48px; background: #fff; color: #000; border-radius: 12px; font-size: 16px; font-weight: 700; cursor: pointer; border: none; margin-top: 10px; transition: 0.3s; }
+.btn-login:hover { background: #e6edf3; }
+.btn-login:disabled { opacity: 0.5; cursor: not-allowed; }
+.divider { display: flex; align-items: center; text-align: center; margin: 30px 0; color: #8b949e; font-size: 13px; }
+.divider::before, .divider::after { content: ''; flex: 1; border-bottom: 1px solid rgba(255,255,255,0.1); }
+.divider::before { margin-right: 15px; } .divider::after { margin-left: 15px; }
+.oauth-btns { display: flex; gap: 15px; }
+.oauth-btn { flex: 1; height: 48px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 18px; cursor: pointer; transition: 0.2s; }
+.oauth-btn:hover { background: rgba(255,255,255,0.1); }
+.trial-badge { margin-top: 25px; padding: 12px; background: rgba(88,166,255,0.1); border-radius: 8px; text-align: center; font-size: 13px; color: #58a6ff; }
+.hidden { display: none !important; }
+.error-msg { color: #f85149; font-size: 13px; margin-top: 5px; display: none; }
+
+/* ==========================================
+   Dashboard 专属
+   ========================================== */
+.dashboard-container { max-width: 1200px; margin: 40px auto; padding: 0 20px; display: grid; grid-template-columns: 2fr 1fr; gap: 24px; }
+.status-badge { display: inline-block; padding: 6px 12px; border-radius: 20px; font-size: 13px; font-weight: 600; background: rgba(88,166,255,0.15); color: #58a6ff; border: 1px solid rgba(88,166,255,0.3); }
+.status-pro { background: rgba(255, 196, 0, 0.15); color: #ffc400; border-color: rgba(255, 196, 0, 0.3); }
+.data-row { display: flex; justify-content: space-between; padding: 15px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
+.data-row:last-child { border-bottom: none; }
+.data-label { color: #8b949e; }
+.data-value { color: #fff; font-weight: 600; }
+.btn { padding: 10px 20px; border-radius: 10px; font-weight: 600; cursor: pointer; border: none; transition: 0.3s; font-size: 14px; }
+.btn-primary { background: #fff; color: #000; }
+.btn-primary:hover { background: #e6edf3; }
+.btn-danger { background: rgba(248, 81, 73, 0.1); color: #f85149; border: 1px solid rgba(248, 81, 73, 0.3); padding: 8px 16px; }
+.btn-danger:hover { background: rgba(248, 81, 73, 0.2); }
+.invite-box { display: flex; gap: 10px; margin-top: 15px; }
+.invite-input { flex: 1; background: rgba(0,0,0,0.3); border: 1px dashed rgba(88,166,255,0.5); border-radius: 10px; padding: 12px; color: #58a6ff; font-family: monospace; font-size: 16px; letter-spacing: 2px; text-align: center; }
+.notification-list { list-style: none; padding: 0; max-height: 400px; overflow-y: auto; margin: 0; }
+.notification-item { padding: 15px; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 14px; }
+.notification-item.unread { background: rgba(88,166,255,0.05); }
+.notification-time { font-size: 12px; color: #8b949e; margin-top: 5px; }
+.modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); backdrop-filter: blur(8px); display: flex; align-items: center; justify-content: center; z-index: 1000; opacity: 0; pointer-events: none; transition: 0.3s; }
+.modal-overlay.active { opacity: 1; pointer-events: all; }
+.modal-content { background: rgba(22, 27, 34, 0.9); border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; padding: 30px; max-width: 450px; width: 90%; }
+.modal-content h3 { margin-bottom: 15px; color: #fff; }
+.modal-content textarea { width: 100%; height: 100px; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; padding: 10px; color: #fff; margin-top: 10px; resize: none; outline: none; }
+.modal-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px; }
+.card-completed { position: relative; pointer-events: none; }
+.card-completed::after { content: "感谢您的分享！已达奖励上限。请留意通知中心，我们会定期发放福利。"; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(22,27,34,0.85); backdrop-filter: blur(8px); display: flex; align-items: center; justify-content: center; text-align: center; padding: 30px; color: #58a6ff; font-weight: bold; font-size: 16px; border-radius: 20px; z-index: 10; }
+.skeleton-text { color: #8b949e; font-size: 14px; animation: pulse 1.5s infinite; }
+@keyframes pulse { 0% { opacity: .6; } 50% { opacity: 1; } 100% { opacity: .6; } }
+
+/* ==========================================
+   响应式
+   ========================================== */
+@media (max-width: 1100px) {
+    header { display: flex; flex-wrap: wrap; height: auto; padding: 15px 20px; justify-content: space-between; }
+    header .logo { order: 1; width: auto; }
+    header .header-right { order: 2; width: auto; }
+    header nav { order: 3; width: 100%; justify-content: center; margin-top: 15px; }
+    body { padding-top: 140px !important; }
+}
+
+@media (max-width: 900px) {
+    .dashboard-container { grid-template-columns: 1fr; }
+}
+
 @media (max-width: 768px) {
-    .comp-row {
-        grid-template-columns: 1.5fr 1fr 1fr 1fr;
-        padding: 16px 15px;
-    }
+    .hero h1 { font-size: 42px; }
+    .hero p { font-size: 16px; }
+    header .logo { font-size: 22px; gap: 8px; }
+    header .logo img { height: 32px; }
+    header nav { gap: 10px 15px; flex-wrap: wrap; }
+    body { padding-top: 140px !important; }
+    .ds-box { min-width: 100%; padding: 30px 20px; }
+    .features { padding: 60px 20px; }
+    .comp-row { grid-template-columns: 1.5fr 1fr 1fr 1fr; padding: 16px 15px; }
     .comp-feature span { display: none; }
     .comp-feature strong { font-size: 14px; }
     .comp-val { font-size: 16px; }
     .comp-val.text-val { font-size: 12px; }
-    .comp-val.partial { font-size: 12px; }
-}
-
-/* 使用 Grid 三等分，保证中间导航绝对居中 */
-
-
-
-
-
-
-
-
-/* 兼容小屏换行，恢复 Flex 布局 */
-@media (max-width: 1050px) {
-    
-}
-
-/* ======== 终极防偏移：强制滚动条占位 ======== */
-html {
-    /* 强制垂直滚动条始终存在，锁定视口宽度，彻底解决跨页面偏移 */
-    overflow-y: scroll !important;
-    /* 兼容现代浏览器的优雅留白 */
-    scrollbar-gutter: stable !important;
-}
-
-/* 强制锁定视口宽度 */
-    padding: 0 40px !important;
-    box-sizing: border-box !important;
-    height: 80px !important;
-}
-
-/* 核心：导航栏脱离文档流，基于屏幕物理中心居中 */
-
-
-/* 保持 Logo 和 地球在最顶层不被遮挡 */
-
-
-/* 小屏幕（半屏）依然完美适配掉到第二行 */
-@media (max-width: 1100px) {
-    
-    
-}
-
-/* 左侧和右侧各占 1 份，把中间的 nav 强行挤在正中间 */
-
-
-
-
-/* 中间导航绝对不被挤压 */
-
-
-/* 小屏换行逻辑（保持不变） */
-@media (max-width: 1100px) {
-    
-    
-}
-
-/* ======== 终极防偏移绝杀（直接覆盖） ======== */
-html {
-    overflow-y: scroll !important;
-    scrollbar-gutter: stable !important;
-}
-
-header {
-    display: grid !important;
-    grid-template-columns: 1fr auto 1fr !important;
-    align-items: center !important;
-    padding: 0 40px !important;
-    height: 80px !important;
-    position: fixed !important;
-    top: 0 !important; left: 0 !important;
-    width: 100% !important;
-    box-sizing: border-box !important;
-    background: rgba(5, 5, 5, 0.6) !important;
-    backdrop-filter: blur(24px) !important;
-    -webkit-backdrop-filter: blur(24px) !important;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
-    z-index: 9999 !important;
-}
-
-header .logo {
-    justify-self: start !important;
-    display: flex !important;
-    align-items: center !important;
-    text-decoration: none !important;
-}
-
-header nav {
-    justify-self: center !important;
-    display: flex !important;
-    gap: 24px !important;
-    margin: 0 !important;
-}
-
-header .lang-switch {
-    justify-self: end !important;
-    display: flex !important;
-    align-items: center !important;
-    position: relative !important;
-}
-
-/* 针对其他页面的链接文字颜色修复，防止变成紫色 */
-a { color: inherit; text-decoration: none; }
-
-/* ======== 终极绝杀版 Header（解决一切偏移） ======== */
-html {
-    /* 强制稳定滚动条占位，消灭宽度抖动 */
-    scrollbar-gutter: stable !important;
-    overflow-y: scroll !important;
-}
-
-header {
-    display: grid !important;
-    grid-template-columns: 1fr auto 1fr !important;
-    align-items: center !important;
-    padding: 0 40px !important;
-    height: 80px !important;
-    position: fixed !important;
-    top: 0 !important; left: 0 !important;
-    width: 100% !important;
-    box-sizing: border-box !important;
-    background: rgba(5, 5, 5, 0.6) !important;
-    backdrop-filter: blur(24px) !important;
-    -webkit-backdrop-filter: blur(24px) !important;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
-    z-index: 9999 !important;
-}
-
-header .logo {
-    justify-self: start !important;
-    display: flex !important;
-    align-items: center !important;
-    text-decoration: none !important;
-}
-
-header nav {
-    justify-self: center !important;
-    display: flex !important;
-    gap: 24px !important;
-    margin: 0 !important;
-}
-
-header .lang-switch {
-    justify-self: end !important;
-    display: flex !important;
-    align-items: center !important;
-    position: relative !important;
-}
-
-/* 彻底修复链接颜色，防止紫色 */
-a { color: inherit; text-decoration: none; }
-
-/* ======== Logo 最终放大微调 ======== */
-header .logo {
-    font-size: 28px !important;
-    font-weight: 800 !important;
-    display: flex !important;
-    align-items: center !important;
-    gap: 12px !important;
-}
-header .logo img {
-    height: 42px !important; 
-    width: auto !important;
-    object-fit: contain !important;
-}
-
-/* ======== 终极 Logo 放大 ======== */
-header .logo {
-    font-size: 34px !important; /* 文字再放大 */
-    font-weight: 900 !important;
-    letter-spacing: -1px !important;
-    display: flex !important;
-    align-items: center !important;
-    gap: 14px !important;
-}
-header .logo img {
-    height: 52px !important; /* 图标放大到 52px */
-    width: auto !important;
-    object-fit: contain !important;
-}
-
-/* 开启硬件加速，提升毛玻璃渲染流畅度 */
-header, .card, .price-card, .update-container, .login-card, .accordion-card {
-    will-change: transform, backdrop-filter;
-    transform: translateZ(0); /* 强制开启 GPU 渲染 */
-}
-
-/* ======== Logo 再次极限放大 ======== */
-header .logo {
-    font-size: 38px !important; /* 文字加大 */
-    font-weight: 900 !important;
-    letter-spacing: -1.5px !important;
-    gap: 16px !important;
-}
-header .logo img {
-    height: 60px !important; /* 图标加到 60px */
-}
-
-/* 手机端 Logo 稍微缩一点，防止把导航栏撑爆 */
-@media (max-width: 768px) {
-    header .logo {
-        font-size: 26px !important;
-        gap: 10px !important;
-    }
-    header .logo img {
-        height: 40px !important;
-    }
-}
-
-/* ==========================================
-   手机端 (Mobile) 专属深度优化补丁
-   ========================================== */
-@media (max-width: 768px) {
-    /* 1. 全局内边距缩小，给内容留出更多空间 */
-    body {
-        padding-top: 110px !important; 
-    }
-
-    /* 2. 首屏主标题与描述缩小 */
-    .hero h1 { font-size: 36px !important; margin-top: 20px !important; }
-    .hero p { font-size: 16px !important; padding: 0 15px; }
-
-    /* 3. 主页下载区适配 */
-    .ds-box {
-        min-width: 95% !important; /* 取消 PC 端的 650px 最小宽度限制 */
-        height: auto !important;
-        min-height: 300px !important;
-        padding: 30px 20px !important;
-    }
-    .ds-t { font-size: 22px !important; top: 40px !important; }
-    .ds-d { font-size: 14px !important; top: 90px !important; height: 60px !important; }
-    .ds-btn { bottom: 30px !important; }
-    .ds-icons { gap: 10px !important; margin-bottom: 20px !important;}
-    .ds-icon { width: 45px !important; height: 45px !important; font-size: 20px !important;}
-
-    /* 4. 定价页卡片全宽 */
-    .price-card {
-        min-width: 100% !important;
-        margin-bottom: 20px !important;
-    }
-
-    /* 5. 对比表：隐藏副标题，防止挤成一坨 */
-    .comp-feature span { display: none !important; }
-    .comp-feature strong { font-size: 13px !important; }
-    .comp-val.text-val { font-size: 12px !important; }
-    .comp-row { padding: 15px 10px !important; }
-
-    /* 6. 登录页：取消左右布局，强制上下堆叠 */
-    .login-layout { flex-direction: column !important; }
-    .login-left { padding: 40px 20px !important; text-align: center !important; border-right: none !important; border-bottom: 1px solid rgba(255,255,255,0.05); }
-    .login-left h1 { font-size: 32px !important; }
-    .login-right { padding: 30px 20px !important; }
-    
-    /* 7. 页脚调整 */
-    .site-footer { flex-direction: column !important; gap: 10px !important; text-align: center; }
-}
-
-/* ==========================================
-   终极手机端修复 (解决导航栏竖排与挤压)
-   ========================================== */
-@media (max-width: 768px) {
-    /* 1. 强制重排 Header，变成两行 */
-    header {
-        display: flex !important;
-        flex-wrap: wrap !important;
-        justify-content: space-between !important;
-        padding: 10px 15px !important;
-        height: auto !important;
-        min-height: 100px !important;
-    }
-
-    /* 2. 手机端 Logo 强制缩小 */
-    header .logo {
-        font-size: 22px !important;
-        gap: 8px !important;
-        width: auto !important;
-    }
-    header .logo img {
-        height: 32px !important;
-    }
-    
-    /* 3. 地球图标归位 */
-    header .lang-switch {
-        margin-left: auto !important;
-        margin-top: 8px !important;
-    }
-
-    /* 4. 导航栏：强制换行并居中，绝对禁止竖排文字 */
-    header nav {
-        width: 100% !important; /* 占满第二行 */
-        display: flex !important;
-        flex-wrap: wrap !important;
-        justify-content: center !important;
-        gap: 10px 15px !important; /* 上下 10px，左右 15px */
-        margin-top: 10px !important;
-        padding-top: 10px !important;
-        border-top: 1px solid rgba(255, 255, 255, 0.05) !important;
-    }
-
-    /* 强制文字横向显示，消除竖排 */
-    header nav a {
-        white-space: nowrap !important; 
-        font-size: 14px !important;
-    }
-
-    /* 5. 调整 body 的 padding，给两行的 Header 留出空间 */
-    body {
-        padding-top: 130px !important;
-    }
-}
-
-/* ==========================================
-   全局性能优化：字体加载不阻塞页面
-   ========================================== */
-@font-face {
-    font-family: 'FontAwesome';
-    font-display: swap;
-}
-
-/* ==========================================
-   终极修复：Header 右侧统一容器
-   ========================================== */
-header .header-right {
-    justify-self: end !important; /* 永远靠右 */
-    display: flex !important;
-    align-items: center !important;
-    gap: 15px !important;
-}
-
-@media (max-width: 1100px) {
-    header .header-right {
-        justify-self: end !important;
-        width: auto !important;
-    }
-}
-@media (max-width: 768px) {
-    header .header-right {
-        order: 2 !important;
-        width: auto !important;
-    }
+    .price-card { min-width: 100%; margin-bottom: 20px; }
+    .login-layout { flex-direction: column; }
+    .login-left { padding: 40px 20px; text-align: center; border-right: none; border-bottom: 1px solid rgba(255,255,255,0.05); }
+    .login-left h1 { font-size: 32px; }
+    .login-right { padding: 30px 20px; }
+    .site-footer { flex-direction: column; gap: 10px; text-align: center; }
 }
