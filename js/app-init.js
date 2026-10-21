@@ -192,6 +192,20 @@ function renderDashboardTexts() {
 
 window.addEventListener('languageChanged', renderDashboardTexts);
 
+// 🌟 全局函数：解绑设备
+window.unbindDevice = async function(deviceId) {
+    if (!confirm("确定要解绑该设备吗？解绑后该设备将失去高级版权限。")) return;
+    const client = window.supabaseClient;
+    try {
+        const { error } = await client.from('devices').delete().eq('id', deviceId);
+        if (error) throw error;
+        alert("设备解绑成功！");
+        window.location.reload(); // 刷新页面更新槽位
+    } catch (err) {
+        alert("解绑失败: " + err.message);
+    }
+};
+
 async function initDashboardLogic() {
     const client = window.supabaseClient;
     if (!client) return;
@@ -256,6 +270,56 @@ async function initDashboardLogic() {
                     claimBtn.textContent = '🎁 重新领取 30 天';
                 }
             };
+        }
+
+        // 🌟 新增：设备管理卡片渲染逻辑
+        const deviceCard = document.getElementById('deviceCard');
+        const deviceSlots = document.getElementById('deviceSlots');
+        const deviceDesc = document.getElementById('deviceDesc');
+
+        if (dashboardData.tier === 'pro' || dashboardData.tier === 'family') {
+            deviceCard.classList.remove('hidden');
+            
+            const maxDevices = dashboardData.tier === 'pro' ? 3 : 9;
+            const t = window.fallbackTranslations || {};
+            
+            const { data: devices, error: devErr } = await client.from('devices').select('*').eq('user_id', dashboardData.id).order('last_seen_at', { ascending: false });
+            const usedCount = devices ? devices.length : 0;
+            
+            let descText = t['dash_device_desc'] || '您当前已绑定 {used} / {total} 台设备。';
+            descText = descText.replace('{used}', usedCount).replace('{total}', maxDevices);
+            deviceDesc.textContent = descText;
+
+            deviceSlots.innerHTML = '';
+            for (let i = 0; i < maxDevices; i++) {
+                const dev = devices && devices[i] ? devices[i] : null;
+                const slot = document.createElement('div');
+                slot.style.cssText = 'display: flex; justify-content: space-between; align-items: center; padding: 12px 16px; border: 1px dashed rgba(255,255,255,0.1); border-radius: 10px; background: rgba(0,0,0,0.2);';
+                
+                if (dev) {
+                    slot.style.borderStyle = 'solid';
+                    slot.innerHTML = `
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <i class="fa-solid fa-desktop" style="color: #58a6ff;"></i>
+                            <div>
+                                <div style="color: #fff; font-size: 14px;">${dev.device_name || 'Unknown Device'} (${dev.browser || 'Browser'})</div>
+                                <div style="color: #8b949e; font-size: 12px;">最后活跃: ${new Date(dev.last_seen_at).toLocaleDateString()}</div>
+                            </div>
+                        </div>
+                        <button class="btn btn-danger" style="padding: 4px 10px; font-size: 12px;" onclick="unbindDevice('${dev.id}')">${t['dash_device_unbind'] || '解绑'}</button>
+                    `;
+                } else {
+                    slot.innerHTML = `
+                        <div style="display: flex; align-items: center; gap: 10px; color: #484f58;">
+                            <i class="fa-solid fa-mobile-screen"></i>
+                            <span style="font-size: 14px;">${t['dash_device_empty'] || '未绑定设备'}</span>
+                        </div>
+                    `;
+                }
+                deviceSlots.appendChild(slot);
+            }
+        } else {
+            deviceCard.classList.add('hidden');
         }
 
         // 生成并显示专属推广链接
@@ -339,7 +403,6 @@ async function initDashboardLogic() {
 
     } catch (err) { 
         console.error("Dashboard 初始化失败:", err); 
-        // 🌟 终极防卡死：报错时也要移除遮罩
         if (loader) loader.remove();
         alert("加载数据失败，请刷新重试。");
     }
