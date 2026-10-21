@@ -1,6 +1,8 @@
+// js/i18n.js
 window.currentLang = 'zh';
-window.fallbackTranslations = null;
+window.fallbackTranslations = {};
 
+// 预加载默认语言，防止页面加载完还没数据
 async function initFallback() {
     try {
         const response = await fetch('/locales/zh.json');
@@ -23,6 +25,7 @@ async function loadLanguage(lang) {
 
         window.fallbackTranslations = translations;
         
+        // 静默替换，不隐藏元素，消除闪烁
         document.querySelectorAll("[data-i18n]").forEach(element => {
             const key = element.getAttribute("data-i18n");
             let targetText = translations[key];
@@ -47,10 +50,10 @@ async function loadLanguage(lang) {
         window.currentLang = lang;
         updateDropdownUI(lang);
         
+        // 移除加载状态
         document.documentElement.classList.remove("i18n-loading");
         document.documentElement.setAttribute("data-i18n-ready", "true");
 
-        // ★ 派发事件，通知主页 JS 刷新动态文本
         window.dispatchEvent(new Event('languageChanged'));
 
     } catch (error) {
@@ -76,11 +79,13 @@ function updateDropdownUI(activeLang) {
     
     await loadLanguage(defaultLang);
 
-    document.querySelectorAll(".lang-option").forEach(option => {
-        option.addEventListener("click", (e) => {
+    // 绑定语言切换事件
+    document.addEventListener('click', (e) => {
+        const option = e.target.closest('.lang-option');
+        if (option) {
             e.preventDefault();
             e.stopPropagation();
-            loadLanguage(option.getAttribute("data-lang"));
-        });
+            loadLanguage(option.getAttribute('data-lang'));
+        }
     });
 })();
