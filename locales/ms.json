@@ -219,6 +219,10 @@
   "login_btn_resend": "Hantar Semula Kod",
   "dash_gen_ing": "Menjana...",
   "dash_gen_fail": "Gagal: ",
- "nav_dashboard": "Papan Pemuka",
-  "nav_logout": "Log Keluar"
+  "nav_dashboard": "Papan Pemuka",
+  "nav_logout": "Log Keluar",
+  "nav_logout": "Log Keluar",
+  "dash_notif_empty": "Tiada pemberitahuan baharu",
+  "dash_cancel_processing": "Memproses...",
+  "dash_cancel_success": "Permintaan pembatalan anda telah direkodkan. Langganan akan tamat pada akhir tempoh semasa."
 }
