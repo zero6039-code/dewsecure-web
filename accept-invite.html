@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark" class="i18n-loading">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DewSecure - Accept Invite</title>
+    <link rel="stylesheet" href="/style.css">
+    <link rel="stylesheet" href="https://unpkg.com/swup@4/dist/swup.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="icon" type="image/png" href="/DewSecure.png">
+    <style>
+        .invite-modal-wrapper {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: calc(100vh - 80px);
+            padding: 20px;
+        }
+        .invite-modal {
+            background: rgba(22, 27, 34, 0.6);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 24px;
+            padding: 50px 40px;
+            max-width: 480px;
+            width: 100%;
+            text-align: center;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+            animation: modalFadeIn 0.4s ease;
+        }
+        @keyframes modalFadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .btn-decline {
+            background: transparent;
+            color: #8b949e;
+            border: 1px solid transparent;
+            transition: all 0.3s ease;
+        }
+        .btn-decline:hover {
+            color: #f85149;
+            border-color: rgba(248, 81, 73, 0.3);
+            background: rgba(248, 81, 73, 0.1);
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <a href="/index.html" class="logo"><img src="/DewSecure.png" alt="DewSecure"> DewSecure</a>
+    </header>
+
+    <main id="swup" class="transition-fade">
+        <div class="invite-modal-wrapper">
+            <div class="invite-modal">
+                <h2 data-i18n="invite_accept_title" style="color: #fff; font-size: 28px; margin-bottom: 20px;">Family Group Invitation</h2>
+                <p style="color: #8b949e; font-size: 16px; margin-bottom: 30px;" id="inviteDesc">加载中...</p>
+                <button class="btn btn-primary" id="btnAcceptInvite" style="width: 100%; margin-bottom: 15px;" data-i18n="invite_accept_btn">Accept & Join</button>
+                <button class="btn btn-decline" id="btnRejectInvite" style="width: 100%; padding: 10px 20px; border-radius: 10px; font-weight: 600;" data-i18n="invite_reject_btn">Decline</button>
+            </div>
+        </div>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://unpkg.com/swup@4/dist/swup.min.js"></script>
+    <script src="/js/auth-nav.js"></script>
+    <script src="/js/app-init.js"></script>
+    <script src="/js/i18n.js"></script>
+</body>
+</html>

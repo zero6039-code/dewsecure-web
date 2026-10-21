@@ -1,6 +1,150 @@
 // js/app-init.js
 
 let dashboardData = null;
+let currentDashboardClient = null;
+let dashboardNotifs = [];
+
+// 🌟 全局极光毛玻璃 Toast 提示框
+window.showToast = function(message, type = 'success') {
+    try {
+        let toast = document.getElementById('global-toast');
+        if (!toast) {
+            toast = document.createElement('div');
+            toast.id = 'global-toast';
+            document.body.appendChild(toast);
+        }
+        toast.style.cssText = `
+            position: fixed !important; 
+            top: 50% !important; left: 50% !important;
+            transform: translate(-50%, -50%) !important;
+            background: rgba(22, 27, 34, 0.95) !important; 
+            backdrop-filter: blur(24px) !important;
+            border: 1px solid ${type === 'error' ? 'rgba(248, 81, 73, 0.5)' : 'rgba(88, 166, 255, 0.5)'} !important;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8) !important; 
+            color: #fff !important; padding: 20px 30px !important; 
+            border-radius: 16px !important; font-size: 16px !important;
+            z-index: 2147483647 !important; display: flex !important; 
+            align-items: center !important; gap: 15px !important;
+            opacity: 0 !important; visibility: hidden !important; 
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
+        `;
+        toast.innerHTML = `<i class="fa-solid ${type === 'error' ? 'fa-circle-exclamation' : 'fa-circle-check'}" style="font-size: 24px; color: ${type === 'error' ? '#f85149' : '#58a6ff'};"></i><span>${message}</span>`;
+        setTimeout(() => { toast.style.setProperty('opacity', '1', 'important'); toast.style.setProperty('visibility', 'visible', 'important'); }, 10);
+        setTimeout(() => { toast.style.setProperty('opacity', '0', 'important'); toast.style.setProperty('visibility', 'hidden', 'important'); }, 4000);
+    } catch (e) { alert(message); }
+};
+
+// 🌟 全局邀请链接专属弹窗
+window.showInviteModal = function(link) {
+    try {
+        const t = window.fallbackTranslations || {};
+        let modal = document.getElementById('invite-link-modal');
+        if (modal) modal.remove();
+        
+        modal = document.createElement('div');
+        modal.id = 'invite-link-modal';
+        modal.style.cssText = `
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; 
+            background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(10px);
+            display: flex; align-items: center; justify-content: center; 
+            z-index: 2147483647;
+        `;
+        
+        modal.innerHTML = `
+            <div style="background: rgba(22, 27, 34, 0.95); border: 1px solid rgba(88, 166, 255, 0.4); border-radius: 20px; padding: 40px; max-width: 500px; width: 90%; text-align: center;">
+                <h2 style="color: #fff; margin-bottom: 15px; font-size: 24px;">${t['modal_invite_title'] || '邀请已生成'}</h2>
+                <p style="color: #8b949e; font-size: 15px; margin-bottom: 25px;">${t['modal_invite_desc'] || '请将以下链接发送给您的家人。他们登录并同意后，即可加入家庭组：'}</p>
+                <input type="text" id="invite-link-input" readonly value="${link}" style="width: 100%; background: rgba(0,0,0,0.5); border: 1px dashed rgba(88, 166, 255, 0.8); border-radius: 10px; padding: 15px; color: #58a6ff; font-family: monospace; font-size: 14px; text-align: center; margin-bottom: 25px; outline: none;">
+                <div style="display: flex; gap: 12px;">
+                    <button id="modal-copy-btn" class="btn btn-primary" style="flex: 1; height: 48px; font-size: 16px;">${t['modal_btn_copy'] || '复制链接'}</button>
+                    <button id="modal-close-btn" class="btn" style="flex: 1; height: 48px; font-size: 16px; background: transparent; border: 1px solid rgba(255,255,255,0.2); color: #c9d1d9;">${t['modal_btn_close'] || '关闭'}</button>
+                </div>
+            </div>
+        `;
+        document.body.appendChild(modal);
+
+        const inputEl = document.getElementById('invite-link-input');
+        const copyBtn = document.getElementById('modal-copy-btn');
+        const closeBtn = document.getElementById('modal-close-btn');
+
+        copyBtn.onclick = async () => {
+            try {
+                await navigator.clipboard.writeText(link);
+                copyBtn.textContent = t['modal_copied'] || '已复制！';
+                copyBtn.style.background = '#3fb950'; copyBtn.style.color = '#fff';
+                setTimeout(() => { copyBtn.textContent = t['modal_btn_copy'] || '复制链接'; copyBtn.style.background = '#fff'; copyBtn.style.color = '#000'; }, 2000);
+            } catch (err) {
+                inputEl.select(); document.execCommand('copy');
+            }
+        };
+
+        closeBtn.onclick = () => { modal.remove(); };
+    } catch (err) {
+        // 终极兜底：如果 DOM 渲染彻底崩溃，用浏览器自带的输入框展示链接，保证你能拿到数据
+        prompt("弹窗渲染异常。请手动复制此链接发送给家人：", link);
+    }
+};
+
+// 🌟 核心事件监听
+document.addEventListener('click', async function(e) {
+    const inviteBtn = e.target.closest('#btnInviteFamily');
+    if (!inviteBtn) return;
+
+    const t = window.fallbackTranslations || {};
+    console.log("1. 捕获到点击事件");
+
+    if (!dashboardData || !currentDashboardClient) {
+        showToast("页面数据未就绪，请刷新", 'error');
+        return;
+    }
+
+    try {
+        const inputEl = document.getElementById('familyEmailInput');
+        if (!inputEl) return;
+        
+        const email = inputEl.value.trim();
+        console.log("2. 输入的邮箱:", email);
+
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!email || !emailRegex.test(email)) { 
+            showToast(t['toast_invalid_email'] || '请输入有效的邮箱地址', 'error'); 
+            return; 
+        }
+        
+        if (email.toLowerCase() === dashboardData.email.toLowerCase()) {
+            showToast(t['toast_invite_self'] || '不能邀请自己加入家庭组', 'error');
+            return;
+        }
+
+        inviteBtn.disabled = true; 
+        inviteBtn.textContent = t['dash_gen_ing'] || '发送中...';
+        console.log("3. 开始请求数据库");
+
+        const token = Math.random().toString(36).substring(2, 10) + Date.now().toString(36);
+        const { data, error } = await currentDashboardClient.from('family_invitations').insert({
+            owner_id: dashboardData.id,
+            invitee_email: email,
+            token: token,
+            status: 'pending'
+        });
+
+        if (error) {
+            console.error("4. 数据库返回错误:", error);
+            throw new Error(error.message || "数据库拒绝了请求");
+        }
+
+        console.log("4. 数据库插入成功，准备弹窗");
+        showInviteModal(window.location.origin + '/accept-invite.html?token=' + token);
+        inputEl.value = '';
+        
+    } catch (err) {
+        console.error("5. 捕获到异常:", err);
+        showToast((t['toast_invite_fail'] || '发送失败: ') + (err.message || '网络错误'), 'error');
+    } finally {
+        inviteBtn.disabled = false;
+        inviteBtn.textContent = t['dash_family_btn_invite'] || '发送邀请';
+    }
+});
 
 function initPage() {
     const path = window.location.pathname;
@@ -19,7 +163,11 @@ function initPage() {
         const supabaseClient = window.supabaseClient;
         
         supabaseClient.auth.getSession().then(({ data: { session } }) => {
-            if (session) window.location.href = '/dashboard.html';
+            if (session) {
+                const urlParams = new URLSearchParams(window.location.search);
+                const redirectUrl = urlParams.get('redirect') || '/dashboard.html';
+                window.location.href = redirectUrl;
+            }
         });
 
         const stepEmail = document.getElementById('step-email');
@@ -40,6 +188,7 @@ function initPage() {
                 if (error) throw error;
                 currentEmail = email;
                 document.getElementById('displayEmail').textContent = email;
+                document.getElementById('otpInput').value = ''; 
                 stepEmail.classList.add('hidden'); stepOtp.classList.remove('hidden');
                 startCountdown(btnSendOtp);
             } catch (err) {
@@ -56,7 +205,9 @@ function initPage() {
             try {
                 const { error } = await supabaseClient.auth.verifyOtp({ email: currentEmail, token, type: 'email' });
                 if (error) throw error;
-                window.location.href = '/dashboard.html';
+                const urlParams = new URLSearchParams(window.location.search);
+                const redirectUrl = urlParams.get('redirect') || '/dashboard.html';
+                window.location.href = redirectUrl;
             } catch (err) {
                 showError('otpError', t['login_error_otp_expired'] || '验证码错误或已过期'); 
                 btnVerifyOtp.disabled = false; btnVerifyOtp.textContent = t['login_btn_verify'] || '验证并登录';
@@ -116,6 +267,63 @@ function initPage() {
         header.addEventListener('click', () => header.parentElement.classList.toggle('active'));
     });
 
+    // 处理接受邀请页面
+    if (window.location.pathname.includes('accept-invite')) {
+        const client = window.supabaseClient;
+        const urlParams = new URLSearchParams(window.location.search);
+        const token = urlParams.get('token');
+        const inviteDesc = document.getElementById('inviteDesc');
+        const btnAcceptInvite = document.getElementById('btnAcceptInvite');
+        const btnRejectInvite = document.getElementById('btnRejectInvite');
+        
+        if (!token) {
+            inviteDesc.textContent = "无效的邀请链接。";
+            btnAcceptInvite.style.display = 'none';
+            return;
+        }
+
+        let currentOwnerEmail = '';
+
+        function renderInviteText() {
+            const t = window.fallbackTranslations || {};
+            let desc = t['invite_accept_desc'] || '{owner} 邀请你加入他的家庭组，共享高级版权益。';
+            inviteDesc.textContent = desc.replace('{owner}', currentOwnerEmail || '...');
+        }
+
+        window.addEventListener('languageChanged', renderInviteText);
+
+        client.auth.getSession().then(async ({ data: { session } }) => {
+            if (!session) {
+                inviteDesc.textContent = "请先登录以确认加入。";
+                btnAcceptInvite.textContent = "去登录";
+                btnAcceptInvite.onclick = () => {
+                    window.location.href = '/login/?redirect=' + encodeURIComponent('/accept-invite.html?token=' + token);
+                };
+                btnRejectInvite.onclick = () => window.location.href = '/';
+                return;
+            }
+
+            const { data: inv } = await client.from('family_invitations').select('owner_id, profiles!family_invitations_owner_id_fkey(email)').eq('token', token).maybeSingle();
+            
+            if (inv && inv.profiles) {
+                currentOwnerEmail = inv.profiles.email;
+                renderInviteText();
+            } else {
+                inviteDesc.textContent = "邀请已失效或已被处理。";
+            }
+
+            btnAcceptInvite.onclick = async () => {
+                btnAcceptInvite.disabled = true;
+                const { data, error } = await client.rpc('accept_family_invite', { p_token: token });
+                if (error || !data.success) { showToast(error?.message || data.message, 'error'); btnAcceptInvite.disabled = false; return; }
+                showToast(data.message);
+                setTimeout(() => window.location.href = '/dashboard.html', 1500);
+            };
+
+            btnRejectInvite.onclick = () => window.location.href = '/';
+        });
+    }
+
     // Dashboard 逻辑
     if (document.getElementById('mainContent') && !document.getElementById('mainContent').dataset.bound) {
         document.getElementById('mainContent').dataset.bound = "true";
@@ -144,6 +352,121 @@ function startCountdown(btn) {
             countdown--; 
         }
     }, 1000);
+}
+
+function renderNotifications() {
+    const t = window.fallbackTranslations || {};
+    const list = document.getElementById('notificationList');
+    if (!list) return;
+
+    if (dashboardNotifs && dashboardNotifs.length > 0) {
+        list.innerHTML = '';
+        dashboardNotifs.forEach(n => {
+            const li = document.createElement('li');
+            li.className = `notification-item ${n.is_read ? '' : 'unread'}`;
+            const title = document.createElement('div'); title.style.cssText = 'font-weight:600;color:#fff;margin-bottom:4px;'; title.textContent = n.title || '';
+            const msg = document.createElement('div'); msg.style.cssText = 'color:#c9d1d9;line-height:1.4;'; msg.textContent = n.message || '';
+            const time = document.createElement('div'); time.className = 'notification-time'; time.textContent = new Date(n.created_at).toLocaleString();
+            li.append(title, msg, time);
+            list.appendChild(li);
+        });
+    } else {
+        list.innerHTML = `<li class="notification-item" style="text-align:center; color:#8b949e;">${t['dash_notif_empty'] || '暂无新通知'}</li>`;
+    }
+}
+
+async function renderDeviceCards() {
+    if (!dashboardData || !currentDashboardClient) return;
+    const client = currentDashboardClient;
+    const deviceCard = document.getElementById('deviceCard');
+    const deviceSlots = document.getElementById('deviceSlots');
+    const deviceDesc = document.getElementById('deviceDesc');
+
+    if (dashboardData.tier === 'pro' || dashboardData.tier === 'family') {
+        deviceCard.classList.remove('hidden');
+        const maxDevices = dashboardData.tier === 'pro' ? 3 : 9;
+        const t = window.fallbackTranslations || {};
+        
+        // 容错处理请求
+        let devices = [];
+        try {
+            const { data } = await client.from('devices').select('*').eq('user_id', dashboardData.id).order('last_seen_at', { ascending: false });
+            if (data) devices = data;
+        } catch (e) { console.error("设备拉取失败", e); }
+        
+        const usedCount = devices.length;
+        
+        let descText = t['dash_device_desc'] || '您当前已绑定 {used} / {total} 台设备。';
+        descText = descText.replace('{used}', usedCount).replace('{total}', maxDevices);
+        deviceDesc.textContent = descText;
+
+        deviceSlots.innerHTML = '';
+        for (let i = 0; i < maxDevices; i++) {
+            const dev = devices[i] ? devices[i] : null;
+            const slot = document.createElement('div');
+            slot.style.cssText = 'display: flex; justify-content: space-between; align-items: center; padding: 12px 16px; border: 1px dashed rgba(255,255,255,0.1); border-radius: 10px; background: rgba(0,0,0,0.2);';
+            
+            if (dev) {
+                slot.style.borderStyle = 'solid';
+                slot.innerHTML = `
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <i class="fa-solid fa-desktop" style="color: #58a6ff;"></i>
+                        <div>
+                            <div style="color: #fff; font-size: 14px;">${dev.device_name || 'Unknown Device'} (${dev.browser || 'Browser'})</div>
+                            <div style="color: #8b949e; font-size: 12px;">${new Date(dev.last_seen_at).toLocaleDateString()}</div>
+                        </div>
+                    </div>
+                    <button class="btn btn-danger" style="padding: 4px 10px; font-size: 12px;" onclick="unbindDevice('${dev.id}')">${t['dash_device_unbind'] || '解绑'}</button>
+                `;
+            } else {
+                slot.innerHTML = `
+                    <div style="display: flex; align-items: center; gap: 10px; color: #484f58;">
+                        <i class="fa-solid fa-mobile-screen"></i>
+                        <span style="font-size: 14px;">${t['dash_device_empty'] || '未绑定设备'}</span>
+                    </div>
+                `;
+            }
+            deviceSlots.appendChild(slot);
+        }
+    } else {
+        deviceCard.classList.add('hidden');
+    }
+}
+
+async function renderFamilyCard() {
+    if (!dashboardData || !currentDashboardClient) return;
+    const client = currentDashboardClient;
+    const familyCard = document.getElementById('familyCard');
+    const familyDesc = document.getElementById('familyDesc');
+    const familyMembersList = document.getElementById('familyMembersList');
+
+    if (dashboardData.tier === 'family') {
+        familyCard.classList.remove('hidden');
+        const t = window.fallbackTranslations || {};
+
+        const { data: members } = await client.from('profiles').select('id, email').eq('family_owner_id', dashboardData.id);
+        const memberCount = members ? members.length : 0;
+        
+        let descText = t['dash_family_desc'] || '邀请家人加入您的家庭组，共享高级版权限。当前成员：{count} 人。';
+        familyDesc.textContent = descText.replace('{count}', memberCount);
+
+        familyMembersList.innerHTML = `<h4 style="color:#fff; font-size:14px; margin-bottom:10px;">${t['dash_family_member_list'] || '已加入成员'}</h4>`;
+        if (members && members.length > 0) {
+            members.forEach(m => {
+                const div = document.createElement('div');
+                div.style.cssText = 'display: flex; justify-content: space-between; align-items: center; padding: 10px; border-bottom: 1px solid rgba(255,255,255,0.05);';
+                div.innerHTML = `
+                    <span style="color:#c9d1d9; font-size: 14px;">${m.email}</span>
+                    <button class="btn btn-danger" style="padding: 4px 10px; font-size: 12px;" onclick="removeFamilyMember('${m.id}')">${t['dash_family_member_remove'] || '移出'}</button>
+                `;
+                familyMembersList.appendChild(div);
+            });
+        } else {
+            familyMembersList.innerHTML += `<div style="color:#8b949e; font-size: 13px;">${t['dash_family_no_members'] || '暂无成员'}</div>`;
+        }
+    } else {
+        familyCard.classList.add('hidden');
+    }
 }
 
 function renderDashboardTexts() {
@@ -188,27 +511,43 @@ function renderDashboardTexts() {
             if(btnUpgrade) btnUpgrade.textContent = t['dash_btn_upgrade'] || '升级/续费高级版';
         }
     }
+
+    renderNotifications();
+    renderDeviceCards();
+    renderFamilyCard();
 }
 
 window.addEventListener('languageChanged', renderDashboardTexts);
 
-// 🌟 全局函数：解绑设备
 window.unbindDevice = async function(deviceId) {
-    if (!confirm("确定要解绑该设备吗？解绑后该设备将失去高级版权限。")) return;
+    if (!confirm("确定要解绑该设备吗？")) return;
     const client = window.supabaseClient;
     try {
         const { error } = await client.from('devices').delete().eq('id', deviceId);
         if (error) throw error;
-        alert("设备解绑成功！");
-        window.location.reload(); // 刷新页面更新槽位
+        showToast("设备解绑成功！");
+        window.location.reload(); 
     } catch (err) {
-        alert("解绑失败: " + err.message);
+        showToast("解绑失败: " + err.message, 'error');
+    }
+};
+
+window.removeFamilyMember = async function(memberId) {
+    if (!confirm("确定要将该成员移出家庭组吗？")) return;
+    const client = window.supabaseClient;
+    const { data, error } = await client.rpc('remove_family_member', { p_member_id: memberId });
+    if (error || !data.success) {
+        showToast("操作失败: " + (error?.message || data.message), 'error');
+    } else {
+        showToast("已移出成员。");
+        window.location.reload();
     }
 };
 
 async function initDashboardLogic() {
     const client = window.supabaseClient;
     if (!client) return;
+    currentDashboardClient = client;
 
     const loader = document.getElementById('page-loader');
     
@@ -220,7 +559,6 @@ async function initDashboardLogic() {
             return; 
         }
         
-        // 验证通过，淡出移除遮罩
         if (loader) {
             loader.style.transition = 'opacity 0.3s ease';
             loader.style.opacity = '0';
@@ -230,10 +568,16 @@ async function initDashboardLogic() {
         const currentUser = session.user;
         const { data: profile } = await client.from('profiles').select('*').eq('id', currentUser.id).maybeSingle();
         
-        dashboardData = profile || { id: currentUser.id, tier: 'free', trial_ends_at: null, invite_success_count: 0 };
+        dashboardData = profile || { id: currentUser.id, email: currentUser.email, tier: 'free', trial_ends_at: null, invite_success_count: 0 };
+        if (!dashboardData.email) dashboardData.email = currentUser.email;
+
+        const { data: notifs } = await client.from('notifications').select('*').order('created_at', { ascending: false });
+        dashboardNotifs = notifs || [];
+        const unreadIds = dashboardNotifs.filter(n => !n.is_read).map(n => n.id);
+        if (unreadIds.length > 0) await client.from('notifications').update({ is_read: true }).in('id', unreadIds);
+        
         renderDashboardTexts();
 
-        // 防白嫖指纹领取逻辑
         async function getFingerprint() {
             const raw = navigator.userAgent + navigator.language + screen.width + 'x' + screen.height + new Date().getTimezoneOffset();
             const msgBuffer = new TextEncoder().encode(raw);
@@ -258,71 +602,20 @@ async function initDashboardLogic() {
                     const { data, error } = await client.rpc('claim_free_trial', { p_fingerprint: fp });
                     if (error) throw error;
                     if (data.success) {
-                        alert(data.message);
-                        window.location.reload(); 
+                        showToast(data.message);
+                        setTimeout(() => window.location.reload(), 1500); 
                     } else {
-                        alert(data.message);
+                        showToast(data.message, 'error');
                         claimBtn.classList.add('hidden');
                     }
                 } catch (err) {
-                    alert('领取失败: ' + err.message);
+                    showToast('领取失败: ' + err.message, 'error');
                     claimBtn.disabled = false;
                     claimBtn.textContent = '🎁 重新领取 30 天';
                 }
             };
         }
 
-        // 🌟 新增：设备管理卡片渲染逻辑
-        const deviceCard = document.getElementById('deviceCard');
-        const deviceSlots = document.getElementById('deviceSlots');
-        const deviceDesc = document.getElementById('deviceDesc');
-
-        if (dashboardData.tier === 'pro' || dashboardData.tier === 'family') {
-            deviceCard.classList.remove('hidden');
-            
-            const maxDevices = dashboardData.tier === 'pro' ? 3 : 9;
-            const t = window.fallbackTranslations || {};
-            
-            const { data: devices, error: devErr } = await client.from('devices').select('*').eq('user_id', dashboardData.id).order('last_seen_at', { ascending: false });
-            const usedCount = devices ? devices.length : 0;
-            
-            let descText = t['dash_device_desc'] || '您当前已绑定 {used} / {total} 台设备。';
-            descText = descText.replace('{used}', usedCount).replace('{total}', maxDevices);
-            deviceDesc.textContent = descText;
-
-            deviceSlots.innerHTML = '';
-            for (let i = 0; i < maxDevices; i++) {
-                const dev = devices && devices[i] ? devices[i] : null;
-                const slot = document.createElement('div');
-                slot.style.cssText = 'display: flex; justify-content: space-between; align-items: center; padding: 12px 16px; border: 1px dashed rgba(255,255,255,0.1); border-radius: 10px; background: rgba(0,0,0,0.2);';
-                
-                if (dev) {
-                    slot.style.borderStyle = 'solid';
-                    slot.innerHTML = `
-                        <div style="display: flex; align-items: center; gap: 10px;">
-                            <i class="fa-solid fa-desktop" style="color: #58a6ff;"></i>
-                            <div>
-                                <div style="color: #fff; font-size: 14px;">${dev.device_name || 'Unknown Device'} (${dev.browser || 'Browser'})</div>
-                                <div style="color: #8b949e; font-size: 12px;">最后活跃: ${new Date(dev.last_seen_at).toLocaleDateString()}</div>
-                            </div>
-                        </div>
-                        <button class="btn btn-danger" style="padding: 4px 10px; font-size: 12px;" onclick="unbindDevice('${dev.id}')">${t['dash_device_unbind'] || '解绑'}</button>
-                    `;
-                } else {
-                    slot.innerHTML = `
-                        <div style="display: flex; align-items: center; gap: 10px; color: #484f58;">
-                            <i class="fa-solid fa-mobile-screen"></i>
-                            <span style="font-size: 14px;">${t['dash_device_empty'] || '未绑定设备'}</span>
-                        </div>
-                    `;
-                }
-                deviceSlots.appendChild(slot);
-            }
-        } else {
-            deviceCard.classList.add('hidden');
-        }
-
-        // 生成并显示专属推广链接
         const { data: inviteCode } = await client.from('invitations').select('code').eq('inviter_id', dashboardData.id).eq('status', 'pending').limit(1).maybeSingle();
         if (inviteCode?.code) {
             const refLink = window.location.origin + '/pricing.html?ref=' + inviteCode.code;
@@ -338,13 +631,12 @@ async function initDashboardLogic() {
             };
         }
 
-        // 绑定生成事件
         document.getElementById('btnGenInvite').onclick = async () => {
             const t = window.fallbackTranslations || {};
             const btn = document.getElementById('btnGenInvite');
             btn.disabled = true; btn.textContent = t['dash_gen_ing'] || '生成中...';
             const { data, error } = await client.rpc('generate_invitation_code');
-            if (error) { alert((t['dash_gen_fail'] || '生成失败: ') + error.message); btn.disabled = false; btn.textContent = t['dash_invite_gen'] || '生成邀请码'; return; }
+            if (error) { showToast((t['dash_gen_fail'] || '生成失败: ') + error.message, 'error'); btn.disabled = false; btn.textContent = t['dash_invite_gen'] || '生成邀请码'; return; }
             
             const refLink = window.location.origin + '/pricing.html?ref=' + data;
             document.getElementById('myInviteCode').textContent = refLink;
@@ -358,30 +650,6 @@ async function initDashboardLogic() {
             };
         };
 
-        // 拉取通知
-        const { data: notifs } = await client.from('notifications').select('*').order('created_at', { ascending: false });
-        const list = document.getElementById('notificationList');
-        if (notifs && notifs.length > 0) {
-            list.innerHTML = '';
-            const unreadIds = [];
-            const t = window.fallbackTranslations || {};
-            notifs.forEach(n => {
-                if (!n.is_read) unreadIds.push(n.id);
-                const li = document.createElement('li');
-                li.className = `notification-item ${n.is_read ? '' : 'unread'}`;
-                const title = document.createElement('div'); title.style.cssText = 'font-weight:600;color:#fff;margin-bottom:4px;'; title.textContent = n.title || '';
-                const msg = document.createElement('div'); msg.style.cssText = 'color:#c9d1d9;line-height:1.4;'; msg.textContent = n.message || '';
-                const time = document.createElement('div'); time.className = 'notification-time'; time.textContent = new Date(n.created_at).toLocaleString();
-                li.append(title, msg, time);
-                list.appendChild(li);
-            });
-            if (unreadIds.length > 0) await client.from('notifications').update({ is_read: true }).in('id', unreadIds);
-        } else {
-            const t = window.fallbackTranslations || {};
-            list.innerHTML = `<li class="notification-item" style="text-align:center; color:#8b949e;">${t['dash_notif_empty'] || '暂无新通知'}</li>`;
-        }
-
-        // 取消订阅逻辑
         document.getElementById('btnCancelSub').onclick = () => document.getElementById('cancelModal').classList.add('active');
         document.getElementById('btnCloseModal').onclick = () => document.getElementById('cancelModal').classList.remove('active');
         document.getElementById('btnConfirmCancel').onclick = async () => {
@@ -393,8 +661,8 @@ async function initDashboardLogic() {
             const { error } = await client.from('reports').insert({
                 user_id: currentUser.id, reporter_email: currentUser.email, report_type: 'other', url: 'Cancel Sub', description: `[取消原因] ${reason || '未填写'}`
             });
-            if (error) { alert('提交失败: ' + error.message); btn.disabled = false; btn.textContent = t['dash_cancel_yes'] || '确认取消'; return; }
-            alert(t['dash_cancel_success'] || '您的取消请求已记录。'); 
+            if (error) { showToast('提交失败: ' + error.message, 'error'); btn.disabled = false; btn.textContent = t['dash_cancel_yes'] || '确认取消'; return; }
+            showToast(t['dash_cancel_success'] || '您的取消请求已记录。'); 
             document.getElementById('cancelModal').classList.remove('active'); 
             document.getElementById('btnCancelSub').classList.add('hidden'); 
             document.getElementById('btnUpgrade').classList.remove('hidden');
@@ -404,7 +672,7 @@ async function initDashboardLogic() {
     } catch (err) { 
         console.error("Dashboard 初始化失败:", err); 
         if (loader) loader.remove();
-        alert("加载数据失败，请刷新重试。");
+        showToast("加载数据失败，请刷新重试。", 'error');
     }
 }
 
@@ -416,5 +684,5 @@ document.addEventListener('DOMContentLoaded', () => {
             initPage();
             if (window.translatePage) window.translatePage();
         });
-    }
+    }      
 });

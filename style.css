@@ -495,3 +495,15 @@ body > .skiptranslate { display: none !important; }
     .promo-icon { margin: 0 0 15px 0; }
     .btn-promo { margin: 20px 0 0 0; width: 100%; }
 }
+
+/* 强制修复 OTP 占位符颜色和防浏览器填充 */
+#otpInput::placeholder,
+#emailInput::placeholder {
+    color: #484f58 !important;
+    opacity: 1 !important;
+    font-weight: normal !important;
+}
+#otpInput {
+    -webkit-text-security: none;
+    font-family: monospace !important;
+}
