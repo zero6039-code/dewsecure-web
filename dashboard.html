@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DewSecure - Dashboard</title>
     <link rel="stylesheet" href="/style.css">
-    <link rel="stylesheet" href="https://unpkg.com/swup@4/dist/swup.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="icon" type="image/png" href="/DewSecure.png">
 </head>
@@ -19,8 +18,8 @@
             <a href="/update/" data-i18n="nav_update">更新日志</a>
             <a href="/guide/" data-i18n="nav_guide">使用指南</a>
             <a href="/about/" data-i18n="nav_about">关于我们</a>
-            <a href="/dashboard.html" style="display:none;">控制台</a>
-            <a href="/login/" id="nav-login-btn">登录</a>
+            <a href="/dashboard.html" style="display:none;" data-i18n="nav_dashboard">控制台</a>
+            <a href="/login/" data-i18n="nav_login">登录</a>
         </nav>
         <div class="lang-switch">
             <button class="lang-toggle-btn" style="background:none;border:none;color:#cbd5e1;font-size:24px;cursor:pointer;padding:0;">🌐</button>
@@ -32,70 +31,68 @@
         </div>
     </header>
 
-    <main id="swup" class="transition-fade">
-        <div class="dashboard-container" id="mainContent">
-            <div class="left-column">
-                <div class="card">
-                    <h3><i class="fa-solid fa-shield-halved"></i> 当前订阅状态</h3>
-                    <div class="data-row">
-                        <span class="data-label">账户等级</span>
-                        <span id="tierBadge" class="status-badge skeleton-text">加载中...</span>
-                    </div>
-                    <div class="data-row">
-                        <span class="data-label">剩余有效天数</span>
-                        <span class="data-value" id="daysLeft">-</span>
-                    </div>
-                    <div class="data-row">
-                        <span class="data-label">到期时间</span>
-                        <span class="data-value" id="expireDate">-</span>
-                    </div>
-                    <div style="margin-top: 25px; display: flex; gap: 10px;">
-                        <button class="btn btn-primary" id="btnUpgrade" onclick="window.location.href='/pricing.html'">升级/续费高级版</button>
-                        <button class="btn btn-danger hidden" id="btnCancelSub">取消订阅</button>
-                    </div>
+    <!-- 内容正常写，不需要 main#swup -->
+    <div class="dashboard-container" id="mainContent">
+        <div class="left-column">
+            <div class="card">
+                <h3><i class="fa-solid fa-shield-halved"></i> 当前订阅状态</h3>
+                <div class="data-row">
+                    <span class="data-label">账户等级</span>
+                    <span id="tierBadge" class="status-badge skeleton-text">加载中...</span>
                 </div>
-
-                <div class="card" id="inviteCard">
-                    <h3><i class="fa-solid fa-gift"></i> 邀请好友，获取奖励</h3>
-                    <p style="color:#8b949e; font-size:14px;">邀请好友注册并激活。每成功激活1次，您将获得额外 <strong>30天</strong> 高级版（上限12次）。</p>
-                    <div class="invite-box">
-                        <div class="invite-input" id="myInviteCode">点击下方生成</div>
-                        <button class="btn btn-primary" id="btnGenInvite">生成邀请码</button>
-                        <button class="btn btn-primary hidden" id="btnCopyInvite" style="background:#58a6ff; color:#fff;">复制</button>
-                    </div>
-                    <div style="margin-top: 15px; font-size: 13px; color: #8b949e;">
-                        已成功邀请人数：<span id="inviteCount" style="color:#58a6ff; font-weight:bold;">0</span> / 12
-                    </div>
+                <div class="data-row">
+                    <span class="data-label">剩余有效天数</span>
+                    <span class="data-value" id="daysLeft">-</span>
+                </div>
+                <div class="data-row">
+                    <span class="data-label">到期时间</span>
+                    <span class="data-value" id="expireDate">-</span>
+                </div>
+                <div style="margin-top: 25px; display: flex; gap: 10px;">
+                    <button class="btn btn-primary" id="btnUpgrade" onclick="window.location.href='/pricing.html'">升级/续费高级版</button>
+                    <button class="btn btn-danger hidden" id="btnCancelSub">取消订阅</button>
                 </div>
             </div>
 
-            <div class="right-column">
-                <div class="card" style="height: 100%;">
-                    <h3><i class="fa-solid fa-bell"></i> 通知中心</h3>
-                    <ul class="notification-list" id="notificationList">
-                        <li class="notification-item skeleton-text" style="text-align:center;">正在拉取通知...</li>
-                    </ul>
+            <div class="card" id="inviteCard">
+                <h3><i class="fa-solid fa-gift"></i> 邀请好友，获取奖励</h3>
+                <p style="color:#8b949e; font-size:14px;">邀请好友注册并激活。每成功激活1次，您将获得额外 <strong>30天</strong> 高级版（上限12次）。</p>
+                <div class="invite-box">
+                    <div class="invite-input" id="myInviteCode">点击下方生成</div>
+                    <button class="btn btn-primary" id="btnGenInvite">生成邀请码</button>
+                    <button class="btn btn-primary hidden" id="btnCopyInvite" style="background:#58a6ff; color:#fff;">复制</button>
+                </div>
+                <div style="margin-top: 15px; font-size: 13px; color: #8b949e;">
+                    已成功邀请人数：<span id="inviteCount" style="color:#58a6ff; font-weight:bold;">0</span> / 12
                 </div>
             </div>
         </div>
 
-        <!-- 取消订阅弹窗 -->
-        <div class="modal-overlay" id="cancelModal">
-            <div class="modal-content">
-                <h3>确认取消订阅？</h3>
-                <p style="font-size:14px; color:#8b949e; margin-bottom:15px;">您的订阅将持续有效直到当前周期结束（<span id="modalExpireDate" style="color:#fff;"></span>）。在此期间，您可以继续享受所有高级功能。</p>
-                <p style="font-size:14px; color:#c9d1d9;">如果不介意，能告诉我们取消的原因吗？(选填)</p>
-                <textarea id="cancelReason" placeholder="例如：太贵了、功能不符合预期、体验不好..."></textarea>
-                <div class="modal-actions">
-                    <button class="btn" style="background:transparent; color:#8b949e;" id="btnCloseModal">暂不取消</button>
-                    <button class="btn btn-danger" id="btnConfirmCancel">确认取消</button>
-                </div>
+        <div class="right-column">
+            <div class="card" style="height: 100%;">
+                <h3><i class="fa-solid fa-bell"></i> 通知中心</h3>
+                <ul class="notification-list" id="notificationList">
+                    <li class="notification-item skeleton-text" style="text-align:center;">正在拉取通知...</li>
+                </ul>
             </div>
         </div>
-    </main>
+    </div>
+
+    <!-- 弹窗 -->
+    <div class="modal-overlay" id="cancelModal">
+        <div class="modal-content">
+            <h3>确认取消订阅？</h3>
+            <p style="font-size:14px; color:#8b949e; margin-bottom:15px;">您的订阅将持续有效直到当前周期结束（<span id="modalExpireDate" style="color:#fff;"></span>）。在此期间，您可以继续享受所有高级功能。</p>
+            <p style="font-size:14px; color:#c9d1d9;">如果不介意，能告诉我们取消的原因吗？(选填)</p>
+            <textarea id="cancelReason" placeholder="例如：太贵了、功能不符合预期、体验不好..."></textarea>
+            <div class="modal-actions">
+                <button class="btn" style="background:transparent; color:#8b949e;" id="btnCloseModal">暂不取消</button>
+                <button class="btn btn-danger" id="btnConfirmCancel">确认取消</button>
+            </div>
+        </div>
+    </div>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="https://unpkg.com/swup@4/dist/swup.min.js"></script>
     <script src="/js/auth-nav.js"></script>
     <script src="/js/app-init.js"></script>
 </body>
