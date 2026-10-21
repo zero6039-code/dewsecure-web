@@ -4,9 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DewSecure - Log In</title>
-    <!-- 确保路径是 /style.css -->
     <link rel="stylesheet" href="/style.css">
-    <link rel="stylesheet" href="https://unpkg.com/swup@4/dist/swup.css"> <!-- 🌟 新增 -->
+    <link rel="stylesheet" href="https://unpkg.com/swup@4/dist/swup.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="icon" type="image/png" href="/DewSecure.png">
 </head>
@@ -32,162 +31,55 @@
         </div>
     </header>
 
-<main id="swup" class="transition-fade"> <!-- 🌟 新增包裹 -->
-    <div class="login-layout">
-        <div class="login-left">
-            <h1 data-i18n="login_hero_title">掌控你的数字生活。</h1>
-            <p data-i18n="login_hero_desc">登录以同步您的跨设备白名单、拉取最新 AI 防护模型，并管理您的安全订阅。您的数据始终在本地加密。</p>
-        </div>
-        <div class="login-right">
-            <div class="login-card">
-                <div id="step-email">
-                    <h2 data-i18n="login_welcome">欢迎回来</h2>
-                    <p class="sub" data-i18n="login_sub">登录或创建一个新账号以继续。</p>
-                    <div class="input-group">
-                        <label data-i18n="login_email_label">电子邮件地址</label>
-                        <div class="input-wrapper">
-                            <i class="fa-regular fa-envelope"></i>
-                            <input type="email" id="emailInput" data-i18n-placeholder="login_email_ph" placeholder="name@example.com">
+    <main id="swup" class="transition-fade">
+        <div class="login-layout">
+            <div class="login-left">
+                <h1 data-i18n="login_hero_title">掌控你的数字生活。</h1>
+                <p data-i18n="login_hero_desc">登录以同步您的跨设备白名单、拉取最新 AI 防护模型，并管理您的安全订阅。您的数据始终在本地加密。</p>
+            </div>
+            <div class="login-right">
+                <div class="login-card">
+                    <div id="step-email">
+                        <h2 data-i18n="login_welcome">欢迎回来</h2>
+                        <p class="sub" data-i18n="login_sub">登录或创建一个新账号以继续。</p>
+                        <div class="input-group">
+                            <label data-i18n="login_email_label">电子邮件地址</label>
+                            <div class="input-wrapper">
+                                <i class="fa-regular fa-envelope"></i>
+                                <input type="email" id="emailInput" data-i18n-placeholder="login_email_ph" placeholder="name@example.com">
+                            </div>
+                            <div id="emailError" class="error-msg"></div>
                         </div>
-                        <div id="emailError" class="error-msg"></div>
+                        <button class="btn-login" id="btnSendOtp" data-i18n="login_btn">使用邮箱登录 (OTP)</button>
+                        
+                        <div class="divider" data-i18n="login_or">或者继续使用</div>
+                        <div class="oauth-btns">
+                            <div class="oauth-btn"><i class="fa-brands fa-google"></i></div>
+                            <div class="oauth-btn"><i class="fa-brands fa-github"></i></div>
+                            <div class="oauth-btn"><i class="fa-brands fa-ethereum"></i></div>
+                        </div>
+                        <div class="trial-badge" data-i18n="login_trial">🎁 首次注册即赠 30 天高级版体验</div>
                     </div>
-                    <button class="btn-login" id="btnSendOtp" data-i18n="login_btn">使用邮箱登录 (OTP)</button>
-                    
-                    <div class="divider" data-i18n="login_or">或者继续使用</div>
-                    <div class="oauth-btns">
-                        <div class="oauth-btn"><i class="fa-brands fa-google"></i></div>
-                        <div class="oauth-btn"><i class="fa-brands fa-github"></i></div>
-                        <div class="oauth-btn"><i class="fa-brands fa-ethereum"></i></div>
-                    </div>
-                    <div class="trial-badge" data-i18n="login_trial">🎁 首次注册即赠 30 天高级版体验</div>
-                </div>
 
-                <div id="step-otp" class="hidden">
-                    <h2>输入验证码</h2>
-                    <p class="sub">我们已向 <strong id="displayEmail"></strong> 发送了 8 位验证码。</p>
-                    <div class="input-group">
-                        <label>8 位验证码</label>
-                        <div class="input-wrapper">
-                            <i class="fa-solid fa-shield-halved"></i>
-                            <input type="text" id="otpInput" maxlength="8" placeholder="12345678" style="letter-spacing: 4px;">
+                    <div id="step-otp" class="hidden">
+                        <h2>输入验证码</h2>
+                        <p class="sub">我们已向 <strong id="displayEmail"></strong> 发送了 8 位验证码。</p>
+                        <div class="input-group">
+                            <label>8 位验证码</label>
+                            <div class="input-wrapper">
+                                <i class="fa-solid fa-shield-halved"></i>
+                                <input type="text" id="otpInput" maxlength="8" placeholder="12345678" style="letter-spacing: 4px;">
+                            </div>
+                            <div id="otpError" class="error-msg"></div>
                         </div>
-                        <div id="otpError" class="error-msg"></div>
+                        <button class="btn-login" id="btnVerifyOtp">验证并登录</button>
+                        <button class="btn-login" id="btnBack" style="background:transparent; color:#8b949e; margin-top:10px;">返回重新输入邮箱</button>
                     </div>
-                    <button class="btn-login" id="btnVerifyOtp">验证并登录</button>
-                    <button class="btn-login" id="btnBack" style="background:transparent; color:#8b949e; margin-top:10px;">返回重新输入邮箱</button>
                 </div>
             </div>
         </div>
-    </div>
+    </main>
 
-    <!-- 脚本加载顺序：SDK -> 导航鉴权 -> 登录业务逻辑 -> i18n -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="/js/auth-nav.js"></script>
-    <script>
-        document.addEventListener("DOMContentLoaded", () => {
-            const supabaseClient = window.supabaseClient;
-            if (!supabaseClient) return;
-
-            // 如果已登录，直接跳转控制台
-            supabaseClient.auth.getSession().then(({ data: { session } }) => {
-                if (session) window.location.href = '/dashboard.html';
-            });
-
-            const stepEmail = document.getElementById('step-email');
-            const stepOtp = document.getElementById('step-otp');
-            const emailInput = document.getElementById('emailInput');
-            const btnSendOtp = document.getElementById('btnSendOtp');
-            const btnVerifyOtp = document.getElementById('btnVerifyOtp');
-            const btnBack = document.getElementById('btnBack');
-            const otpInput = document.getElementById('otpInput');
-            
-            let currentEmail = '';
-            let countdown = 0;
-            let timerInterval = null;
-
-            btnSendOtp.addEventListener('click', async () => {
-                const email = emailInput.value.trim();
-                if (!email || !email.includes('@')) {
-                    showError('emailError', '请输入有效的邮箱地址');
-                    return;
-                }
-                btnSendOtp.disabled = true;
-                btnSendOtp.textContent = '正在发送...';
-
-                try {
-                    const { data, error } = await supabaseClient.auth.signInWithOtp({
-                        email: email,
-                        options: { shouldCreateUser: true }
-                    });
-                    if (error) throw error;
-                    currentEmail = email;
-                    document.getElementById('displayEmail').textContent = email;
-                    stepEmail.classList.add('hidden');
-                    stepOtp.classList.remove('hidden');
-                    startCountdown();
-                } catch (err) {
-                    showError('emailError', err.message || '发送失败，请稍后再试');
-                    btnSendOtp.disabled = false;
-                    btnSendOtp.textContent = '使用邮箱登录 (OTP)';
-                }
-            });
-
-            btnVerifyOtp.addEventListener('click', async () => {
-                const token = otpInput.value.trim();
-                if (token.length !== 8) {
-                    showError('otpError', '请输入 8 位验证码');
-                    return;
-                }
-                btnVerifyOtp.disabled = true;
-                btnVerifyOtp.textContent = '正在验证...';
-
-                try {
-                    const { data, error } = await supabaseClient.auth.verifyOtp({
-                        email: currentEmail,
-                        token: token,
-                        type: 'email'
-                    });
-                    if (error) throw error;
-                    window.location.href = '/dashboard.html';
-                } catch (err) {
-                    showError('otpError', '验证码错误或已过期');
-                    btnVerifyOtp.disabled = false;
-                    btnVerifyOtp.textContent = '验证并登录';
-                }
-            });
-
-            btnBack.addEventListener('click', () => {
-                stepOtp.classList.add('hidden');
-                stepEmail.classList.remove('hidden');
-                otpInput.value = '';
-                clearInterval(timerInterval);
-                btnSendOtp.disabled = false;
-                btnSendOtp.textContent = '使用邮箱登录 (OTP)';
-            });
-
-            function showError(id, msg) {
-                const el = document.getElementById(id);
-                el.textContent = msg;
-                el.style.display = 'block';
-                setTimeout(() => { el.style.display = 'none'; }, 5000);
-            }
-
-            function startCountdown() {
-                countdown = 60;
-                btnSendOtp.disabled = true;
-                timerInterval = setInterval(() => {
-                    if (countdown <= 0) {
-                        clearInterval(timerInterval);
-                        btnSendOtp.disabled = false;
-                        btnSendOtp.textContent = '重新发送验证码';
-                    } else {
-                        btnSendOtp.textContent = `重新发送 (${countdown}s)`;
-                        countdown--;
-                    }
-                }, 1000);
-            }
-        });
-    </script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="https://unpkg.com/swup@4/dist/swup.min.js"></script>
     <script src="/js/auth-nav.js"></script>
