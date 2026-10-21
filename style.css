@@ -170,12 +170,48 @@ header .lang-switch {
     width: 100%; 
     min-width: 650px; 
     height: 320px; 
-    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 40px;
 }
-.ds-t { position: absolute; top: 50px; left: 5%; right: 5%; font-size: 28px; font-weight: 800; color: #fff; margin: 0; }
-.ds-d { position: absolute; top: 110px; left: 5%; right: 5%; font-size: 16px; color: #8b949e; line-height: 1.6; margin: 0; height: 50px; opacity: 0; transition: opacity 0.3s; }
-.ds-btn { position: absolute; bottom: 40px; left: 50%; transform: translateX(-50%); display: inline-flex; align-items: center; background: #fff; color: #000; padding: 8px 24px 8px 8px; border-radius: 100px; font-weight: 700; font-size: 16px; transition: all 0.3s; }
-.ds-btn:hover { transform: translateX(-50%) scale(1.05); box-shadow: 0 0 30px rgba(255, 255, 255, 0.3); }
+.ds-t { 
+    font-size: 28px; 
+    font-weight: 800; 
+    color: #fff; 
+    margin-bottom: 12px; 
+}
+
+.ds-d { 
+    font-size: 16px; 
+    color: #8b949e; 
+    line-height: 1.6; 
+    margin-bottom: 30px; 
+    /* 🌟 关键修复：预留固定高度，防止文字加载时盒子变高 */
+    min-height: 50px; 
+    opacity: 0; 
+    transition: opacity 0.3s; 
+    text-align: center;
+}
+
+.ds-btn { 
+    display: inline-flex; 
+    align-items: center; 
+    background: #fff; 
+    color: #000; 
+    padding: 8px 24px 8px 8px; 
+    border-radius: 100px; 
+    font-weight: 700; 
+    font-size: 16px; 
+    transition: all 0.3s; 
+}
+
+.ds-btn:hover { 
+    transform: scale(1.05); 
+    box-shadow: 0 0 30px rgba(255, 255, 255, 0.3); 
+}
+
 .ds-btn-ic { width: 40px; height: 40px; background: #0d1117; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-right: 15px; color: #fff; font-size: 20px; }
 
 .features { padding: 100px 40px; }
