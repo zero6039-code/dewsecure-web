@@ -5,69 +5,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DewSecure - Dashboard</title>
     <link rel="stylesheet" href="/style.css">
+    <link rel="stylesheet" href="https://unpkg.com/swup@4/dist/swup.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        body { background: #0d1117; color: #c9d1d9; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif; margin: 0; }
-        
-        .dashboard-container { 
-            max-width: 1200px; 
-            margin: 40px auto; 
-            padding: 0 20px; 
-            display: grid; 
-            grid-template-columns: 2fr 1fr; 
-            gap: 24px; 
-        }
-        .card { background: rgba(22, 27, 34, 0.6); backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 20px; padding: 30px; margin-bottom: 24px; }
-        .card h3 { color: #fff; margin-bottom: 20px; font-size: 20px; display: flex; align-items: center; gap: 10px; }
-        .status-badge { display: inline-block; padding: 6px 12px; border-radius: 20px; font-size: 13px; font-weight: 600; background: rgba(88,166,255,0.15); color: #58a6ff; border: 1px solid rgba(88,166,255,0.3); }
-        .status-pro { background: rgba(255, 196, 0, 0.15); color: #ffc400; border-color: rgba(255, 196, 0, 0.3); }
-        .data-row { display: flex; justify-content: space-between; padding: 15px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
-        .data-row:last-child { border-bottom: none; }
-        .data-label { color: #8b949e; }
-        .data-value { color: #fff; font-weight: 600; }
-        .btn { padding: 10px 20px; border-radius: 10px; font-weight: 600; cursor: pointer; border: none; transition: 0.3s; font-size: 14px; }
-        .btn-primary { background: #fff; color: #000; }
-        .btn-primary:hover { background: #e6edf3; }
-        .btn-danger { background: rgba(248, 81, 73, 0.1); color: #f85149; border: 1px solid rgba(248, 81, 73, 0.3); padding: 8px 16px; }
-        .btn-danger:hover { background: rgba(248, 81, 73, 0.2); }
-        .invite-box { display: flex; gap: 10px; margin-top: 15px; }
-        .invite-input { flex: 1; background: rgba(0,0,0,0.3); border: 1px dashed rgba(88,166,255,0.5); border-radius: 10px; padding: 12px; color: #58a6ff; font-family: monospace; font-size: 16px; letter-spacing: 2px; text-align: center; }
-        .notification-list { list-style: none; padding: 0; max-height: 400px; overflow-y: auto; margin: 0; }
-        .notification-item { padding: 15px; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 14px; }
-        .notification-item.unread { background: rgba(88,166,255,0.05); }
-        .notification-time { font-size: 12px; color: #8b949e; margin-top: 5px; }
-        
-        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); backdrop-filter: blur(8px); display: flex; align-items: center; justify-content: center; z-index: 1000; opacity: 0; pointer-events: none; transition: 0.3s; }
-        .modal-overlay.active { opacity: 1; pointer-events: all; }
-        .modal-content { background: rgba(22, 27, 34, 0.9); border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; padding: 30px; max-width: 450px; width: 90%; }
-        .modal-content h3 { margin-bottom: 15px; color: #fff; }
-        .modal-content textarea { width: 100%; height: 100px; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; padding: 10px; color: #fff; margin-top: 10px; resize: none; outline: none; }
-        .modal-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px; }
-        .hidden { display: none !important; }
-        
-        .card-completed { position: relative; pointer-events: none; }
-        .card-completed::after { content: "感谢您的分享！已达奖励上限。请留意通知中心，我们会定期发放福利。"; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(22,27,34,0.85); backdrop-filter: blur(8px); display: flex; align-items: center; justify-content: center; text-align: center; padding: 30px; color: #58a6ff; font-weight: bold; font-size: 16px; border-radius: 20px; z-index: 10; }
-
-        /* 骨架加载动画 */
-        .skeleton-text { color: #8b949e; font-size: 14px; animation: pulse 1.5s infinite; }
-        @keyframes pulse { 0% { opacity: .6; } 50% { opacity: 1; } 100% { opacity: .6; } }
-
-        @media (max-width: 900px) {
-            .dashboard-container { grid-template-columns: 1fr; }
-        }
-    </style>
+    <link rel="icon" type="image/png" href="/DewSecure.png">
 </head>
 <body>
-    <!-- 导航栏 -->
     <header>
         <a href="/index.html" class="logo"><img src="/DewSecure.png" alt="DewSecure"> DewSecure</a>
         <nav>
-            <a href="/index.html">首页</a>
-            <a href="/pricing.html">定价</a>
-            <a href="/pentest/" target="_blank">安全审计</a>
-            <a href="/update/">更新日志</a>
-            <a href="/guide/">使用指南</a>
-            <a href="/about/">关于我们</a>
+            <a href="/index.html" data-i18n="nav_home">首页</a>
+            <a href="/pricing.html" data-i18n="nav_pricing">定价</a>
+            <a href="/pentest/" target="_blank" data-i18n="nav_pentest">安全审计</a>
+            <a href="/update/" data-i18n="nav_update">更新日志</a>
+            <a href="/guide/" data-i18n="nav_guide">使用指南</a>
+            <a href="/about/" data-i18n="nav_about">关于我们</a>
             <a href="/dashboard.html" style="display:none;">控制台</a>
             <a href="/login/" id="nav-login-btn">登录</a>
         </nav>
@@ -81,318 +32,71 @@
         </div>
     </header>
 
-    <!-- 直接显示容器，绝不 display: none -->
-    <div class="dashboard-container" id="mainContent">
-        <!-- 左侧：状态与邀请 -->
-        <div class="left-column">
-            <div class="card">
-                <h3><i class="fa-solid fa-shield-halved"></i> 当前订阅状态</h3>
-                <div class="data-row">
-                    <span class="data-label">账户等级</span>
-                    <span id="tierBadge" class="status-badge skeleton-text">加载中...</span>
+    <main id="swup" class="transition-fade">
+        <div class="dashboard-container" id="mainContent">
+            <div class="left-column">
+                <div class="card">
+                    <h3><i class="fa-solid fa-shield-halved"></i> 当前订阅状态</h3>
+                    <div class="data-row">
+                        <span class="data-label">账户等级</span>
+                        <span id="tierBadge" class="status-badge skeleton-text">加载中...</span>
+                    </div>
+                    <div class="data-row">
+                        <span class="data-label">剩余有效天数</span>
+                        <span class="data-value" id="daysLeft">-</span>
+                    </div>
+                    <div class="data-row">
+                        <span class="data-label">到期时间</span>
+                        <span class="data-value" id="expireDate">-</span>
+                    </div>
+                    <div style="margin-top: 25px; display: flex; gap: 10px;">
+                        <button class="btn btn-primary" id="btnUpgrade" onclick="window.location.href='/pricing.html'">升级/续费高级版</button>
+                        <button class="btn btn-danger hidden" id="btnCancelSub">取消订阅</button>
+                    </div>
                 </div>
-                <div class="data-row">
-                    <span class="data-label">剩余有效天数</span>
-                    <span class="data-value" id="daysLeft">-</span>
-                </div>
-                <div class="data-row">
-                    <span class="data-label">到期时间</span>
-                    <span class="data-value" id="expireDate">-</span>
-                </div>
-                <div style="margin-top: 25px; display: flex; gap: 10px;">
-                    <button class="btn btn-primary" id="btnUpgrade" onclick="window.location.href='/pricing.html'">升级/续费高级版</button>
-                    <button class="btn btn-danger hidden" id="btnCancelSub">取消订阅</button>
+
+                <div class="card" id="inviteCard">
+                    <h3><i class="fa-solid fa-gift"></i> 邀请好友，获取奖励</h3>
+                    <p style="color:#8b949e; font-size:14px;">邀请好友注册并激活。每成功激活1次，您将获得额外 <strong>30天</strong> 高级版（上限12次）。</p>
+                    <div class="invite-box">
+                        <div class="invite-input" id="myInviteCode">点击下方生成</div>
+                        <button class="btn btn-primary" id="btnGenInvite">生成邀请码</button>
+                        <button class="btn btn-primary hidden" id="btnCopyInvite" style="background:#58a6ff; color:#fff;">复制</button>
+                    </div>
+                    <div style="margin-top: 15px; font-size: 13px; color: #8b949e;">
+                        已成功邀请人数：<span id="inviteCount" style="color:#58a6ff; font-weight:bold;">0</span> / 12
+                    </div>
                 </div>
             </div>
 
-            <div class="card" id="inviteCard">
-                <h3><i class="fa-solid fa-gift"></i> 邀请好友，获取奖励</h3>
-                <p style="color:#8b949e; font-size:14px;">邀请好友注册并激活。每成功激活1次，您将获得额外 <strong>30天</strong> 高级版（上限12次）。</p>
-                <div class="invite-box">
-                    <div class="invite-input" id="myInviteCode">点击下方生成</div>
-                    <button class="btn btn-primary" id="btnGenInvite">生成邀请码</button>
-                    <button class="btn btn-primary hidden" id="btnCopyInvite" style="background:#58a6ff; color:#fff;">复制</button>
+            <div class="right-column">
+                <div class="card" style="height: 100%;">
+                    <h3><i class="fa-solid fa-bell"></i> 通知中心</h3>
+                    <ul class="notification-list" id="notificationList">
+                        <li class="notification-item skeleton-text" style="text-align:center;">正在拉取通知...</li>
+                    </ul>
                 </div>
-                <div style="margin-top: 15px; font-size: 13px; color: #8b949e;">
-                    已成功邀请人数：<span id="inviteCount" style="color:#58a6ff; font-weight:bold;">0</span> / 12
+            </div>
+        </div>
+
+        <!-- 取消订阅弹窗 -->
+        <div class="modal-overlay" id="cancelModal">
+            <div class="modal-content">
+                <h3>确认取消订阅？</h3>
+                <p style="font-size:14px; color:#8b949e; margin-bottom:15px;">您的订阅将持续有效直到当前周期结束（<span id="modalExpireDate" style="color:#fff;"></span>）。在此期间，您可以继续享受所有高级功能。</p>
+                <p style="font-size:14px; color:#c9d1d9;">如果不介意，能告诉我们取消的原因吗？(选填)</p>
+                <textarea id="cancelReason" placeholder="例如：太贵了、功能不符合预期、体验不好..."></textarea>
+                <div class="modal-actions">
+                    <button class="btn" style="background:transparent; color:#8b949e;" id="btnCloseModal">暂不取消</button>
+                    <button class="btn btn-danger" id="btnConfirmCancel">确认取消</button>
                 </div>
             </div>
         </div>
+    </main>
 
-        <!-- 右侧：通知中心 -->
-        <div class="right-column">
-            <div class="card" style="height: 100%;">
-                <h3><i class="fa-solid fa-bell"></i> 通知中心</h3>
-                <ul class="notification-list" id="notificationList">
-                    <li class="notification-item skeleton-text" style="text-align:center;">正在拉取通知...</li>
-                </ul>
-            </div>
-        </div>
-    </div>
-
-    <!-- 取消订阅弹窗 -->
-    <div class="modal-overlay" id="cancelModal">
-        <div class="modal-content">
-            <h3>确认取消订阅？</h3>
-            <p style="font-size:14px; color:#8b949e; margin-bottom:15px;">您的订阅将持续有效直到当前周期结束（<span id="modalExpireDate" style="color:#fff;"></span>）。在此期间，您可以继续享受所有高级功能。</p>
-            <p style="font-size:14px; color:#c9d1d9;">如果不介意，能告诉我们取消的原因吗？(选填)</p>
-            <textarea id="cancelReason" placeholder="例如：太贵了、功能不符合预期、体验不好..."></textarea>
-            <div class="modal-actions">
-                <button class="btn" style="background:transparent; color:#8b949e;" id="btnCloseModal">暂不取消</button>
-                <button class="btn btn-danger" id="btnConfirmCancel">确认取消</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- 1. 加载 SDK -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <!-- 2. 加载鉴权与导航 -->
+    <script src="https://unpkg.com/swup@4/dist/swup.min.js"></script>
     <script src="/js/auth-nav.js"></script>
-
-    <!-- 3. 业务代码 -->
-    <script>
-        document.addEventListener("DOMContentLoaded", async () => {
-            const client = window.supabaseClient;
-            if (!client) {
-                alert('严重错误：Supabase 客户端未初始化，请检查网络是否拦截了 SDK。');
-                return;
-            }
-
-            try {
-                // 1. 获取登录状态
-                const { data: { session }, error: sessionError } = await client.auth.getSession();
-                
-                if (sessionError || !session) {
-                    // 没登录直接踢回登录页
-                    window.location.href = '/login.html';
-                    return;
-                }
-
-                const currentUser = session.user;
-                
-                // 静态 UI 先行激活
-                const loginBtn = document.getElementById('nav-login-btn');
-                if (loginBtn) loginBtn.style.display = 'none';
-
-                // 2. 拉取用户资料
-                const { data: profile, error: profileErr } = await client
-                    .from('profiles')
-                    .select('*')
-                    .eq('id', currentUser.id)
-                    .maybeSingle();
-                
-                if (profileErr) throw profileErr;
-
-                const currentProfile = profile || { 
-                    id: currentUser.id, 
-                    tier: 'free', 
-                    trial_ends_at: null, 
-                    invite_success_count: 0 
-                };
-
-                // 3. 渲染订阅状态
-                renderProfileStatus(currentProfile);
-
-                // 4. 异步拉取邀请码
-                if (currentProfile.invite_success_count < 12) {
-                    fetchInviteCode(client, currentProfile.id);
-                } else {
-                    document.getElementById('inviteCard').classList.add('card-completed');
-                }
-
-                // 5. 异步拉取通知
-                fetchNotifications(client);
-
-                // 6. 绑定按钮事件
-                document.getElementById('btnGenInvite').onclick = () => generateInvite(client);
-                document.getElementById('btnCancelSub').onclick = () => document.getElementById('cancelModal').classList.add('active');
-                document.getElementById('btnCloseModal').onclick = () => document.getElementById('cancelModal').classList.remove('active');
-                document.getElementById('btnConfirmCancel').onclick = () => submitCancelSubscription(client, currentUser);
-
-            } catch (err) {
-                console.error("Dashboard 初始化错误:", err);
-                document.getElementById('tierBadge').textContent = '加载失败';
-                document.getElementById('tierBadge').classList.remove('skeleton-text');
-                document.getElementById('tierBadge').style.color = '#f85149';
-                alert("加载数据失败: " + (err.message || "请检查网络连接"));
-            }
-        });
-
-        function renderProfileStatus(profile) {
-            const tierBadge = document.getElementById('tierBadge');
-            const daysLeftEl = document.getElementById('daysLeft');
-            const expireDateEl = document.getElementById('expireDate');
-            const btnCancel = document.getElementById('btnCancelSub');
-            const btnUpgrade = document.getElementById('btnUpgrade');
-
-            document.getElementById('inviteCount').textContent = profile.invite_success_count || 0;
-
-            tierBadge.classList.remove('skeleton-text');
-
-            let expireDate = profile.trial_ends_at ? new Date(profile.trial_ends_at) : null;
-            const now = new Date();
-            
-            if (profile.tier === 'free') {
-                tierBadge.textContent = '免费版 (Free)';
-                tierBadge.className = 'status-badge';
-                daysLeftEl.textContent = '永久有效';
-                expireDateEl.textContent = '-';
-                btnCancel.classList.add('hidden');
-                btnUpgrade.classList.remove('hidden');
-            } else {
-                tierBadge.textContent = profile.tier === 'pro' ? '高级版 (Pro)' : '家庭版 (Family)';
-                tierBadge.className = 'status-badge status-pro';
-                
-                if (expireDate && expireDate > now) {
-                    const diffTime = Math.abs(expireDate - now);
-                    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); 
-                    daysLeftEl.textContent = `${diffDays} 天`;
-                    daysLeftEl.style.color = diffDays <= 7 ? '#f85149' : '#fff';
-                    expireDateEl.textContent = expireDate.toLocaleDateString('zh-CN');
-                    document.getElementById('modalExpireDate').textContent = expireDate.toLocaleDateString('zh-CN');
-                    
-                    btnCancel.classList.remove('hidden');
-                    btnUpgrade.textContent = '续费 / 延长订阅';
-                } else {
-                    daysLeftEl.textContent = '已过期';
-                    btnCancel.classList.add('hidden');
-                    btnUpgrade.classList.remove('hidden');
-                }
-            }
-        }
-
-        async function fetchInviteCode(client, userId) {
-            const { data: inviteCode, error } = await client
-                .from('invitations')
-                .select('code')
-                .eq('inviter_id', userId)
-                .eq('status', 'pending')
-                .limit(1)
-                .maybeSingle();
-
-            if (error) {
-                console.error('读取邀请码失败:', error);
-                return;
-            }
-
-            if (inviteCode && inviteCode.code) {
-                document.getElementById('myInviteCode').textContent = inviteCode.code;
-                document.getElementById('btnGenInvite').classList.add('hidden');
-                
-                const copyBtn = document.getElementById('btnCopyInvite');
-                copyBtn.classList.remove('hidden');
-                copyBtn.onclick = async () => {
-                    try {
-                        await navigator.clipboard.writeText(inviteCode.code);
-                        copyBtn.textContent = '已复制!';
-                        setTimeout(() => copyBtn.textContent = '复制', 2000);
-                    } catch (err) {
-                        alert('复制失败。');
-                    }
-                };
-            }
-        }
-
-        async function generateInvite(client) {
-            const btn = document.getElementById('btnGenInvite');
-            btn.disabled = true;
-            btn.textContent = '生成中...';
-
-            try {
-                const { data, error } = await client.rpc('generate_invitation_code');
-                if (error) throw error;
-                
-                document.getElementById('myInviteCode').textContent = data;
-                btn.classList.add('hidden');
-                
-                const copyBtn = document.getElementById('btnCopyInvite');
-                copyBtn.classList.remove('hidden');
-                copyBtn.onclick = async () => {
-                    try {
-                        await navigator.clipboard.writeText(data);
-                        copyBtn.textContent = '已复制!';
-                        setTimeout(() => copyBtn.textContent = '复制', 2000);
-                    } catch (err) {
-                        alert('复制失败。');
-                    }
-                };
-            } catch (err) {
-                alert('生成失败: ' + err.message);
-                btn.disabled = false;
-                btn.textContent = '生成邀请码';
-            }
-        }
-
-        async function fetchNotifications(client) {
-            const { data, error } = await client
-                .from('notifications')
-                .select('*')
-                .order('created_at', { ascending: false });
-
-            const list = document.getElementById('notificationList');
-            if (error || !data || data.length === 0) {
-                list.innerHTML = '<li class="notification-item" style="text-align:center; color:#8b949e;">暂无新通知</li>';
-                return;
-            }
-
-            list.innerHTML = '';
-            const unreadIds = [];
-            
-            data.forEach(n => {
-                if (!n.is_read) unreadIds.push(n.id);
-
-                const li = document.createElement('li');
-                li.className = `notification-item ${n.is_read ? '' : 'unread'}`;
-                
-                const title = document.createElement('div');
-                title.style.cssText = 'font-weight:600;color:#fff;margin-bottom:4px;';
-                title.textContent = n.title ?? '';
-
-                const message = document.createElement('div');
-                message.style.cssText = 'color:#c9d1d9;line-height:1.4;';
-                message.textContent = n.message ?? '';
-
-                const time = document.createElement('div');
-                time.className = 'notification-time';
-                time.textContent = new Date(n.created_at).toLocaleString();
-
-                li.append(title, message, time);
-                list.appendChild(li);
-            });
-
-            if (unreadIds.length > 0) {
-                await client.from('notifications').update({ is_read: true }).in('id', unreadIds);
-            }
-        }
-
-        async function submitCancelSubscription(client, currentUser) {
-            const btn = document.getElementById('btnConfirmCancel');
-            const reason = document.getElementById('cancelReason').value.trim();
-            btn.disabled = true;
-            btn.textContent = '处理中...';
-
-            try {
-                const { error } = await client.from('reports').insert({
-                    user_id: currentUser.id,
-                    reporter_email: currentUser.email,
-                    report_type: 'other',
-                    url: 'Cancel Subscription Flow',
-                    description: `[取消订阅原因] ${reason || '用户未填写'}`
-                });
-
-                if (error) throw error;
-
-                alert('您的取消请求已记录。订阅将在当前周期结束后失效。');
-                document.getElementById('cancelModal').classList.remove('active');
-                document.getElementById('btnCancelSub').classList.add('hidden');
-                document.getElementById('btnUpgrade').classList.remove('hidden');
-            } catch (err) {
-                alert('提交失败: ' + err.message);
-            } finally {
-                btn.disabled = false;
-                btn.textContent = '确认取消';
-            }
-        }
-    </script>
+    <script src="/js/app-init.js"></script>
 </body>
 </html>
