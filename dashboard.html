@@ -11,9 +11,10 @@
         body { background: #0d1117; color: #c9d1d9; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif; margin: 0; }
         .i18n-loading [data-i18n] { visibility: hidden !important; }
         
+        /* 因为 auth-nav.js 留了 70px 的 padding-top，这里 margin-top 改为 30px 即可 */
         .dashboard-container { 
             max-width: 1200px; 
-            margin: 100px auto 40px; 
+            margin: 30px auto 40px; 
             padding: 0 20px; 
             display: grid; 
             grid-template-columns: 2fr 1fr; 
@@ -39,7 +40,7 @@
         .notification-item.unread { background: rgba(88,166,255,0.05); }
         .notification-time { font-size: 12px; color: #8b949e; margin-top: 5px; }
         
-        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); backdrop-filter: blur(8px); display: flex; align-items: center; justify-content: center; z-index: 1000; opacity: 0; pointer-events: none; transition: 0.3s; }
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); backdrop-filter: blur(8px); display: flex; align-items: center; justify-content: center; z-index: 10000; opacity: 0; pointer-events: none; transition: 0.3s; }
         .modal-overlay.active { opacity: 1; pointer-events: all; }
         .modal-content { background: rgba(22, 27, 34, 0.9); border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; padding: 30px; max-width: 450px; width: 90%; }
         .modal-content h3 { margin-bottom: 15px; color: #fff; }
@@ -51,13 +52,12 @@
         .card-completed::after { content: "感谢您的分享！已达奖励上限。请留意通知中心，我们会定期发放福利。"; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(22,27,34,0.85); backdrop-filter: blur(8px); display: flex; align-items: center; justify-content: center; text-align: center; padding: 30px; color: #58a6ff; font-weight: bold; font-size: 16px; border-radius: 20px; z-index: 10; }
 
         @media (max-width: 900px) {
-            .dashboard-container { grid-template-columns: 1fr; margin-top: 80px; }
+            .dashboard-container { grid-template-columns: 1fr; margin-top: 20px; }
         }
     </style>
 </head>
 <body>
-    <!-- 就留这一个空壳，全交由 auth-nav.js 渲染 -->
-    <header></header>
+    <!-- 完全不需要 header 标签，JS 会自动生成 -->
 
     <div class="dashboard-container" id="mainContent" style="display: none;">
         <!-- 左侧：状态与邀请 -->
