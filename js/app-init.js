@@ -1,6 +1,5 @@
 // js/app-init.js
 
-// 缓存当前的 Dashboard 数据，以便语言切换时重新渲染
 let dashboardData = null;
 
 function initPage() {
@@ -64,20 +63,8 @@ function initPage() {
             }
         });
 
-        // 🌟 核心修复：支持 ENTER 键发送验证码和验证
-        emailInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') {
-                e.preventDefault();
-                btnSendOtp.click();
-            }
-        });
-
-        otpInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') {
-                e.preventDefault();
-                btnVerifyOtp.click();
-            }
-        });
+        emailInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') { e.preventDefault(); btnSendOtp.click(); } });
+        otpInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') { e.preventDefault(); btnVerifyOtp.click(); } });
 
         btnBack.addEventListener('click', () => {
             stepOtp.classList.add('hidden'); stepEmail.classList.remove('hidden'); otpInput.value = '';
@@ -204,7 +191,6 @@ function renderDashboardTexts() {
     }
 }
 
-// 监听语言变化，实时刷新 Dashboard 文字
 window.addEventListener('languageChanged', renderDashboardTexts);
 
 async function initDashboardLogic() {
@@ -216,11 +202,49 @@ async function initDashboardLogic() {
         const currentUser = session.user;
         const { data: profile } = await client.from('profiles').select('*').eq('id', currentUser.id).maybeSingle();
         
-        // 保存数据
         dashboardData = profile || { id: currentUser.id, tier: 'free', trial_ends_at: null, invite_success_count: 0 };
-
-        // 首次渲染文字
         renderDashboardTexts();
+
+        // 🌟 新增：防白嫖指纹领取逻辑
+        async function getFingerprint() {
+            const raw = navigator.userAgent + navigator.language + screen.width + 'x' + screen.height + new Date().getTimezoneOffset();
+            const msgBuffer = new TextEncoder().encode(raw);
+            const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
+            const hashArray = Array.from(new Uint8Array(hashBuffer));
+            return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+        }
+
+        // 如果当前是 free 且没有领取过，显示领取按钮
+        if (dashboardData.tier === 'free' && !dashboardData.trial_ends_at) {
+            const card = document.getElementById('inviteCard'); // 或者你可以新建一个卡片
+            const claimBtn = document.createElement('button');
+            claimBtn.className = 'btn btn-primary';
+            claimBtn.style = 'width: 100%; margin-top: 20px; background: #58a6ff; color: #fff;';
+            claimBtn.textContent = '🎁 免费领取 30 天高级版体验';
+            card.appendChild(claimBtn);
+
+            claimBtn.onclick = async () => {
+                claimBtn.disabled = true;
+                claimBtn.textContent = '正在验证设备...';
+                try {
+                    const fp = await getFingerprint();
+                    const { data, error } = await client.rpc('claim_free_trial', { p_fingerprint: fp });
+                    if (error) throw error;
+                    
+                    if (data.success) {
+                        alert(data.message);
+                        window.location.reload(); 
+                    } else {
+                        alert(data.message);
+                        claimBtn.classList.add('hidden');
+                    }
+                } catch (err) {
+                    alert('领取失败: ' + err.message);
+                    claimBtn.disabled = false;
+                    claimBtn.textContent = '🎁 重新领取 30 天';
+                }
+            };
+        }
 
         // 拉取邀请码
         const { data: inviteCode } = await client.from('invitations').select('code').eq('inviter_id', dashboardData.id).eq('status', 'pending').limit(1).maybeSingle();
@@ -250,6 +274,7 @@ async function initDashboardLogic() {
             copyBtn.classList.remove('hidden');
             copyBtn.onclick = async () => {
                 await navigator.clipboard.writeText(data); 
+                const t = window.fallbackTranslations || {};
                 copyBtn.textContent = t['dash_copied'] || '已复制!'; 
                 setTimeout(() => copyBtn.textContent = t['dash_invite_copy'] || '复制', 2000); 
             };
