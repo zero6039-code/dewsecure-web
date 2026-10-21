@@ -2,9 +2,24 @@
 
 // 页面专属的初始化逻辑
 function initPage() {
+    // ==========================================
+    // 1. 核心修复：自动根据当前 URL 高亮导航栏
+    // ==========================================
     const path = window.location.pathname;
+    document.querySelectorAll('header nav a').forEach(link => {
+        link.classList.remove('active');
+        const href = link.getAttribute('href');
+        // 兼容带 html 和不带 html 的路径
+        if (href === path || 
+            (path === '/' && href === '/index.html') || 
+            (path.includes(href.replace('.html', '')) && href !== '/')) {
+            link.classList.add('active');
+        }
+    });
 
-    // 1. 首页专属逻辑
+    // ==========================================
+    // 2. 首页专属逻辑
+    // ==========================================
     if (document.getElementById('ds-title')) {
         const browserUrls = { chrome: 'https://chromewebstore.google.com/', edge: 'https://microsoftedge.microsoft.com/', firefox: 'https://addons.mozilla.org/', safari: '#', opera: '#', yandex: '#', android: '#' };
         const browserIcons = { chrome: 'fa-chrome', edge: 'fa-edge', firefox: 'fa-firefox-browser', safari: 'fa-safari', opera: 'fa-opera', yandex: 'fa-yandex', android: 'fa-android' };
@@ -38,27 +53,30 @@ function initPage() {
 
         setTimeout(() => { if (icons.length > 0) icons[0].click(); }, 50);
 
-        btnEl.addEventListener('click', (e) => {
-            if (btnEl.getAttribute('href') === '#') {
-                e.preventDefault();
-                alert("商店链接即将上线！");
-            }
-        });
+        if (btnEl) {
+            btnEl.addEventListener('click', (e) => {
+                if (btnEl.getAttribute('href') === '#') {
+                    e.preventDefault();
+                    alert("商店链接即将上线！");
+                }
+            });
+        }
 
         window.addEventListener('languageChanged', () => {
             renderBrowserData(currentTarget);
         });
     }
 
-    // 2. 指南页手风琴逻辑
+    // ==========================================
+    // 3. 指南页手风琴逻辑
+    // ==========================================
     const accordions = document.querySelectorAll('.accordion-header');
     if (accordions.length > 0) {
         accordions.forEach(header => {
-            // 防止重复绑定
-            header.replaceWith(header.cloneNode(true)); 
-        });
-        // 重新绑定
-        document.querySelectorAll('.accordion-header').forEach(header => {
+            // 防止重复绑定事件导致点击一次触发两次
+            if (header.dataset.bound) return;
+            header.dataset.bound = "true"; 
+            
             header.addEventListener('click', () => {
                 const card = header.parentElement;
                 card.classList.toggle('active');
@@ -66,7 +84,9 @@ function initPage() {
         });
     }
 
-    // 3. Dashboard 专属逻辑
+    // ==========================================
+    // 4. Dashboard 专属逻辑
+    // ==========================================
     if (document.getElementById('mainContent')) {
         initDashboardLogic();
     }
@@ -111,7 +131,7 @@ async function initDashboardLogic() {
         const btnUpgrade = document.getElementById('btnUpgrade');
 
         document.getElementById('inviteCount').textContent = currentProfile.invite_success_count || 0;
-        tierBadge.classList.remove('skeleton-text');
+        if(tierBadge) tierBadge.classList.remove('skeleton-text');
 
         let expireDate = currentProfile.trial_ends_at ? new Date(currentProfile.trial_ends_at) : null;
         const now = new Date();
@@ -219,18 +239,24 @@ async function initDashboardLogic() {
 
     } catch (err) {
         console.error("Dashboard 初始化失败:", err);
-        document.getElementById('tierBadge').textContent = '加载失败';
-        document.getElementById('tierBadge').style.color = '#f85149';
+        const tierBadge = document.getElementById('tierBadge');
+        if(tierBadge) {
+            tierBadge.textContent = '加载失败';
+            tierBadge.style.color = '#f85149';
+        }
     }
 }
 
 // 首次加载直接运行
 document.addEventListener('DOMContentLoaded', () => {
     initPage();
+    
     // 实例化 Swup (无刷新页面切换)
-    window.swup = new Swup({
-        containers: ['#swup']
-    });
-    // 每次页面切换后重新初始化页面专属逻辑
-    window.swup.hooks.on('page:view', initPage);
+    if (window.Swup) {
+        window.swup = new Swup({
+            containers: ['#swup']
+        });
+        // 每次页面切换后重新初始化页面专属逻辑
+        window.swup.hooks.on('page:view', initPage);
+    }
 });
