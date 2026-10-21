@@ -176,5 +176,8 @@
   "login_or": "或者继续使用",
   "login_trial": "🎁 首次注册即赠 30 天高级版体验",
   "nav_dashboard": "控制台",
-  "nav_logout": "退出"
+  "nav_logout": "退出",
+  "dash_notif_empty": "暂无新通知",
+  "dash_cancel_processing": "处理中...",
+  "dash_cancel_success": "您的取消请求已记录。订阅将在当前周期结束后失效。"
 }
