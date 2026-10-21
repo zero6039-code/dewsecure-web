@@ -5,40 +5,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DewSecure - Guide</title>
     <link rel="stylesheet" href="/style.css">
+    <link rel="stylesheet" href="https://unpkg.com/swup@4/dist/swup.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        .i18n-loading [data-i18n] { visibility: hidden !important; }
-        .guide-wrapper { max-width: 1000px; margin: 60px auto; padding: 0 20px; }
-        .guide-header { text-align: center; margin-bottom: 60px; }
-        .guide-header h1 { font-size: 48px; color: #fff; margin-bottom: 16px; font-weight: 800;}
-        .guide-header p { font-size: 20px; color: #8b949e; }
-        
-        .accordion-card { background: rgba(22, 27, 34, 0.4); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 16px; margin-bottom: 20px; backdrop-filter: blur(24px); overflow: hidden; transition: all 0.3s; }
-        .accordion-header { padding: 24px 30px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; color: #fff; font-weight: 600;}
-        .accordion-header h2 { display: flex; align-items: center; gap: 12px; margin: 0; color: #58a6ff; font-size: 22px;}
-        .accordion-header .faq-q { color: #fff; font-size: 18px; font-weight: 600; margin: 0; }
-        .accordion-icon { transition: transform 0.3s; color: #8b949e; font-size: 18px;}
-        .accordion-content { max-height: 0; overflow: hidden; transition: max-height 0.4s ease-out, padding 0.4s ease; padding: 0 30px; background: rgba(0,0,0,0.2); border-top: 1px solid transparent; }
-        .accordion-content p, .accordion-content .faq-a { color: #c9d1d9; font-size: 16px; line-height: 1.8; margin-top: 15px; }
-        .accordion-card.active .accordion-icon { transform: rotate(180deg); }
-        .accordion-card.active .accordion-content { max-height: 1000px; padding: 0 30px 30px; border-top-color: rgba(255,255,255,0.05); }
-        
-        .faq-section { margin-top: 80px; }
-        .faq-title { font-size: 32px; color: #fff; font-weight: 700; margin-bottom: 30px; text-align: center; display: flex; align-items: center; justify-content: center; gap: 12px; }
-        .img-placeholder { width: 100%; height: 250px; background: rgba(255, 255, 255, 0.03); border: 2px dashed rgba(255, 255, 255, 0.15); border-radius: 12px; display: flex; flex-direction: column; align-items: center; justify-content: center; color: #484f58; margin: 20px 0 30px; }
-        .img-placeholder i { font-size: 40px; margin-bottom: 10px; }
-    </style>
     <link rel="icon" type="image/png" href="/DewSecure.png">
 </head>
 <body>
     <header>
-        <a href="/index.html" class="logo"><img src="/DewSecure.png" alt="DewSecure" > DewSecure</a>
+        <a href="/index.html" class="logo"><img src="/DewSecure.png" alt="DewSecure"> DewSecure</a>
         <nav>
             <a href="/index.html" data-i18n="nav_home">首页</a>
             <a href="/pricing.html" data-i18n="nav_pricing">定价</a>
             <a href="/pentest/" target="_blank" data-i18n="nav_pentest">安全审计</a>
             <a href="/update/" data-i18n="nav_update">更新日志</a>
-            <a href="/guide/" class="active" data-i18n="nav_guide">使用指南</a>
+            <a href="/guide/" data-i18n="nav_guide">使用指南</a>
             <a href="/about/" data-i18n="nav_about">关于我们</a>
             <a href="/login/" data-i18n="nav_login">登录</a>
         </nav>
@@ -52,108 +31,96 @@
         </div>
     </header>
 
-    <div class="guide-wrapper">
-        <div class="guide-header">
-            <h1 data-i18n="guide_title">使用指南 & 常见问题</h1>
-            <p data-i18n="guide_subtitle">从安装到极致体验，只需 1 分钟。</p>
-        </div>
+    <main id="swup" class="transition-fade">
+        <div class="guide-wrapper">
+            <div class="guide-header">
+                <h1 data-i18n="guide_title">使用指南 & 常见问题</h1>
+                <p data-i18n="guide_subtitle">从安装到极致体验，只需 1 分钟。</p>
+            </div>
 
-        <div class="accordion-card">
-            <div class="accordion-header">
-                <h2><i class="fa-solid fa-download"></i> <span data-i18n="guide_step1">1. 下载并安装扩展</span></h2>
-                <i class="fa-solid fa-chevron-down accordion-icon"></i>
+            <div class="accordion-card">
+                <div class="accordion-header">
+                    <h2><i class="fa-solid fa-download"></i> <span data-i18n="guide_step1">1. 下载并安装扩展</span></h2>
+                    <i class="fa-solid fa-chevron-down accordion-icon"></i>
+                </div>
+                <div class="accordion-content">
+                    <p data-i18n="guide_step1_desc">前往首页，选择您的浏览器（如 Chrome、Edge），点击下载。将下载的扩展文件拖入浏览器扩展管理页面（chrome://extensions/），即可完成安装。</p>
+                    <div class="img-placeholder"><i class="fa-regular fa-image"></i><span>此处放置安装演示图/GIF (稍后补充)</span></div>
+                </div>
             </div>
-            <div class="accordion-content">
-                <p data-i18n="guide_step1_desc">前往首页，选择您的浏览器（如 Chrome、Edge），点击下载。将下载的扩展文件拖入浏览器扩展管理页面（chrome://extensions/），即可完成安装。</p>
-                <div class="img-placeholder"><i class="fa-regular fa-image"></i><span>此处放置安装演示图/GIF (稍后补充)</span></div>
+            <div class="accordion-card">
+                <div class="accordion-header">
+                    <h2><i class="fa-solid fa-bolt"></i> <span data-i18n="guide_step2">2. 核心功能与开箱即用</span></h2>
+                    <i class="fa-solid fa-chevron-down accordion-icon"></i>
+                </div>
+                <div class="accordion-content">
+                    <p data-i18n="guide_step2_desc">安装后，DewSecure 将自动在本地开启 11 万条规则拦截。点击浏览器右上角的 DewSecure 图标，即可查看今日拦截统计、开启 AI 高级防护或自定义白名单。</p>
+                    <div class="img-placeholder"><i class="fa-regular fa-image"></i><span>此处放置插件面板截图 (稍后补充)</span></div>
+                </div>
             </div>
-        </div>
-        <div class="accordion-card">
-            <div class="accordion-header">
-                <h2><i class="fa-solid fa-bolt"></i> <span data-i18n="guide_step2">2. 核心功能与开箱即用</span></h2>
-                <i class="fa-solid fa-chevron-down accordion-icon"></i>
+            <div class="accordion-card">
+                <div class="accordion-header">
+                    <h2><i class="fa-solid fa-link"></i> <span data-i18n="guide_step3">3. 跨设备绑定与授权</span></h2>
+                    <i class="fa-solid fa-chevron-down accordion-icon"></i>
+                </div>
+                <div class="accordion-content">
+                    <p data-i18n="guide_step3_desc">如果您购买了高级版或家庭版，只需在已登录的网页端（Dashboard）生成邀请链接，然后在新的设备插件中粘贴该链接，即可自动激活对应的高级权益。</p>
+                    <div class="img-placeholder"><i class="fa-regular fa-image"></i><span>此处放置 Dashboard 生成邀请链接截图 (稍后补充)</span></div>
+                </div>
             </div>
-            <div class="accordion-content">
-                <p data-i18n="guide_step2_desc">安装后，DewSecure 将自动在本地开启 11 万条规则拦截。点击浏览器右上角的 DewSecure 图标，即可查看今日拦截统计、开启 AI 高级防护或自定义白名单。</p>
-                <div class="img-placeholder"><i class="fa-regular fa-image"></i><span>此处放置插件面板截图 (稍后补充)</span></div>
+            <div class="accordion-card">
+                <div class="accordion-header">
+                    <h2><i class="fa-solid fa-gift"></i> <span data-i18n="guide_trial_title_short">4. 激活 30 天高级版</span></h2>
+                    <i class="fa-solid fa-chevron-down accordion-icon"></i>
+                </div>
+                <div class="accordion-content">
+                    <p data-i18n="guide_trial_desc">每个账号均可激活一次 30 天高级版。只需在“登录/注册”页面完成登录，系统将自动判断您是否符合资格，点击“激活高级版 30 天”即可使用完整功能。请注意：每个账号仅限领取一次。</p>
+                    <p style="color: #ff7b72; font-size: 14px; margin-top: 10px; font-weight: 600;" data-i18n="guide_trial_note">⚠️ 为防止滥用，临时邮箱（如 10minutemail 等）无法注册或登录，请使用真实邮箱地址。</p>
+                </div>
             </div>
-        </div>
-        <div class="accordion-card">
-            <div class="accordion-header">
-                <h2><i class="fa-solid fa-link"></i> <span data-i18n="guide_step3">3. 跨设备绑定与授权</span></h2>
-                <i class="fa-solid fa-chevron-down accordion-icon"></i>
-            </div>
-            <div class="accordion-content">
-                <p data-i18n="guide_step3_desc">如果您购买了高级版或家庭版，只需在已登录的网页端（Dashboard）生成邀请链接，然后在新的设备插件中粘贴该链接，即可自动激活对应的高级权益。</p>
-                <div class="img-placeholder"><i class="fa-regular fa-image"></i><span>此处放置 Dashboard 生成邀请链接截图 (稍后补充)</span></div>
-            </div>
-        </div>
-        <div class="accordion-card">
-            <div class="accordion-header">
-                <h2><i class="fa-solid fa-gift"></i> <span data-i18n="guide_trial_title_short">4. 激活 30 天高级版</span></h2>
-                <i class="fa-solid fa-chevron-down accordion-icon"></i>
-            </div>
-            <div class="accordion-content">
-                <p data-i18n="guide_trial_desc">每个账号均可激活一次 30 天高级版。只需在“登录/注册”页面完成登录，系统将自动判断您是否符合资格，点击“激活高级版 30 天”即可使用完整功能。请注意：每个账号仅限领取一次。</p>
-                <p style="color: #ff7b72; font-size: 14px; margin-top: 10px; font-weight: 600;" data-i18n="guide_trial_note">⚠️ 为防止滥用，临时邮箱（如 10minutemail 等）无法注册或登录，请使用真实邮箱地址。</p>
-            </div>
-        </div>
 
-        <div class="faq-section">
-            <h2 class="faq-title"><i class="fa-solid fa-circle-question"></i> <span data-i18n="guide_faq_title">常见问题 (FAQ)</span></h2>
-            <div class="accordion-card">
-                <div class="accordion-header"><div class="faq-q" data-i18n="faq_anyone_q">任何人都可以使用 DewSecure 吗？</div><i class="fa-solid fa-chevron-down accordion-icon"></i></div>
-                <div class="accordion-content"><p class="faq-a" data-i18n="faq_anyone_a">是的，任何人都可以免费使用！即使您不注册、不登录，也能直接享受基础规则库的全面净化体验。<br><br>如果您注册并登录账号，系统会直接赠送一次 30 天的高级版体验，让您感受 AI 实时检测的威力。如果您只是日常轻度上网，免费版已经足够；如果您追求极致性能与跨设备同步，您完全可以永远不花一分钱使用免费版，或者随时升级高级版。</p></div>
-            </div>
-            <div class="accordion-card">
-                <div class="accordion-header"><div class="faq-q" data-i18n="faq1_q">为什么某些 YouTube 广告无法拦截？</div><i class="fa-solid fa-chevron-down accordion-icon"></i></div>
-                <div class="accordion-content"><p class="faq-a" data-i18n="faq1_a">DewSecure 充分尊重并支持 YouTube 创作者的生态发展。因此，对于 YouTube 专属的贴片广告、推荐商品等与创作者收益直接挂钩的内容，我们默认不做任何净化处理。我们将火力集中在恶意弹窗、钓鱼追踪等有害内容上。</p></div>
-            </div>
-            <div class="accordion-card">
-                <div class="accordion-header"><div class="faq-q" data-i18n="faq4_q">高级版/家庭版如何计算设备数量？</div><i class="fa-solid fa-chevron-down accordion-icon"></i></div>
-                <div class="accordion-content"><p class="faq-a" data-i18n="faq4_a">同一台 PC 上的不同浏览器（如 Chrome+Edge）算作 2 台设备。手机 Android + PC 浏览器 也算作 2 台。您可以在 Dashboard 中生成“邀请链接”，家人在其设备的插件中粘贴该链接即可激活。如果超出限制，您可随时在后台解绑旧设备。</p></div>
-            </div>
-            <div class="accordion-card">
-                <div class="accordion-header"><div class="faq-q" data-i18n="faq5_q">为什么无法做到 100% 拦截？</div><i class="fa-solid fa-chevron-down accordion-icon"></i></div>
-                <div class="accordion-content"><p class="faq-a" data-i18n="faq5_a">互联网广告与追踪技术处于不断动态更新中。部分网站会将广告与正文代码深度绑定（同源加载），拦截它会导致网页排版错乱（白屏）。我们采用“保持网页可用性优先”的策略，通过 AI 模型每周迭代，努力将漏网之鱼降到最低。</p></div>
-            </div>
-            <div class="accordion-card">
-                <div class="accordion-header"><div class="faq-q" data-i18n="faq3_q">我的数据会泄露吗？</div><i class="fa-solid fa-chevron-down accordion-icon"></i></div>
-                <div class="accordion-content"><p class="faq-a" data-i18n="faq3_a">绝对不会。DewSecure 的所有规则匹配和 AI 推理均在您的设备本地沙箱内完成。我们不会收集您的任何浏览记录，您的隐私至高无上。</p></div>
-            </div>
-            <div class="accordion-card">
-                <div class="accordion-header"><div class="faq-q" data-i18n="faq7_q">DewSecure 能彻底消灭烦人的弹窗广告吗？</div><i class="fa-solid fa-chevron-down accordion-icon"></i></div>
-                <div class="accordion-content"><p class="faq-a" data-i18n="faq7_a">是的。弹窗广告不仅遮挡内容，现在还有很多“潜伏弹窗”——当你点击网页任意位置，或者准备关闭网页时才会突然弹出来。<br><br>DewSecure 默认开启强力拦截，能在页面加载的最早期就将其斩断。同时，针对那些跟随你浏览记录的“追踪代码”（比如你搜了鞋子，全网都在给你推鞋子广告），我们的 11 万条规则库也能精准掐断它们的追踪路径。<br><br>💡 <b>温馨提示</b>：并非所有弹窗都是坏的（比如网站的登录提示、优惠券）。如果某些正常的弹窗被误拦，你可以随时在插件面板里将它们加入“白名单”。</p></div>
-            </div>
-            <div class="accordion-card">
-                <div class="accordion-header"><div class="faq-q" data-i18n="faq8_q">网页广告真的会传播病毒或木马吗？</div><i class="fa-solid fa-chevron-down accordion-icon"></i></div>
-                <div class="accordion-content"><p class="faq-a" data-i18n="faq8_a">会。这在行业内被称为“恶意广告”（Malvertising）。很多黑客会把病毒、木马或者勒索软件伪装成正常的下载按钮或广告。一旦你误点，恶意软件就会偷偷在后台下载。<br><br>DewSecure 不仅是一个“去广告”工具，它更是一套<b>安全防护引擎</b>。我们在底层切断了这些可疑广告商的网络请求，让黑客根本没有机会把恶意代码塞进你的电脑。<br><br>🛡️ <b>安全建议</b>：使用 DewSecure 拦截恶意广告，配合你电脑自带的杀毒软件，就能构建最坚固的安全防线。千万不要随便点击不知名网站的“立即下载”按钮。</p></div>
-            </div>
-            <div class="accordion-card">
-                <div class="accordion-header"><div class="faq-q" data-i18n="faq6_q">DewSecure 能阻止网页“偷”我的电脑算力去挖矿吗？</div><i class="fa-solid fa-chevron-down accordion-icon"></i></div>
-                <div class="accordion-content"><p class="faq-a" data-i18n="faq6_a">能，且非常有效。所谓的“网页挖矿”，是指某些不良网站未经允许，利用您打开网页的间隙，在后台静默运行复杂的计算脚本，以赚取加密货币。这会导致您的设备严重发热、风扇狂转、耗电剧增甚至卡顿。<br><br>【免费版即享有基础保护】DewSecure 免费版内置的超 11 万条规则库中，已包含了针对全网已知恶意挖矿域名的封锁规则。<br><br>【高级版提供进阶防护】面对不断变种的新型隐蔽挖矿脚本，高级版依托设备端 AI 模型，能通过行为特征实时侦测并阻断未知脚本，确保您的算力 100% 属于自己，绝不被他人窃取牟利。</p></div>
+            <div class="faq-section">
+                <h2 class="faq-title"><i class="fa-solid fa-circle-question"></i> <span data-i18n="guide_faq_title">常见问题 (FAQ)</span></h2>
+                <div class="accordion-card">
+                    <div class="accordion-header"><div class="faq-q" data-i18n="faq_anyone_q">任何人都可以使用 DewSecure 吗？</div><i class="fa-solid fa-chevron-down accordion-icon"></i></div>
+                    <div class="accordion-content"><p class="faq-a" data-i18n="faq_anyone_a">是的，任何人都可以免费使用！即使您不注册、不登录，也能直接享受基础规则库的全面净化体验。<br><br>如果您注册并登录账号，系统会直接赠送一次 30 天的高级版体验，让您感受 AI 实时检测的威力。如果您只是日常轻度上网，免费版已经足够；如果您追求极致性能与跨设备同步，您完全可以永远不花一分钱使用免费版，或者随时升级高级版。</p></div>
+                </div>
+                <div class="accordion-card">
+                    <div class="accordion-header"><div class="faq-q" data-i18n="faq1_q">为什么某些 YouTube 广告无法拦截？</div><i class="fa-solid fa-chevron-down accordion-icon"></i></div>
+                    <div class="accordion-content"><p class="faq-a" data-i18n="faq1_a">DewSecure 充分尊重并支持 YouTube 创作者的生态发展。因此，对于 YouTube 专属的贴片广告、推荐商品等与创作者收益直接挂钩的内容，我们默认不做任何净化处理。我们将火力集中在恶意弹窗、钓鱼追踪等有害内容上。</p></div>
+                </div>
+                <div class="accordion-card">
+                    <div class="accordion-header"><div class="faq-q" data-i18n="faq4_q">高级版/家庭版如何计算设备数量？</div><i class="fa-solid fa-chevron-down accordion-icon"></i></div>
+                    <div class="accordion-content"><p class="faq-a" data-i18n="faq4_a">同一台 PC 上的不同浏览器（如 Chrome+Edge）算作 2 台设备。手机 Android + PC 浏览器 也算作 2 台。您可以在 Dashboard 中生成“邀请链接”，家人在其设备的插件中粘贴该链接即可激活。如果超出限制，您可随时在后台解绑旧设备。</p></div>
+                </div>
+                <div class="accordion-card">
+                    <div class="accordion-header"><div class="faq-q" data-i18n="faq5_q">为什么无法做到 100% 拦截？</div><i class="fa-solid fa-chevron-down accordion-icon"></i></div>
+                    <div class="accordion-content"><p class="faq-a" data-i18n="faq5_a">互联网广告与追踪技术处于不断动态更新中。部分网站会将广告与正文代码深度绑定（同源加载），拦截它会导致网页排版错乱（白屏）。我们采用“保持网页可用性优先”的策略，通过 AI 模型每周迭代，努力将漏网之鱼降到最低。</p></div>
+                </div>
+                <div class="accordion-card">
+                    <div class="accordion-header"><div class="faq-q" data-i18n="faq3_q">我的数据会泄露吗？</div><i class="fa-solid fa-chevron-down accordion-icon"></i></div>
+                    <div class="accordion-content"><p class="faq-a" data-i18n="faq3_a">绝对不会。DewSecure 的所有规则匹配和 AI 推理均在您的设备本地沙箱内完成。我们不会收集您的任何浏览记录，您的隐私至高无上。</p></div>
+                </div>
+                <div class="accordion-card">
+                    <div class="accordion-header"><div class="faq-q" data-i18n="faq7_q">DewSecure 能彻底消灭烦人的弹窗广告吗？</div><i class="fa-solid fa-chevron-down accordion-icon"></i></div>
+                    <div class="accordion-content"><p class="faq-a" data-i18n="faq7_a">是的。弹窗广告不仅遮挡内容，现在还有很多“潜伏弹窗”——当你点击网页任意位置，或者准备关闭网页时才会突然弹出来。<br><br>DewSecure 默认开启强力拦截，能在页面加载的最早期就将其斩断。同时，针对那些跟随你浏览记录的“追踪代码”（比如你搜了鞋子，全网都在给你推鞋子广告），我们的 11 万条规则库也能精准掐断它们的追踪路径。<br><br>💡 <b>温馨提示</b>：并非所有弹窗都是坏的（比如网站的登录提示、优惠券）。如果某些正常的弹窗被误拦，你可以随时在插件面板里将它们加入“白名单”。</p></div>
+                </div>
+                <div class="accordion-card">
+                    <div class="accordion-header"><div class="faq-q" data-i18n="faq8_q">网页广告真的会传播病毒或木马吗？</div><i class="fa-solid fa-chevron-down accordion-icon"></i></div>
+                    <div class="accordion-content"><p class="faq-a" data-i18n="faq8_a">会。这在行业内被称为“恶意广告”（Malvertising）。很多黑客会把病毒、木马或者勒索软件伪装成正常的下载按钮或广告。一旦你误点，恶意软件就会偷偷在后台下载。<br><br>DewSecure 不仅是一个“去广告”工具，它更是一套<b>安全防护引擎</b>。我们在底层切断了这些可疑广告商的网络请求，让黑客根本没有机会把恶意代码塞进你的电脑。<br><br>🛡️ <b>安全建议</b>：使用 DewSecure 拦截恶意广告，配合你电脑自带的杀毒软件，就能构建最坚固的安全防线。千万不要随便点击不知名网站的“立即下载”按钮。</p></div>
+                </div>
+                <div class="accordion-card">
+                    <div class="accordion-header"><div class="faq-q" data-i18n="faq6_q">DewSecure 能阻止网页“偷”我的电脑算力去挖矿吗？</div><i class="fa-solid fa-chevron-down accordion-icon"></i></div>
+                    <div class="accordion-content"><p class="faq-a" data-i18n="faq6_a">能，且非常有效。所谓的“网页挖矿”，是指某些不良网站未经允许，利用您打开网页的间隙，在后台静默运行复杂的计算脚本，以赚取加密货币。这会导致您的设备严重发热、风扇狂转、耗电剧增甚至卡顿。<br><br>【免费版即享有基础保护】DewSecure 免费版内置的超 11 万条规则库中，已包含了针对全网已知恶意挖矿域名的封锁规则。<br><br>【高级版提供进阶防护】面对不断变种的新型隐蔽挖矿脚本，高级版依托设备端 AI 模型，能通过行为特征实时侦测并阻断未知脚本，确保您的算力 100% 属于自己，绝不被他人窃取牟利。</p></div>
+                </div>
             </div>
         </div>
-    </div>
+    </main>
 
-    <script>
-        document.querySelectorAll('.accordion-header').forEach(header => {
-            header.addEventListener('click', () => {
-                const card = header.parentElement;
-                card.classList.toggle('active');
-            });
-        });
-        document.querySelector('.lang-switch').addEventListener('mouseenter', () => {
-            const dd = document.querySelector('.lang-dropdown');
-            dd.style.opacity = '1'; dd.style.visibility = 'visible'; dd.style.transform = 'translateY(0)';
-        });
-        document.querySelector('.lang-switch').addEventListener('mouseleave', () => {
-            const dd = document.querySelector('.lang-dropdown');
-            dd.style.opacity = '0'; dd.style.visibility = 'hidden'; dd.style.transform = 'translateY(10px)';
-        });
-    </script>
-    <script src="/js/i18n.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://unpkg.com/swup@4/dist/swup.min.js"></script>
     <script src="/js/auth-nav.js"></script>
+    <script src="/js/app-init.js"></script>
+    <script src="/js/i18n.js"></script>
 </body>
 </html>
