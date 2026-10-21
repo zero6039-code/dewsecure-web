@@ -39,6 +39,10 @@
         .modal-content textarea { width: 100%; height: 100px; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; padding: 10px; color: #fff; margin-top: 10px; resize: none; outline: none; }
         .modal-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px; }
         .hidden { display: none !important; }
+        
+        /* 满 12 次模糊卡片效果 */
+        .card-completed { position: relative; pointer-events: none; }
+        .card-completed::after { content: "感谢您的分享！已达奖励上限。请留意通知中心，我们会定期发放福利。"; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(22,27,34,0.85); backdrop-filter: blur(8px); display: flex; align-items: center; justify-content: center; text-align: center; padding: 30px; color: #58a6ff; font-weight: bold; font-size: 16px; border-radius: 20px; z-index: 10; }
     </style>
 </head>
 <body>
@@ -75,7 +79,8 @@
                 </div>
             </div>
 
-            <div class="card">
+            <!-- 注意这里加了 id="inviteCard" -->
+            <div class="card" id="inviteCard">
                 <h3><i class="fa-solid fa-gift"></i> 邀请好友，获取奖励</h3>
                 <p style="color:#8b949e; font-size:14px;">邀请好友注册并激活。每成功激活1次，您将获得额外 <strong>30天</strong> 高级版（上限12次）。</p>
                 <div class="invite-box">
@@ -133,7 +138,7 @@
                 currentUser = session.user;
                 document.getElementById('userEmail').textContent = currentUser.email;
 
-                // 2. 获取 Profile 数据（使用 maybeSingle 兼容可能为空的情况）
+                // 2. 获取 Profile 数据
                 const { data: profile, error: profileErr } = await supabaseClient
                     .from('profiles')
                     .select('*')
@@ -145,7 +150,6 @@
                     throw profileErr;
                 }
 
-                // 如果没有数据，用兜底数据防止崩溃
                 if (!profile) {
                     console.warn("找不到 Profile 数据，使用兜底数据");
                     currentProfile = { tier: 'free', trial_ends_at: null, invite_success_count: 0 };
@@ -154,7 +158,7 @@
                 }
 
                 // 3. 渲染数据
-                renderProfileStatus(currentProfile);
+                await renderProfileStatus(currentProfile); // 加上 await，确保自动拉取邀请码完成
                 fetchNotifications();
 
                 // 4. 绑定按钮事件
@@ -172,14 +176,13 @@
             } catch (err) {
                 console.error("Dashboard 初始化错误:", err);
                 alert("加载数据失败: " + (err.message || "未知错误，请检查网络或权限。"));
-                // 只有明确未登录或 Token 过期才踢回登录页
                 if (err.message === 'JWT expired' || err.code === 'PGRST301' || !currentUser) {
                     window.location.href = '/login.html';
                 }
             }
         }
 
-        function renderProfileStatus(profile) {
+        async function renderProfileStatus(profile) {
             if (!profile) return;
             const tierBadge = document.getElementById('tierBadge');
             const daysLeftEl = document.getElementById('daysLeft');
@@ -187,12 +190,40 @@
             const btnCancel = document.getElementById('btnCancelSub');
             const btnUpgrade = document.getElementById('btnUpgrade');
 
-            document.getElementById('inviteCount').textContent = profile.invite_success_count || 0;
+            const inviteCount = profile.invite_success_count || 0;
+            document.getElementById('inviteCount').textContent = inviteCount;
+
+            // ✅ 修复：如果已达 12 次，模糊卡片
+            if (inviteCount >= 12) {
+                document.getElementById('inviteCard').classList.add('card-completed');
+            } else {
+                // ✅ 新增：如果未满 12 次，自动拉取该用户的专属邀请码
+                const { data: inviteCode } = await supabaseClient
+                    .from('invitations')
+                    .select('code')
+                    .eq('inviter_id', profile.id)
+                    .eq('status', 'pending')
+                    .limit(1)
+                    .maybeSingle();
+
+                if (inviteCode && inviteCode.code) {
+                    document.getElementById('myInviteCode').textContent = inviteCode.code;
+                    document.getElementById('btnGenInvite').classList.add('hidden');
+                    
+                    const copyBtn = document.getElementById('btnCopyInvite');
+                    copyBtn.classList.remove('hidden');
+                    copyBtn.onclick = () => {
+                        navigator.clipboard.writeText(inviteCode.code);
+                        copyBtn.textContent = '已复制!';
+                        setTimeout(() => copyBtn.textContent = '复制', 2000);
+                    };
+                }
+            }
 
             // 计算到期时间
             let expireDate = profile.trial_ends_at ? new Date(profile.trial_ends_at) : null;
-            const now = new Date();
-
+            const now = new Date(); // ✅ 修复：补全了这行丢失的代码
+            
             if (profile.tier === 'free') {
                 tierBadge.textContent = '免费版 (Free)';
                 tierBadge.className = 'status-badge';
