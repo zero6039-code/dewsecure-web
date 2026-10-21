@@ -49,15 +49,11 @@
             const dashLink = header.querySelector('nav a[href="/dashboard.html"]');
             if (dashLink) dashLink.style.display = 'block';
 
-            // 🌟 动态获取语言字典，如果还没有就默认中文
-            const t = window.fallbackTranslations || {};
-            const dashText = t['nav_dashboard'] || '控制台';
-            const logoutText = t['nav_logout'] || '退出';
-
+            // 🌟 核心修复：加上 data-i18n 属性，让 i18n.js 能够识别并翻译它们
             authArea.innerHTML = `
                 <span title="${rawEmail}" style="color: #8b949e; font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 120px;">${displayEmail}</span>
-                <a href="/dashboard.html" style="color: #58a6ff; font-size: 14px; font-weight: 600; white-space: nowrap;">${dashText}</a>
-                <button id="global-logout-btn" style="background: rgba(248, 81, 73, 0.1); color: #f85149; border: 1px solid rgba(248, 81, 73, 0.3); padding: 6px 12px; border-radius: 8px; cursor: pointer; font-size: 13px; white-space: nowrap;">${logoutText}</button>
+                <a href="/dashboard.html" data-i18n="nav_dashboard" style="color: #58a6ff; font-size: 14px; font-weight: 600; white-space: nowrap;">控制台</a>
+                <button id="global-logout-btn" data-i18n="nav_logout" style="background: rgba(248, 81, 73, 0.1); color: #f85149; border: 1px solid rgba(248, 81, 73, 0.3); padding: 6px 12px; border-radius: 8px; cursor: pointer; font-size: 13px; white-space: nowrap;">退出</button>
             `;
             
             document.getElementById('global-logout-btn').onclick = async () => {
@@ -69,15 +65,17 @@
             if (dashLink) dashLink.style.display = 'none';
             
             authArea.innerHTML = `<a href="/login.html" data-i18n="nav_login" style="color: #58a6ff; font-size: 14px; font-weight: 600; white-space: nowrap;">登录</a>`;
-            if (window.translatePage) window.translatePage();
         }
+        
+        // 🌟 生成后立刻执行一次翻译，确保渲染出来就是正确的语言
+        if (window.translatePage) window.translatePage();
     }
 
     supabaseClient.auth.onAuthStateChange((event, session) => {
         renderAuthState(session);
     });
     
-    // 语言切换时刷新右侧状态
+    // 语言切换时，刷新右侧状态栏
     window.addEventListener('languageChanged', () => {
         supabaseClient.auth.getSession().then(({ data: { session } }) => {
             renderAuthState(session);
