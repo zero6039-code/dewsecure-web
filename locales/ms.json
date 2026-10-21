@@ -218,5 +218,7 @@
   "login_error_otp_expired": "Kod tidak sah atau tamat tempoh",
   "login_btn_resend": "Hantar Semula Kod",
   "dash_gen_ing": "Menjana...",
-  "dash_gen_fail": "Gagal: "
+  "dash_gen_fail": "Gagal: ",
+ "nav_dashboard": "Papan Pemuka",
+  "nav_logout": "Log Keluar"
 }
