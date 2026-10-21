@@ -20,14 +20,12 @@
         let langSwitch = header.querySelector('.lang-switch');
         if (!langSwitch) return;
 
-        // 隐藏静态登录按钮
         header.querySelectorAll('nav a').forEach(a => {
             if (a.href.includes('/login') || a.getAttribute('data-i18n') === 'nav_login') {
                 a.style.display = 'none';
             }
         });
 
-        // 构建容器
         let headerRight = header.querySelector('.header-right');
         if (!headerRight) {
             headerRight = document.createElement('div');
@@ -51,10 +49,15 @@
             const dashLink = header.querySelector('nav a[href="/dashboard.html"]');
             if (dashLink) dashLink.style.display = 'block';
 
+            // 🌟 动态获取语言字典，如果还没有就默认中文
+            const t = window.fallbackTranslations || {};
+            const dashText = t['nav_dashboard'] || '控制台';
+            const logoutText = t['nav_logout'] || '退出';
+
             authArea.innerHTML = `
                 <span title="${rawEmail}" style="color: #8b949e; font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 120px;">${displayEmail}</span>
-                <a href="/dashboard.html" style="color: #58a6ff; font-size: 14px; font-weight: 600; white-space: nowrap;">控制台</a>
-                <button id="global-logout-btn" style="background: rgba(248, 81, 73, 0.1); color: #f85149; border: 1px solid rgba(248, 81, 73, 0.3); padding: 6px 12px; border-radius: 8px; cursor: pointer; font-size: 13px; white-space: nowrap;">退出</button>
+                <a href="/dashboard.html" style="color: #58a6ff; font-size: 14px; font-weight: 600; white-space: nowrap;">${dashText}</a>
+                <button id="global-logout-btn" style="background: rgba(248, 81, 73, 0.1); color: #f85149; border: 1px solid rgba(248, 81, 73, 0.3); padding: 6px 12px; border-radius: 8px; cursor: pointer; font-size: 13px; white-space: nowrap;">${logoutText}</button>
             `;
             
             document.getElementById('global-logout-btn').onclick = async () => {
@@ -65,18 +68,19 @@
             const dashLink = header.querySelector('nav a[href="/dashboard.html"]');
             if (dashLink) dashLink.style.display = 'none';
             
-            // 🌟 修复：给登录按钮加上 data-i18n，这样 i18n.js 就能翻译它了！
             authArea.innerHTML = `<a href="/login.html" data-i18n="nav_login" style="color: #58a6ff; font-size: 14px; font-weight: 600; white-space: nowrap;">登录</a>`;
-            
-            // 🌟 如果此时页面已经有翻译字典，立刻主动翻译一次
-            if (window.fallbackTranslations && window.fallbackTranslations['nav_login']) {
-                const loginBtn = authArea.querySelector('a[data-i18n="nav_login"]');
-                if (loginBtn) loginBtn.textContent = window.fallbackTranslations['nav_login'];
-            }
+            if (window.translatePage) window.translatePage();
         }
     }
 
     supabaseClient.auth.onAuthStateChange((event, session) => {
         renderAuthState(session);
+    });
+    
+    // 语言切换时刷新右侧状态
+    window.addEventListener('languageChanged', () => {
+        supabaseClient.auth.getSession().then(({ data: { session } }) => {
+            renderAuthState(session);
+        });
     });
 })();
