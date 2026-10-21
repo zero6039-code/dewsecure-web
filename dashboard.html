@@ -38,7 +38,6 @@
         </div>
     </header>
 
-    <!-- 🌟 去掉了 display: none; 因为遮罩会挡住它 -->
     <main id="swup" class="transition-fade">
         <div class="dashboard-container" id="mainContent">
             <div class="left-column">
@@ -60,6 +59,13 @@
                         <button class="btn btn-primary" id="btnUpgrade" onclick="window.location.href='/pricing.html'" data-i18n="dash_btn_upgrade">升级/续费高级版</button>
                         <button class="btn btn-danger hidden" id="btnCancelSub" data-i18n="dash_btn_cancel">取消订阅</button>
                     </div>
+                </div>
+
+                <!-- 🌟 新增：设备管理卡片 (默认隐藏，Pro/Family 显示) -->
+                <div class="card hidden" id="deviceCard" style="margin-bottom: 24px;">
+                    <h3><i class="fa-solid fa-laptop"></i> <span data-i18n="dash_device_title">设备管理</span></h3>
+                    <p style="color:#8b949e; font-size:14px; margin-bottom: 15px;" id="deviceDesc"></p>
+                    <div id="deviceSlots" style="display: flex; flex-direction: column; gap: 10px;"></div>
                 </div>
 
                 <div class="card" id="inviteCard">
