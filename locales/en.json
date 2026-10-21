@@ -223,5 +223,6 @@
   "nav_logout": "Log out",
   "dash_notif_empty": "No new notifications",
   "dash_cancel_processing": "Processing...",
-  "dash_cancel_success": "Your cancellation request has been recorded. The subscription will expire at the end of the current period."
+  "dash_cancel_success": "Your cancellation request has been recorded. The subscription will expire at the end of the current period.",
+  "dash_invite_desc": "Invite friends. When they make their first real payment (after a 14-day cooling-off period), you'll earn an extra 120 days of Pro!"
 }
