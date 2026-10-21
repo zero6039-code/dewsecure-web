@@ -119,6 +119,11 @@
         
         // 统一使用 supabaseClient，避免冲突
         const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        supabaseClient.auth.getSession().then(({ data: { session } }) => {
+            if (session) {
+                window.location.href = '/dashboard.html';
+            }
+        });
 
         // ==========================================
         // 2. 语言切换动画逻辑
