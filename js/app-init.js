@@ -1,7 +1,9 @@
 // js/app-init.js
 
+// 缓存当前的 Dashboard 数据，以便语言切换时重新渲染
+let dashboardData = null;
+
 function initPage() {
-    // 1. 自动高亮导航栏
     const path = window.location.pathname;
     document.querySelectorAll('header nav a').forEach(link => {
         link.classList.remove('active');
@@ -11,7 +13,7 @@ function initPage() {
         }
     });
 
-    // 2. 登录页专属逻辑
+    // 登录页逻辑
     const btnSendOtp = document.getElementById('btnSendOtp');
     if (btnSendOtp && !btnSendOtp.dataset.bound) {
         btnSendOtp.dataset.bound = "true";
@@ -69,7 +71,7 @@ function initPage() {
         });
     }
 
-    // 3. 首页专属逻辑
+    // 首页逻辑
     if (document.getElementById('ds-title') && !document.getElementById('ds-title').dataset.bound) {
         document.getElementById('ds-title').dataset.bound = "true";
         const browserUrls = { chrome: 'https://chromewebstore.google.com/', edge: 'https://microsoftedge.microsoft.com/', firefox: 'https://addons.mozilla.org/', safari: '#', opera: '#', yandex: '#', android: '#' };
@@ -105,14 +107,14 @@ function initPage() {
         window.addEventListener('languageChanged', () => renderBrowserData(currentTarget));
     }
 
-    // 4. 指南页手风琴
+    // 指南页手风琴
     document.querySelectorAll('.accordion-header').forEach(header => {
         if (header.dataset.bound) return;
         header.dataset.bound = "true"; 
         header.addEventListener('click', () => header.parentElement.classList.toggle('active'));
     });
 
-    // 5. Dashboard 业务逻辑
+    // Dashboard 逻辑
     if (document.getElementById('mainContent') && !document.getElementById('mainContent').dataset.bound) {
         document.getElementById('mainContent').dataset.bound = "true";
         initDashboardLogic();
@@ -142,50 +144,71 @@ function startCountdown(btn) {
     }, 1000);
 }
 
+// 🌟 提取渲染函数，专用于刷新 DOM 文字
+function renderDashboardTexts() {
+    if (!dashboardData) return;
+    const t = window.fallbackTranslations || {};
+    const profile = dashboardData;
+
+    const tierBadge = document.getElementById('tierBadge');
+    const daysLeftEl = document.getElementById('daysLeft');
+    const expireDateEl = document.getElementById('expireDate');
+    const btnCancel = document.getElementById('btnCancelSub');
+    const btnUpgrade = document.getElementById('btnUpgrade');
+
+    document.getElementById('inviteCount').textContent = profile.invite_success_count || 0;
+    
+    tierBadge.classList.remove('skeleton-text');
+    let expireDate = profile.trial_ends_at ? new Date(profile.trial_ends_at) : null;
+    const now = new Date();
+    
+    if (profile.tier === 'free') {
+        tierBadge.textContent = t['dash_tier_free'] || '免费版 (Free)'; 
+        tierBadge.className = 'status-badge'; 
+        daysLeftEl.textContent = t['dash_forever'] || '永久有效'; 
+        expireDateEl.textContent = '-';
+        btnCancel.classList.add('hidden'); 
+        btnUpgrade.classList.remove('hidden');
+        if(btnUpgrade) btnUpgrade.textContent = t['dash_btn_upgrade'] || '升级/续费高级版';
+    } else {
+        tierBadge.textContent = profile.tier === 'pro' ? (t['dash_tier_pro'] || '高级版 (Pro)') : (t['dash_tier_family'] || '家庭版 (Family)');
+        tierBadge.className = 'status-badge status-pro';
+        if (expireDate && expireDate > now) {
+            const diffDays = Math.ceil(Math.abs(expireDate - now) / (1000 * 60 * 60 * 24)); 
+            daysLeftEl.textContent = `${diffDays} ${t['dash_days'] || '天'}`; 
+            expireDateEl.textContent = expireDate.toLocaleDateString('zh-CN');
+            btnCancel.classList.remove('hidden'); 
+            if(btnUpgrade) btnUpgrade.textContent = t['dash_btn_renew'] || '续费 / 延长订阅';
+            if(btnCancel) btnCancel.textContent = t['dash_btn_cancel'] || '取消订阅';
+        } else {
+            daysLeftEl.textContent = t['dash_expired'] || '已过期'; 
+            btnCancel.classList.add('hidden'); 
+            btnUpgrade.classList.remove('hidden');
+            if(btnUpgrade) btnUpgrade.textContent = t['dash_btn_upgrade'] || '升级/续费高级版';
+        }
+    }
+}
+
+// 监听语言变化，实时刷新 Dashboard 文字
+window.addEventListener('languageChanged', renderDashboardTexts);
+
 async function initDashboardLogic() {
     const client = window.supabaseClient;
     if (!client) return;
     try {
-        const t = window.fallbackTranslations || {};
         const { data: { session } } = await client.auth.getSession();
         if (!session) { window.location.href = '/login.html'; return; }
         const currentUser = session.user;
         const { data: profile } = await client.from('profiles').select('*').eq('id', currentUser.id).maybeSingle();
-        const currentProfile = profile || { id: currentUser.id, tier: 'free', trial_ends_at: null, invite_success_count: 0 };
-
-        const tierBadge = document.getElementById('tierBadge');
-        const daysLeftEl = document.getElementById('daysLeft');
-        const expireDateEl = document.getElementById('expireDate');
-        const btnCancel = document.getElementById('btnCancelSub');
-        const btnUpgrade = document.getElementById('btnUpgrade');
-        document.getElementById('inviteCount').textContent = currentProfile.invite_success_count || 0;
         
-        tierBadge.classList.remove('skeleton-text');
-        let expireDate = currentProfile.trial_ends_at ? new Date(currentProfile.trial_ends_at) : null;
-        const now = new Date();
-        
-        if (currentProfile.tier === 'free') {
-            tierBadge.textContent = t['dash_tier_free'] || '免费版 (Free)'; 
-            tierBadge.className = 'status-badge'; 
-            daysLeftEl.textContent = t['dash_forever'] || '永久有效'; 
-            expireDateEl.textContent = '-';
-            btnCancel.classList.add('hidden'); btnUpgrade.classList.remove('hidden');
-        } else {
-            tierBadge.textContent = currentProfile.tier === 'pro' ? (t['dash_tier_pro'] || '高级版 (Pro)') : (t['dash_tier_family'] || '家庭版 (Family)');
-            tierBadge.className = 'status-badge status-pro';
-            if (expireDate && expireDate > now) {
-                const diffDays = Math.ceil(Math.abs(expireDate - now) / (1000 * 60 * 60 * 24)); 
-                daysLeftEl.textContent = `${diffDays} ${t['dash_days'] || '天'}`; 
-                expireDateEl.textContent = expireDate.toLocaleDateString('zh-CN');
-                btnCancel.classList.remove('hidden'); 
-                btnUpgrade.textContent = t['dash_btn_renew'] || '续费 / 延长订阅';
-            } else {
-                daysLeftEl.textContent = t['dash_expired'] || '已过期'; 
-                btnCancel.classList.add('hidden'); btnUpgrade.classList.remove('hidden');
-            }
-        }
+        // 保存数据
+        dashboardData = profile || { id: currentUser.id, tier: 'free', trial_ends_at: null, invite_success_count: 0 };
 
-        const { data: inviteCode } = await client.from('invitations').select('code').eq('inviter_id', currentProfile.id).eq('status', 'pending').limit(1).maybeSingle();
+        // 首次渲染文字
+        renderDashboardTexts();
+
+        // 拉取邀请码
+        const { data: inviteCode } = await client.from('invitations').select('code').eq('inviter_id', dashboardData.id).eq('status', 'pending').limit(1).maybeSingle();
         if (inviteCode?.code) {
             document.getElementById('myInviteCode').textContent = inviteCode.code;
             document.getElementById('btnGenInvite').classList.add('hidden');
@@ -193,13 +216,15 @@ async function initDashboardLogic() {
             copyBtn.classList.remove('hidden');
             copyBtn.onclick = async () => { 
                 await navigator.clipboard.writeText(inviteCode.code); 
+                const t = window.fallbackTranslations || {};
                 copyBtn.textContent = t['dash_copied'] || '已复制!'; 
                 setTimeout(() => copyBtn.textContent = t['dash_invite_copy'] || '复制', 2000); 
             };
         }
 
-        // 绑定按钮
+        // 绑定事件
         document.getElementById('btnGenInvite').onclick = async () => {
+            const t = window.fallbackTranslations || {};
             const btn = document.getElementById('btnGenInvite');
             btn.disabled = true; btn.textContent = t['dash_gen_ing'] || '生成中...';
             const { data, error } = await client.rpc('generate_invitation_code');
@@ -215,8 +240,49 @@ async function initDashboardLogic() {
             };
         };
 
-        // ... 省略弹窗绑定的部分（逻辑一样） ...
-        
+        // 拉取通知
+        const { data: notifs } = await client.from('notifications').select('*').order('created_at', { ascending: false });
+        const list = document.getElementById('notificationList');
+        if (notifs && notifs.length > 0) {
+            list.innerHTML = '';
+            const unreadIds = [];
+            const t = window.fallbackTranslations || {};
+            notifs.forEach(n => {
+                if (!n.is_read) unreadIds.push(n.id);
+                const li = document.createElement('li');
+                li.className = `notification-item ${n.is_read ? '' : 'unread'}`;
+                const title = document.createElement('div'); title.style.cssText = 'font-weight:600;color:#fff;margin-bottom:4px;'; title.textContent = n.title || '';
+                const msg = document.createElement('div'); msg.style.cssText = 'color:#c9d1d9;line-height:1.4;'; msg.textContent = n.message || '';
+                const time = document.createElement('div'); time.className = 'notification-time'; time.textContent = new Date(n.created_at).toLocaleString();
+                li.append(title, msg, time);
+                list.appendChild(li);
+            });
+            if (unreadIds.length > 0) await client.from('notifications').update({ is_read: true }).in('id', unreadIds);
+        } else {
+            const t = window.fallbackTranslations || {};
+            list.innerHTML = `<li class="notification-item" style="text-align:center; color:#8b949e;">${t['dash_notif_empty'] || '暂无新通知'}</li>`;
+        }
+
+        // 取消订阅逻辑
+        document.getElementById('btnCancelSub').onclick = () => document.getElementById('cancelModal').classList.add('active');
+        document.getElementById('btnCloseModal').onclick = () => document.getElementById('cancelModal').classList.remove('active');
+        document.getElementById('btnConfirmCancel').onclick = async () => {
+            const btn = document.getElementById('btnConfirmCancel');
+            const reason = document.getElementById('cancelReason').value.trim();
+            btn.disabled = true; 
+            const t = window.fallbackTranslations || {};
+            btn.textContent = t['dash_cancel_processing'] || '处理中...';
+            const { error } = await client.from('reports').insert({
+                user_id: currentUser.id, reporter_email: currentUser.email, report_type: 'other', url: 'Cancel Sub', description: `[取消原因] ${reason || '未填写'}`
+            });
+            if (error) { alert('提交失败: ' + error.message); btn.disabled = false; btn.textContent = t['dash_cancel_yes'] || '确认取消'; return; }
+            alert(t['dash_cancel_success'] || '您的取消请求已记录。'); 
+            document.getElementById('cancelModal').classList.remove('active'); 
+            document.getElementById('btnCancelSub').classList.add('hidden'); 
+            document.getElementById('btnUpgrade').classList.remove('hidden');
+            btn.disabled = false; btn.textContent = t['dash_cancel_yes'] || '确认取消';
+        };
+
     } catch (err) { console.error("Dashboard 初始化失败:", err); }
 }
 
