@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DewSecure - Dashboard</title>
     <link rel="stylesheet" href="/style.css">
+    <link rel="stylesheet" href="https://unpkg.com/swup@4/dist/swup.css"> <!-- 🌟 新增 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="icon" type="image/png" href="/DewSecure.png">
 </head>
@@ -30,7 +31,7 @@
             </ul>
         </div>
     </header>
-
+<main id="swup" class="transition-fade"> <!-- 🌟 新增包裹 -->
     <!-- 内容正常写，不需要 main#swup -->
     <div class="dashboard-container" id="mainContent">
         <div class="left-column">
@@ -93,6 +94,7 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://unpkg.com/swup@4/dist/swup.min.js"></script> <!-- 🌟 新增 -->
     <script src="/js/auth-nav.js"></script>
     <script src="/js/app-init.js"></script>
 </body>
