@@ -1,15 +1,11 @@
 // js/app-init.js
 
-// 页面专属的初始化逻辑
-function initPage() {
-    // ==========================================
-    // 1. 核心修复：自动根据当前 URL 高亮导航栏
-    // ==========================================
+document.addEventListener('DOMContentLoaded', () => {
+    // 1. 修复导航栏高亮
     const path = window.location.pathname;
     document.querySelectorAll('header nav a').forEach(link => {
         link.classList.remove('active');
         const href = link.getAttribute('href');
-        // 兼容带 html 和不带 html 的路径
         if (href === path || 
             (path === '/' && href === '/index.html') || 
             (path.includes(href.replace('.html', '')) && href !== '/')) {
@@ -17,9 +13,7 @@ function initPage() {
         }
     });
 
-    // ==========================================
     // 2. 首页专属逻辑
-    // ==========================================
     if (document.getElementById('ds-title')) {
         const browserUrls = { chrome: 'https://chromewebstore.google.com/', edge: 'https://microsoftedge.microsoft.com/', firefox: 'https://addons.mozilla.org/', safari: '#', opera: '#', yandex: '#', android: '#' };
         const browserIcons = { chrome: 'fa-chrome', edge: 'fa-edge', firefox: 'fa-firefox-browser', safari: 'fa-safari', opera: 'fa-opera', yandex: 'fa-yandex', android: 'fa-android' };
@@ -67,16 +61,12 @@ function initPage() {
         });
     }
 
-    // ==========================================
     // 3. 指南页手风琴逻辑
-    // ==========================================
     const accordions = document.querySelectorAll('.accordion-header');
     if (accordions.length > 0) {
         accordions.forEach(header => {
-            // 防止重复绑定事件导致点击一次触发两次
             if (header.dataset.bound) return;
             header.dataset.bound = "true"; 
-            
             header.addEventListener('click', () => {
                 const card = header.parentElement;
                 card.classList.toggle('active');
@@ -84,16 +74,15 @@ function initPage() {
         });
     }
 
-    // ==========================================
     // 4. Dashboard 专属逻辑
-    // ==========================================
     if (document.getElementById('mainContent')) {
         initDashboardLogic();
     }
-}
+});
 
 // Dashboard 业务逻辑
 async function initDashboardLogic() {
+    // 因为引入顺序，此处必定已存在
     const client = window.supabaseClient;
     if (!client) {
         alert('严重错误：Supabase 客户端未初始化。');
@@ -103,14 +92,13 @@ async function initDashboardLogic() {
     try {
         const { data: { session }, error: sessionError } = await client.auth.getSession();
         if (sessionError || !session) {
+            // 如果在 dashboard 没拿到 session，直接踹回登录页
             window.location.href = '/login.html';
             return;
         }
 
         const currentUser = session.user;
-        const loginBtn = document.getElementById('nav-login-btn');
-        if (loginBtn) loginBtn.style.display = 'none';
-
+        
         const { data: profile, error: profileErr } = await client
             .from('profiles')
             .select('*')
@@ -246,17 +234,3 @@ async function initDashboardLogic() {
         }
     }
 }
-
-// 首次加载直接运行
-document.addEventListener('DOMContentLoaded', () => {
-    initPage();
-    
-    // 实例化 Swup (无刷新页面切换)
-    if (window.Swup) {
-        window.swup = new Swup({
-            containers: ['#swup']
-        });
-        // 每次页面切换后重新初始化页面专属逻辑
-        window.swup.hooks.on('page:view', initPage);
-    }
-});
