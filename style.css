@@ -1,5 +1,5 @@
 /* ==========================================
-   DewSecure 纯净版全局样式 (V8.0 完美补全版)
+   DewSecure 纯净版全局样式 (V9.0 终极完美版)
    ========================================== */
 
 :root {
@@ -33,6 +33,17 @@ body {
 
 a { color: inherit; text-decoration: none; }
 .hidden { display: none !important; }
+
+/* 🌟 核心修复：多语言加载前的透明度护盾，防止中文闪烁 */
+html.i18n-loading [data-i18n], 
+html.i18n-loading [data-i18n-placeholder] {
+    opacity: 0 !important;
+    transition: opacity 0.2s ease;
+}
+html[data-i18n-ready="true"] [data-i18n], 
+html[data-i18n-ready="true"] [data-i18n-placeholder] {
+    opacity: 1 !important;
+}
 
 /* ==========================================
    Header 三列 Grid 布局
@@ -127,7 +138,7 @@ header .lang-switch {
 .btn-primary:hover { box-shadow: 0 0 20px rgba(255, 255, 255, 0.4); transform: scale(1.02); }
 
 /* ==========================================
-   主页专属样式 (绝对定位防跳动)
+   主页专属样式 (修复居中)
    ========================================== */
 .hero {
     min-height: calc(100vh - 80px);
@@ -143,7 +154,7 @@ header .lang-switch {
 .ds-icon:hover { transform: scale(1.1) translateY(-3px); color: #fff; }
 .ds-icon.active { color: #fff; background: rgba(88, 166, 255, 0.2); border-color: #58a6ff; box-shadow: 0 0 15px rgba(88, 166, 255, 0.3); transform: scale(1.05); }
 
-/* 🌟 修复跳动：使用固定高度和绝对定位 */
+/* 🌟 核心修复：使用 Flex 垂直居中，彻底解决文案不够居中的问题 */
 .ds-box { 
     text-align: center; 
     background: rgba(22, 27, 34, 0.5); 
@@ -152,13 +163,17 @@ header .lang-switch {
     backdrop-filter: blur(24px); 
     width: 100%; 
     min-width: 650px; 
-    height: 320px; /* 锁死高度 */
-    position: relative; /* 启用绝对定位 */
+    height: 320px; 
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 40px;
 }
-.ds-t { position: absolute; top: 50px; left: 5%; right: 5%; font-size: 28px; font-weight: 800; color: #fff; margin: 0; }
-.ds-d { position: absolute; top: 110px; left: 5%; right: 5%; font-size: 16px; color: #8b949e; line-height: 1.6; margin: 0; height: 60px; display: flex; align-items: center; justify-content: center; opacity: 0; transition: opacity 0.3s ease; }
-.ds-btn { position: absolute; bottom: 40px; left: 50%; transform: translateX(-50%); display: inline-flex; align-items: center; background: #fff; color: #000; padding: 8px 24px 8px 8px; border-radius: 100px; font-weight: 700; font-size: 16px; transition: all 0.3s; }
-.ds-btn:hover { transform: translateX(-50%) scale(1.05); box-shadow: 0 0 30px rgba(255, 255, 255, 0.3); }
+.ds-t { font-size: 28px; font-weight: 800; color: #fff; margin-bottom: 12px; }
+.ds-d { font-size: 16px; color: #8b949e; line-height: 1.6; margin-bottom: 30px; min-height: 50px; opacity: 0; transition: opacity 0.3s; text-align: center;}
+.ds-btn { display: inline-flex; align-items: center; background: #fff; color: #000; padding: 8px 24px 8px 8px; border-radius: 100px; font-weight: 700; font-size: 16px; transition: all 0.3s; }
+.ds-btn:hover { transform: scale(1.05); box-shadow: 0 0 30px rgba(255, 255, 255, 0.3); }
 .ds-btn-ic { width: 40px; height: 40px; background: #0d1117; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-right: 15px; color: #fff; font-size: 20px; }
 
 .features { padding: 100px 40px; }
@@ -256,7 +271,7 @@ header .lang-switch {
 .disclaimer-section p { color: #8b949e; font-size: 13px; line-height: 1.8; margin-bottom: 16px; background: rgba(255, 255, 255, 0.02); padding: 16px; border-radius: 8px; border-left: 3px solid rgba(255, 123, 114, 0.5); }
 
 /* ==========================================
-   更新日志 (Update) 专属样式 (这就是之前漏掉的)
+   更新日志 (Update) 专属样式
    ========================================== */
 .update-container { max-width: 800px; margin: 60px auto; padding: 40px; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.08); border-radius: 24px; backdrop-filter: blur(20px); }
 .translate-tip { display: flex; justify-content: space-between; align-items: center; font-size: 14px; color: #58a6ff; margin-bottom: 40px; background: rgba(88,166,255,0.1); padding: 12px 16px; border-radius: 8px; border: 1px solid rgba(88,166,255,0.2); }
@@ -349,9 +364,8 @@ body > .skiptranslate { display: none !important; }
     header nav { gap: 10px 15px; flex-wrap: wrap; }
     body { padding-top: 140px !important; }
     .ds-box { min-width: 100%; padding: 30px 20px; height: auto; min-height: 300px;}
-    .ds-t { top: 40px; font-size: 22px;}
-    .ds-d { top: 90px; font-size: 14px;}
-    .ds-btn { bottom: 30px; }
+    .ds-t { font-size: 22px;}
+    .ds-d { font-size: 14px;}
     .features { padding: 60px 20px; }
     .comp-row { grid-template-columns: 1.5fr 1fr 1fr 1fr; padding: 16px 15px; }
     .comp-feature span { display: none; }
