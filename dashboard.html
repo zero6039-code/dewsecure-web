@@ -11,16 +11,24 @@
         body { background: #0d1117; color: #c9d1d9; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif; margin: 0; }
         .i18n-loading [data-i18n] { visibility: hidden !important; }
         
-        /* 因为 auth-nav.js 留了 70px 的 padding-top，这里 margin-top 改为 30px 即可 */
+        /* 主内容区，绝不碰 Header */
         .dashboard-container { 
             max-width: 1200px; 
-            margin: 30px auto 40px; 
+            margin: 40px auto; 
             padding: 0 20px; 
             display: grid; 
             grid-template-columns: 2fr 1fr; 
             gap: 24px; 
         }
-        .card { background: rgba(22, 27, 34, 0.6); backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 20px; padding: 30px; margin-bottom: 24px; }
+
+        .card { 
+            background: rgba(22, 27, 34, 0.6); 
+            backdrop-filter: blur(16px); 
+            border: 1px solid rgba(255, 255, 255, 0.08); 
+            border-radius: 20px; 
+            padding: 30px; 
+            margin-bottom: 24px; 
+        }
         .card h3 { color: #fff; margin-bottom: 20px; font-size: 20px; display: flex; align-items: center; gap: 10px; }
         .status-badge { display: inline-block; padding: 6px 12px; border-radius: 20px; font-size: 13px; font-weight: 600; background: rgba(88,166,255,0.15); color: #58a6ff; border: 1px solid rgba(88,166,255,0.3); }
         .status-pro { background: rgba(255, 196, 0, 0.15); color: #ffc400; border-color: rgba(255, 196, 0, 0.3); }
@@ -40,7 +48,7 @@
         .notification-item.unread { background: rgba(88,166,255,0.05); }
         .notification-time { font-size: 12px; color: #8b949e; margin-top: 5px; }
         
-        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); backdrop-filter: blur(8px); display: flex; align-items: center; justify-content: center; z-index: 10000; opacity: 0; pointer-events: none; transition: 0.3s; }
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); backdrop-filter: blur(8px); display: flex; align-items: center; justify-content: center; z-index: 1000; opacity: 0; pointer-events: none; transition: 0.3s; }
         .modal-overlay.active { opacity: 1; pointer-events: all; }
         .modal-content { background: rgba(22, 27, 34, 0.9); border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; padding: 30px; max-width: 450px; width: 90%; }
         .modal-content h3 { margin-bottom: 15px; color: #fff; }
@@ -52,12 +60,34 @@
         .card-completed::after { content: "感谢您的分享！已达奖励上限。请留意通知中心，我们会定期发放福利。"; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(22,27,34,0.85); backdrop-filter: blur(8px); display: flex; align-items: center; justify-content: center; text-align: center; padding: 30px; color: #58a6ff; font-weight: bold; font-size: 16px; border-radius: 20px; z-index: 10; }
 
         @media (max-width: 900px) {
-            .dashboard-container { grid-template-columns: 1fr; margin-top: 20px; }
+            .dashboard-container { grid-template-columns: 1fr; }
         }
     </style>
+    <link rel="icon" type="image/png" href="/DewSecure.png">
 </head>
 <body>
-    <!-- 完全不需要 header 标签，JS 会自动生成 -->
+    <!-- 完美克隆主页的 Header 结构 -->
+    <header>
+        <a href="/index.html" class="logo"><img src="/DewSecure.png" alt="DewSecure" > DewSecure</a>
+        <nav>
+            <a href="/index.html" data-i18n="nav_home">首页</a>
+            <a href="/pricing.html" data-i18n="nav_pricing">定价</a>
+            <a href="/pentest/" target="_blank" data-i18n="nav_pentest">安全审计</a>
+            <a href="/update/" data-i18n="nav_update">更新日志</a>
+            <a href="/guide/" data-i18n="nav_guide">使用指南</a>
+            <a href="/about/" data-i18n="nav_about">关于我们</a>
+            <!-- 这个登录按钮会被 JS 自动隐藏，无需担心 -->
+            <a href="/login/" data-i18n="nav_login">登录</a>
+        </nav>
+        <div class="lang-switch">
+            <button class="lang-toggle-btn" style="background:none;border:none;color:#cbd5e1;font-size:24px;cursor:pointer;padding:0;">🌐</button>
+            <ul class="lang-dropdown">
+                <li data-lang="zh" class="lang-option">中文 (简体)</li>
+                <li data-lang="en" class="lang-option">English</li>
+                <li data-lang="ms" class="lang-option">Bahasa Melayu</li>
+            </ul>
+        </div>
+    </header>
 
     <div class="dashboard-container" id="mainContent" style="display: none;">
         <!-- 左侧：状态与邀请 -->
