@@ -1,5 +1,5 @@
 /* ==========================================
-   DewSecure 纯净版全局样式 (V7.0 绝对稳定版)
+   DewSecure 纯净版全局样式 (V8.0 完美补全版)
    ========================================== */
 
 :root {
@@ -127,7 +127,7 @@ header .lang-switch {
 .btn-primary:hover { box-shadow: 0 0 20px rgba(255, 255, 255, 0.4); transform: scale(1.02); }
 
 /* ==========================================
-   主页专属样式
+   主页专属样式 (绝对定位防跳动)
    ========================================== */
 .hero {
     min-height: calc(100vh - 80px);
@@ -142,11 +142,23 @@ header .lang-switch {
 .ds-icon { width: 55px; height: 55px; border-radius: 14px; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); display: flex; align-items: center; justify-content: center; font-size: 26px; color: #8b949e; cursor: pointer; transition: all 0.3s; }
 .ds-icon:hover { transform: scale(1.1) translateY(-3px); color: #fff; }
 .ds-icon.active { color: #fff; background: rgba(88, 166, 255, 0.2); border-color: #58a6ff; box-shadow: 0 0 15px rgba(88, 166, 255, 0.3); transform: scale(1.05); }
-.ds-box { text-align: center; background: rgba(22, 27, 34, 0.5); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 24px; padding: 40px 50px; backdrop-filter: blur(24px); width: 100%; min-width: 650px; min-height: 260px; display: flex; flex-direction: column; justify-content: center; align-items: center; }
-.ds-t { font-size: 28px; font-weight: 800; color: #fff; margin-bottom: 12px; }
-.ds-d { font-size: 16px; color: #8b949e; line-height: 1.6; margin-bottom: 30px; }
-.ds-btn { display: inline-flex; align-items: center; background: #fff; color: #000; padding: 8px 24px 8px 8px; border-radius: 100px; font-weight: 700; font-size: 16px; transition: all 0.3s; }
-.ds-btn:hover { transform: scale(1.05); box-shadow: 0 0 30px rgba(255, 255, 255, 0.3); }
+
+/* 🌟 修复跳动：使用固定高度和绝对定位 */
+.ds-box { 
+    text-align: center; 
+    background: rgba(22, 27, 34, 0.5); 
+    border: 1px solid rgba(255, 255, 255, 0.1); 
+    border-radius: 24px; 
+    backdrop-filter: blur(24px); 
+    width: 100%; 
+    min-width: 650px; 
+    height: 320px; /* 锁死高度 */
+    position: relative; /* 启用绝对定位 */
+}
+.ds-t { position: absolute; top: 50px; left: 5%; right: 5%; font-size: 28px; font-weight: 800; color: #fff; margin: 0; }
+.ds-d { position: absolute; top: 110px; left: 5%; right: 5%; font-size: 16px; color: #8b949e; line-height: 1.6; margin: 0; height: 50px; }
+.ds-btn { position: absolute; bottom: 40px; left: 50%; transform: translateX(-50%); display: inline-flex; align-items: center; background: #fff; color: #000; padding: 8px 24px 8px 8px; border-radius: 100px; font-weight: 700; font-size: 16px; transition: all 0.3s; }
+.ds-btn:hover { transform: translateX(-50%) scale(1.05); box-shadow: 0 0 30px rgba(255, 255, 255, 0.3); }
 .ds-btn-ic { width: 40px; height: 40px; background: #0d1117; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-right: 15px; color: #fff; font-size: 20px; }
 
 .features { padding: 100px 40px; }
@@ -165,7 +177,7 @@ header .lang-switch {
 .footer-copy { color: #484f58; font-size: 13px; }
 
 /* ==========================================
-   定价页专属样式 (修复你截图里的错位)
+   定价页专属样式
    ========================================== */
 .pricing-wrapper { min-height: 100vh; display: flex; flex-direction: column; align-items: center; padding: 80px 20px; }
 .pricing-title { font-size: 48px; font-weight: 800; color: #fff; margin-bottom: 60px; letter-spacing: -1px; }
@@ -244,6 +256,21 @@ header .lang-switch {
 .disclaimer-section p { color: #8b949e; font-size: 13px; line-height: 1.8; margin-bottom: 16px; background: rgba(255, 255, 255, 0.02); padding: 16px; border-radius: 8px; border-left: 3px solid rgba(255, 123, 114, 0.5); }
 
 /* ==========================================
+   更新日志 (Update) 专属样式 (这就是之前漏掉的)
+   ========================================== */
+.update-container { max-width: 800px; margin: 60px auto; padding: 40px; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.08); border-radius: 24px; backdrop-filter: blur(20px); }
+.translate-tip { display: flex; justify-content: space-between; align-items: center; font-size: 14px; color: #58a6ff; margin-bottom: 40px; background: rgba(88,166,255,0.1); padding: 12px 16px; border-radius: 8px; border: 1px solid rgba(88,166,255,0.2); }
+#google_translate_element { display: none; }
+#my-lang-select { background-color: #0d1117; color: #fff; border: 1px solid #30363d; padding: 8px 30px 8px 12px; border-radius: 6px; outline: none; cursor: pointer; font-size: 14px; appearance: none; background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23cbd5e1%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E"); background-repeat: no-repeat; background-position: right 10px top 50%; background-size: 10px auto; width: 150px; }
+body > .skiptranslate { display: none !important; }
+.update-container h1 { font-size: 36px; color: #fff; margin-bottom: 30px; }
+.log-entry { border-bottom: 1px solid rgba(255,255,255,0.08); padding-bottom: 24px; margin-bottom: 24px; }
+.log-entry:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+.log-date { font-size: 14px; color: #8b949e; margin-bottom: 8px; font-family: monospace; }
+.log-title { font-size: 22px; color: #fff; margin-bottom: 12px; font-weight: 700; }
+.log-content { color: #c9d1d9; font-size: 15px; line-height: 1.7; }
+
+/* ==========================================
    登录页、Dashboard专属
    ========================================== */
 .login-layout { display: flex; min-height: calc(100vh - 80px); width: 100%; }
@@ -272,7 +299,6 @@ header .lang-switch {
 .trial-badge { margin-top: 25px; padding: 12px; background: rgba(88,166,255,0.1); border-radius: 8px; text-align: center; font-size: 13px; color: #58a6ff; }
 .error-msg { color: #f85149; font-size: 13px; margin-top: 5px; display: none; }
 
-/* Dashboard */
 .dashboard-container { max-width: 1200px; margin: 40px auto; padding: 0 20px; display: grid; grid-template-columns: 2fr 1fr; gap: 24px; }
 .status-badge { display: inline-block; padding: 6px 12px; border-radius: 20px; font-size: 13px; font-weight: 600; background: rgba(88,166,255,0.15); color: #58a6ff; border: 1px solid rgba(88,166,255,0.3); }
 .status-pro { background: rgba(255, 196, 0, 0.15); color: #ffc400; border-color: rgba(255, 196, 0, 0.3); }
@@ -322,7 +348,10 @@ header .lang-switch {
     header .logo img { height: 32px; }
     header nav { gap: 10px 15px; flex-wrap: wrap; }
     body { padding-top: 140px !important; }
-    .ds-box { min-width: 100%; padding: 30px 20px; }
+    .ds-box { min-width: 100%; padding: 30px 20px; height: auto; min-height: 300px;}
+    .ds-t { top: 40px; font-size: 22px;}
+    .ds-d { top: 90px; font-size: 14px;}
+    .ds-btn { bottom: 30px; }
     .features { padding: 60px 20px; }
     .comp-row { grid-template-columns: 1.5fr 1fr 1fr 1fr; padding: 16px 15px; }
     .comp-feature span { display: none; }
