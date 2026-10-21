@@ -154,13 +154,17 @@
                 }
                 currentUser = session.user;
 
+                // 获取 Profile 数据
                 const { data: profile, error: profileErr } = await supabaseClient
                     .from('profiles')
                     .select('*')
                     .eq('id', currentUser.id)
                     .maybeSingle();
                 
-                if (profileErr) throw profileErr;
+                if (profileErr) {
+                    console.error("获取 Profile 失败:", profileErr);
+                    throw profileErr;
+                }
 
                 currentProfile = profile || { tier: 'free', trial_ends_at: null, invite_success_count: 0 };
 
@@ -176,6 +180,9 @@
             } catch (err) {
                 console.error("Dashboard 初始化错误:", err);
                 alert("加载数据失败: " + (err.message || "未知错误，请检查网络或权限。"));
+                if (err.message === 'JWT expired' || err.code === 'PGRST301') {
+                    window.location.href = '/login.html';
+                }
             }
         }
 
@@ -335,6 +342,7 @@
 
         initDashboard();
     </script>
+    <!-- 引入统一的状态管理 -->
     <script src="/js/auth-nav.js"></script>
 </body>
 </html>
