@@ -1,6 +1,14 @@
 /* ==========================================
-   DewSecure 纯净版全局样式 (V9.0 终极完美版)
+   DewSecure 纯净版全局样式 (V10.0 终极丝滑版)
    ========================================== */
+
+/* 🌟 原生黑科技：开启多页应用(MPA)的平滑过渡，导航栏不闪不跳 */
+@view-transition {
+    navigation: auto;
+}
+header {
+    view-transition-name: site-header; /* 让 Header 在页面跳转时保持静止 */
+}
 
 :root {
     --bg-color: #050505;
@@ -34,15 +42,13 @@ body {
 a { color: inherit; text-decoration: none; }
 .hidden { display: none !important; }
 
-/* 🌟 核心修复：多语言加载前的透明度护盾，防止中文闪烁 */
-html.i18n-loading [data-i18n], 
-html.i18n-loading [data-i18n-placeholder] {
+/* 🌟 核心修复：多语言加载前的全站透明度护盾，彻底杜绝中文残影 */
+html.i18n-loading body {
     opacity: 0 !important;
-    transition: opacity 0.2s ease;
 }
-html[data-i18n-ready="true"] [data-i18n], 
-html[data-i18n-ready="true"] [data-i18n-placeholder] {
+html[data-i18n-ready="true"] body {
     opacity: 1 !important;
+    transition: opacity 0.2s ease-out;
 }
 
 /* ==========================================
@@ -138,7 +144,7 @@ header .lang-switch {
 .btn-primary:hover { box-shadow: 0 0 20px rgba(255, 255, 255, 0.4); transform: scale(1.02); }
 
 /* ==========================================
-   主页专属样式 (修复居中)
+   主页专属样式 (绝对定位锁死，绝不跳动)
    ========================================== */
 .hero {
     min-height: calc(100vh - 80px);
@@ -154,7 +160,7 @@ header .lang-switch {
 .ds-icon:hover { transform: scale(1.1) translateY(-3px); color: #fff; }
 .ds-icon.active { color: #fff; background: rgba(88, 166, 255, 0.2); border-color: #58a6ff; box-shadow: 0 0 15px rgba(88, 166, 255, 0.3); transform: scale(1.05); }
 
-/* 🌟 核心修复：使用 Flex 垂直居中，彻底解决文案不够居中的问题 */
+/* 🌟 核心修复：绝对定位，锁定尺寸，配合 JS 防止文案撑开盒子 */
 .ds-box { 
     text-align: center; 
     background: rgba(22, 27, 34, 0.5); 
@@ -164,16 +170,12 @@ header .lang-switch {
     width: 100%; 
     min-width: 650px; 
     height: 320px; 
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    padding: 40px;
+    position: relative;
 }
-.ds-t { font-size: 28px; font-weight: 800; color: #fff; margin-bottom: 12px; }
-.ds-d { font-size: 16px; color: #8b949e; line-height: 1.6; margin-bottom: 30px; min-height: 50px; opacity: 0; transition: opacity 0.3s; text-align: center;}
-.ds-btn { display: inline-flex; align-items: center; background: #fff; color: #000; padding: 8px 24px 8px 8px; border-radius: 100px; font-weight: 700; font-size: 16px; transition: all 0.3s; }
-.ds-btn:hover { transform: scale(1.05); box-shadow: 0 0 30px rgba(255, 255, 255, 0.3); }
+.ds-t { position: absolute; top: 50px; left: 5%; right: 5%; font-size: 28px; font-weight: 800; color: #fff; margin: 0; }
+.ds-d { position: absolute; top: 110px; left: 5%; right: 5%; font-size: 16px; color: #8b949e; line-height: 1.6; margin: 0; height: 50px; opacity: 0; transition: opacity 0.3s; }
+.ds-btn { position: absolute; bottom: 40px; left: 50%; transform: translateX(-50%); display: inline-flex; align-items: center; background: #fff; color: #000; padding: 8px 24px 8px 8px; border-radius: 100px; font-weight: 700; font-size: 16px; transition: all 0.3s; }
+.ds-btn:hover { transform: translateX(-50%) scale(1.05); box-shadow: 0 0 30px rgba(255, 255, 255, 0.3); }
 .ds-btn-ic { width: 40px; height: 40px; background: #0d1117; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-right: 15px; color: #fff; font-size: 20px; }
 
 .features { padding: 100px 40px; }
@@ -191,6 +193,8 @@ header .lang-switch {
 .footer-github-link:hover { color: #fff; background: rgba(255, 255, 255, 0.1); transform: translateY(-2px); }
 .footer-copy { color: #484f58; font-size: 13px; }
 
+/* 其他页面样式（定价、登录、控制台等）保持之前的完整版即可，这里为了简洁省略部分未改动的代码，请确保你的 style.css 包含之前所有的其余样式 */
+/* (请直接使用你现有的定价、指南、Dashboard等样式粘贴到这里，不要删除) */
 /* ==========================================
    定价页专属样式
    ========================================== */
@@ -363,9 +367,10 @@ body > .skiptranslate { display: none !important; }
     header .logo img { height: 32px; }
     header nav { gap: 10px 15px; flex-wrap: wrap; }
     body { padding-top: 140px !important; }
-    .ds-box { min-width: 100%; padding: 30px 20px; height: auto; min-height: 300px;}
-    .ds-t { font-size: 22px;}
-    .ds-d { font-size: 14px;}
+    .ds-box { min-width: 100%; height: 360px; }
+    .ds-t { font-size: 22px; top: 40px; }
+    .ds-d { font-size: 14px; top: 90px; height: 60px; }
+    .ds-btn { bottom: 30px; }
     .features { padding: 60px 20px; }
     .comp-row { grid-template-columns: 1.5fr 1fr 1fr 1fr; padding: 16px 15px; }
     .comp-feature span { display: none; }
