@@ -146,7 +146,6 @@ function startCountdown(btn) {
     }, 1000);
 }
 
-// 🌟 提取渲染函数，专用于刷新 DOM 文字
 function renderDashboardTexts() {
     if (!dashboardData) return;
     const t = window.fallbackTranslations || {};
@@ -205,7 +204,7 @@ async function initDashboardLogic() {
         dashboardData = profile || { id: currentUser.id, tier: 'free', trial_ends_at: null, invite_success_count: 0 };
         renderDashboardTexts();
 
-        // 🌟 新增：防白嫖指纹领取逻辑
+        // 防白嫖指纹领取逻辑
         async function getFingerprint() {
             const raw = navigator.userAgent + navigator.language + screen.width + 'x' + screen.height + new Date().getTimezoneOffset();
             const msgBuffer = new TextEncoder().encode(raw);
@@ -214,9 +213,8 @@ async function initDashboardLogic() {
             return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
         }
 
-        // 如果当前是 free 且没有领取过，显示领取按钮
         if (dashboardData.tier === 'free' && !dashboardData.trial_ends_at) {
-            const card = document.getElementById('inviteCard'); // 或者你可以新建一个卡片
+            const card = document.getElementById('inviteCard');
             const claimBtn = document.createElement('button');
             claimBtn.className = 'btn btn-primary';
             claimBtn.style = 'width: 100%; margin-top: 20px; background: #58a6ff; color: #fff;';
@@ -230,7 +228,6 @@ async function initDashboardLogic() {
                     const fp = await getFingerprint();
                     const { data, error } = await client.rpc('claim_free_trial', { p_fingerprint: fp });
                     if (error) throw error;
-                    
                     if (data.success) {
                         alert(data.message);
                         window.location.reload(); 
@@ -246,35 +243,37 @@ async function initDashboardLogic() {
             };
         }
 
-        // 拉取邀请码
+        // 🌟 核心修改：生成并显示专属推广链接
         const { data: inviteCode } = await client.from('invitations').select('code').eq('inviter_id', dashboardData.id).eq('status', 'pending').limit(1).maybeSingle();
         if (inviteCode?.code) {
-            document.getElementById('myInviteCode').textContent = inviteCode.code;
+            const refLink = window.location.origin + '/pricing.html?ref=' + inviteCode.code;
+            document.getElementById('myInviteCode').textContent = refLink; // 直接显示链接
             document.getElementById('btnGenInvite').classList.add('hidden');
             const copyBtn = document.getElementById('btnCopyInvite');
             copyBtn.classList.remove('hidden');
             copyBtn.onclick = async () => { 
-                await navigator.clipboard.writeText(inviteCode.code); 
+                await navigator.clipboard.writeText(refLink); // 复制链接
                 const t = window.fallbackTranslations || {};
                 copyBtn.textContent = t['dash_copied'] || '已复制!'; 
                 setTimeout(() => copyBtn.textContent = t['dash_invite_copy'] || '复制', 2000); 
             };
         }
 
-        // 绑定事件
+        // 绑定生成事件
         document.getElementById('btnGenInvite').onclick = async () => {
             const t = window.fallbackTranslations || {};
             const btn = document.getElementById('btnGenInvite');
             btn.disabled = true; btn.textContent = t['dash_gen_ing'] || '生成中...';
             const { data, error } = await client.rpc('generate_invitation_code');
             if (error) { alert((t['dash_gen_fail'] || '生成失败: ') + error.message); btn.disabled = false; btn.textContent = t['dash_invite_gen'] || '生成邀请码'; return; }
-            document.getElementById('myInviteCode').textContent = data;
+            
+            const refLink = window.location.origin + '/pricing.html?ref=' + data;
+            document.getElementById('myInviteCode').textContent = refLink;
             btn.classList.add('hidden');
             const copyBtn = document.getElementById('btnCopyInvite');
             copyBtn.classList.remove('hidden');
             copyBtn.onclick = async () => {
-                await navigator.clipboard.writeText(data); 
-                const t = window.fallbackTranslations || {};
+                await navigator.clipboard.writeText(refLink); 
                 copyBtn.textContent = t['dash_copied'] || '已复制!'; 
                 setTimeout(() => copyBtn.textContent = t['dash_invite_copy'] || '复制', 2000); 
             };
