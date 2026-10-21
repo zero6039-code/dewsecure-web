@@ -53,7 +53,7 @@
     </style>
 </head>
 <body>
-    <!-- 统一使用和主页完全一致的结构，由 auth-nav.js 动态注入右侧状态 -->
+    <!-- 最纯净的 Header，全部交给 auth-nav.js 接管 -->
     <header>
         <a href="/index.html" class="logo"><img src="/DewSecure.png" alt="DewSecure"> DewSecure</a>
         <nav>
@@ -154,17 +154,13 @@
                 }
                 currentUser = session.user;
 
-                // 获取 Profile 数据
                 const { data: profile, error: profileErr } = await supabaseClient
                     .from('profiles')
                     .select('*')
                     .eq('id', currentUser.id)
                     .maybeSingle();
                 
-                if (profileErr) {
-                    console.error("获取 Profile 失败:", profileErr);
-                    throw profileErr;
-                }
+                if (profileErr) throw profileErr;
 
                 currentProfile = profile || { tier: 'free', trial_ends_at: null, invite_success_count: 0 };
 
