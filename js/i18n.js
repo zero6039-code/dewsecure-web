@@ -1,5 +1,5 @@
 // js/i18n.js
-window.currentLang = 'en'; // 🌟 默认设置为英文
+window.currentLang = 'en'; 
 window.fallbackTranslations = {};
 
 async function initFallback() {
@@ -24,7 +24,6 @@ async function loadLanguage(lang) {
 
         window.fallbackTranslations = translations;
         
-        // 静默替换
         document.querySelectorAll("[data-i18n]").forEach(element => {
             const key = element.getAttribute("data-i18n");
             let targetText = translations[key];
@@ -49,7 +48,7 @@ async function loadLanguage(lang) {
         window.currentLang = lang;
         updateDropdownUI(lang);
         
-        // 🌟 核心修复：解锁透明度护盾，显示文字
+        // 翻译完成，解锁全站透明度
         document.documentElement.classList.remove("i18n-loading");
         document.documentElement.setAttribute("data-i18n-ready", "true");
 
@@ -57,7 +56,6 @@ async function loadLanguage(lang) {
 
     } catch (error) {
         console.error("国际化加载失败:", error);
-        // 发生错误也必须解锁，防止页面全白
         document.documentElement.classList.remove("i18n-loading");
         document.documentElement.setAttribute("data-i18n-ready", "true");
     }
@@ -75,13 +73,11 @@ function updateDropdownUI(activeLang) {
 
 (async () => {
     await initFallback();
-    // 🌟 优先读取本地，如果没有则默认英文
     let defaultLang = localStorage.getItem("preferred_lang") || 'en';
     if (!['zh', 'en', 'ms'].includes(defaultLang)) defaultLang = 'en';
     
     await loadLanguage(defaultLang);
 
-    // 事件委托处理语言切换
     document.addEventListener('click', (e) => {
         const option = e.target.closest('.lang-option');
         if (option) {
