@@ -49,7 +49,7 @@
             const dashLink = header.querySelector('nav a[href="/dashboard.html"]');
             if (dashLink) dashLink.style.display = 'block';
 
-            // 🌟 核心修复：加上 data-i18n 属性，让 i18n.js 能够识别并翻译它们
+            // 🌟 核心：使用 data-i18n 交给全局翻译
             authArea.innerHTML = `
                 <span title="${rawEmail}" style="color: #8b949e; font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 120px;">${displayEmail}</span>
                 <a href="/dashboard.html" data-i18n="nav_dashboard" style="color: #58a6ff; font-size: 14px; font-weight: 600; white-space: nowrap;">控制台</a>
@@ -67,7 +67,6 @@
             authArea.innerHTML = `<a href="/login.html" data-i18n="nav_login" style="color: #58a6ff; font-size: 14px; font-weight: 600; white-space: nowrap;">登录</a>`;
         }
         
-        // 🌟 生成后立刻执行一次翻译，确保渲染出来就是正确的语言
         if (window.translatePage) window.translatePage();
     }
 
@@ -75,7 +74,6 @@
         renderAuthState(session);
     });
     
-    // 语言切换时，刷新右侧状态栏
     window.addEventListener('languageChanged', () => {
         supabaseClient.auth.getSession().then(({ data: { session } }) => {
             renderAuthState(session);
