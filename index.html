@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DewSecure - Your Device, Your Rules</title>
     <link rel="stylesheet" href="/style.css">
-    <link rel="stylesheet" href="https://unpkg.com/swup@4/dist/swup.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="icon" type="image/png" href="/DewSecure.png">
 </head>
@@ -31,69 +30,64 @@
         </div>
     </header>
 
-    <!-- Swup 核心容器开始 -->
-    <main id="swup" class="transition-fade">
-        <section class="hero">
-            <h1 data-i18n="hero_title">你的设备，你的规则。</h1>
-            <p data-i18n="hero_desc">融合设备端 AI 与云端联邦学习的内容优化与安全防护引擎。深度阻断恶意追踪与钓鱼威胁，极速加载，为您重塑纯净、安全、高效的上网体验。</p>
-            
-            <div class="ds-wrap">
-                <div class="ds-icons">
-                    <div class="ds-icon active" data-target="chrome" title="Chrome"><i class="fa-brands fa-chrome"></i></div>
-                    <div class="ds-icon" data-target="edge" title="Edge"><i class="fa-brands fa-edge"></i></div>
-                    <div class="ds-icon" data-target="firefox" title="Firefox"><i class="fa-brands fa-firefox-browser"></i></div>
-                    <div class="ds-icon" data-target="safari" title="Safari"><i class="fa-brands fa-safari"></i></div>
-                    <div class="ds-icon" data-target="opera" title="Opera"><i class="fa-brands fa-opera"></i></div>
-                    <div class="ds-icon" data-target="yandex" title="Yandex"><i class="fa-brands fa-yandex"></i></div>
-                    <div class="ds-icon" data-target="android" title="Android"><i class="fa-brands fa-android"></i></div>
-                </div>
-
-                <div class="ds-box">
-                    <h2 id="ds-title" class="ds-t">重塑纯净、安全的上网体验</h2>
-                    <p id="ds-desc" class="ds-d">融合原生拦截与设备端 AI 引擎，毫秒级阻断恶意追踪与钓鱼威胁。</p>
-                    <a href="#" id="ds-btn" class="ds-btn">
-                        <div class="ds-btn-ic" id="ds-btn-icon"><i class="fa-brands fa-chrome"></i></div>
-                        <span id="ds-btn-text">下载 Chrome 扩展</span>
-                    </a>
-                </div>
+    <section class="hero">
+        <h1 data-i18n="hero_title">你的设备，你的规则。</h1>
+        <p data-i18n="hero_desc">融合设备端 AI 与云端联邦学习的内容优化与安全防护引擎。深度阻断恶意追踪与钓鱼威胁，极速加载，为您重塑纯净、安全、高效的上网体验。</p>
+        
+        <div class="ds-wrap">
+            <div class="ds-icons">
+                <div class="ds-icon active" data-target="chrome" title="Chrome"><i class="fa-brands fa-chrome"></i></div>
+                <div class="ds-icon" data-target="edge" title="Edge"><i class="fa-brands fa-edge"></i></div>
+                <div class="ds-icon" data-target="firefox" title="Firefox"><i class="fa-brands fa-firefox-browser"></i></div>
+                <div class="ds-icon" data-target="safari" title="Safari"><i class="fa-brands fa-safari"></i></div>
+                <div class="ds-icon" data-target="opera" title="Opera"><i class="fa-brands fa-opera"></i></div>
+                <div class="ds-icon" data-target="yandex" title="Yandex"><i class="fa-brands fa-yandex"></i></div>
+                <div class="ds-icon" data-target="android" title="Android"><i class="fa-brands fa-android"></i></div>
             </div>
-        </section>
 
-        <section class="features">
-            <div class="grid">
-                <div class="card"><h3 data-i18n="feat_title_1">🧠 智能安全引擎</h3><p data-i18n="feat_desc_1">内置 11 万条精准防御规则，结合设备端 AI 模型，精准拦截恶意钓鱼、追踪器及潜在威胁。</p></div>
-                <div class="card"><h3 data-i18n="feat_title_2">🛡️ 隐私数据不出设备</h3><p data-i18n="feat_desc_2">所有 URL 分析均在本地沙箱完成，零数据上传，我们不收集您的浏览记录，彻底杜绝隐私泄露。</p></div>
-                <div class="card"><h3 data-i18n="feat_title_3">⚡ 极致性能体验</h3><p data-i18n="feat_desc_3">毫秒级本地响应，大幅减少不必要的网络请求，不卡顿、不白屏，让网页加载速度肉眼可见地提升。</p></div>
-                <div class="card"><h3 data-i18n="feat_title_4">🧹 告别视觉噪音</h3><p data-i18n="feat_desc_4">彻底清理弹窗、横幅与视频广告，让你专注网页的核心内容，回归纯粹的浏览体验。</p></div>
-                <div class="card"><h3 data-i18n="feat_title_5">🛡️ 防钓鱼与木马拦截</h3><p data-i18n="feat_desc_5">实时识别并阻断钓鱼网站、恶意重定向以及木马病毒广告，为你构筑坚不可摧的安全防线。</p></div>
-                <div class="card"><h3 data-i18n="feat_title_6">🍪 智能 Cookie 管家</h3><p data-i18n="feat_desc_6">智能拦截烦人的 Cookie 同意横幅，同时精准放行必要配置，确保网站功能正常运转，拒绝一刀切。</p></div>
-                <div class="card"><h3 data-i18n="feat_title_7">⛏️ 拦截恶意挖矿</h3><p data-i18n="feat_desc_7">阻止恶意网页利用您的设备静默挖掘加密货币，节省 CPU 算力与电量消耗，让设备保持冷静流畅。</p></div>
+            <div class="ds-box">
+                <h2 id="ds-title" class="ds-t">重塑纯净、安全的上网体验</h2>
+                <p id="ds-desc" class="ds-d">融合原生拦截与设备端 AI 引擎，毫秒级阻断恶意追踪与钓鱼威胁。</p>
+                <a href="#" id="ds-btn" class="ds-btn">
+                    <div class="ds-btn-ic" id="ds-btn-icon"><i class="fa-brands fa-chrome"></i></div>
+                    <span id="ds-btn-text">下载 Chrome 扩展</span>
+                </a>
             </div>
-            
-            <div class="transparency-card">
-                <div style="font-size: 28px;">🛡️</div>
-                <div>
-                    <h4 data-i18n="trans_home_title">🤝 我们的透明承诺</h4>
-                    <p data-i18n="trans_home_desc">网络环境瞬息万变，恶意追踪技术持续进化，我们无法保证 100% 的绝对拦截率。受限于平台底层机制，部分应用内广告（如 YouTube App）暂无法拦截。但 DewSecure 会通过 AI 持续学习进化，竭尽全力为您提供最强悍的过滤体验。</p>
-                </div>
-            </div>
-        </section>
+        </div>
+    </section>
 
-        <footer class="site-footer">
-            <a href="https://github.com/zero6039-code/dewsecure-web" target="_blank" class="footer-github-link">
-                <i class="fa-brands fa-github"></i>
-                <span data-i18n="footer_link">在 GitHub 上查看开源代码</span>
-            </a>
-            <p class="footer-copy">
-                <span data-i18n="footer_text">核心引擎开源，数据绝不出户。</span><br>
-                &copy; 2026 DewSecure. All rights reserved.
-            </p>
-        </footer>
-    </main>
-    <!-- Swup 核心容器结束 -->
+    <section class="features">
+        <div class="grid">
+            <div class="card"><h3 data-i18n="feat_title_1">🧠 智能安全引擎</h3><p data-i18n="feat_desc_1">内置 11 万条精准防御规则，结合设备端 AI 模型，精准拦截恶意钓鱼、追踪器及潜在威胁。</p></div>
+            <div class="card"><h3 data-i18n="feat_title_2">🛡️ 隐私数据不出设备</h3><p data-i18n="feat_desc_2">所有 URL 分析均在本地沙箱完成，零数据上传，我们不收集您的浏览记录，彻底杜绝隐私泄露。</p></div>
+            <div class="card"><h3 data-i18n="feat_title_3">⚡ 极致性能体验</h3><p data-i18n="feat_desc_3">毫秒级本地响应，大幅减少不必要的网络请求，不卡顿、不白屏，让网页加载速度肉眼可见地提升。</p></div>
+            <div class="card"><h3 data-i18n="feat_title_4">🧹 告别视觉噪音</h3><p data-i18n="feat_desc_4">彻底清理弹窗、横幅与视频广告，让你专注网页的核心内容，回归纯粹的浏览体验。</p></div>
+            <div class="card"><h3 data-i18n="feat_title_5">🛡️ 防钓鱼与木马拦截</h3><p data-i18n="feat_desc_5">实时识别并阻断钓鱼网站、恶意重定向以及木马病毒广告，为你构筑坚不可摧的安全防线。</p></div>
+            <div class="card"><h3 data-i18n="feat_title_6">🍪 智能 Cookie 管家</h3><p data-i18n="feat_desc_6">智能拦截烦人的 Cookie 同意横幅，同时精准放行必要配置，确保网站功能正常运转，拒绝一刀切。</p></div>
+            <div class="card"><h3 data-i18n="feat_title_7">⛏️ 拦截恶意挖矿</h3><p data-i18n="feat_desc_7">阻止恶意网页利用您的设备静默挖掘加密货币，节省 CPU 算力与电量消耗，让设备保持冷静流畅。</p></div>
+        </div>
+        
+        <div class="transparency-card">
+            <div style="font-size: 28px;">🛡️</div>
+            <div>
+                <h4 data-i18n="trans_home_title">🤝 我们的透明承诺</h4>
+                <p data-i18n="trans_home_desc">网络环境瞬息万变，恶意追踪技术持续进化，我们无法保证 100% 的绝对拦截率。受限于平台底层机制，部分应用内广告（如 YouTube App）暂无法拦截。但 DewSecure 会通过 AI 持续学习进化，竭尽全力为您提供最强悍的过滤体验。</p>
+            </div>
+        </div>
+    </section>
+
+    <footer class="site-footer">
+        <a href="https://github.com/zero6039-code/dewsecure-web" target="_blank" class="footer-github-link">
+            <i class="fa-brands fa-github"></i>
+            <span data-i18n="footer_link">在 GitHub 上查看开源代码</span>
+        </a>
+        <p class="footer-copy">
+            <span data-i18n="footer_text">核心引擎开源，数据绝不出户。</span><br>
+            &copy; 2026 DewSecure. All rights reserved.
+        </p>
+    </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="https://unpkg.com/swup@4/dist/swup.min.js"></script>
     <script src="/js/auth-nav.js"></script>
     <script src="/js/app-init.js"></script>
     <script src="/js/i18n.js"></script>
