@@ -7,10 +7,10 @@ document.addEventListener("DOMContentLoaded", () => {
   const header = document.querySelector('header');
   if (!header) return;
 
-  // 1. 注入最高优先级的 CSS，强制解决 Flex 挤压问题
+  // 1. 注入全局 Header 布局样式
   const style = document.createElement('style');
   style.textContent = `
-    /* 锁定整个 header 为不换行、两端对齐 */
+    /* 锁定 Header 为 Flex 布局，禁止整体换行 */
     header {
       display: flex !important;
       flex-wrap: nowrap !important;
@@ -20,57 +20,56 @@ document.addEventListener("DOMContentLoaded", () => {
       box-sizing: border-box !important;
     }
 
-    /* 左侧 Logo 防压缩 */
+    /* 左侧 Logo 不压缩 */
     header .logo {
       display: flex !important;
       flex-shrink: 0 !important;
       align-items: center !important;
     }
 
-    /* 中间导航防挤压 */
+    /* 中间导航区：不隐藏，允许横向滚动 */
     header nav {
       display: flex !important;
       align-items: center !important;
-      gap: 24px !important;
+      gap: 20px !important;
       flex-shrink: 1 !important;
-      overflow-x: auto !important;
+      overflow-x: auto !important;      /* 关键：内容过多时允许横向滑动 */
       white-space: nowrap !important;
       scrollbar-width: none !important;
       margin: 0 auto !important;
     }
     header nav::-webkit-scrollbar { display: none !important; }
-    header nav a { white-space: nowrap !important; font-size: 14px; }
+    header nav a { white-space: nowrap !important; }
 
-    /* 右侧区域（用户状态 + 地球）强制固定在最右侧，永不压缩 */
+    /* 右侧用户区：固定在最右，永不压缩 */
     header .header-right {
       display: flex !important;
       align-items: center !important;
-      gap: 15px !important;
+      gap: 12px !important;
       flex-shrink: 0 !important;
       margin-left: 15px !important;
     }
 
-    /* 响应式：屏幕变窄时，直接隐藏中间导航，保留右侧登录状态 */
-    @media (max-width: 1050px) {
-      header nav { display: none !important; }
+    /* 仅在小屏幕上适当缩小间距，确保不换行，但导航依然可见 */
+    @media (max-width: 768px) {
+      header nav { gap: 12px !important; }
+      header .header-right { gap: 8px !important; }
     }
   `;
   document.head.appendChild(style);
 
-  // 2. 把原本散落的 lang-switch 统一装进右侧容器
+  // 2. 将语言切换器移动到统一的右侧容器
   let headerRight = header.querySelector('.header-right');
   if (!headerRight) {
     headerRight = document.createElement('div');
     headerRight.className = 'header-right';
-    header.appendChild(headerRight); 
+    header.appendChild(headerRight);
     
     const langSwitch = header.querySelector('.lang-switch');
-    if (langSwitch) {
-      headerRight.appendChild(langSwitch); 
-    }
+    if (langSwitch) headerRight.appendChild(langSwitch);
   }
 
-  // 3. 准备用户状态区域
+  // 3. 准备用户状态区域（插入到地球图标左侧）
   let authArea = document.getElementById('global-auth-area');
   if (!authArea) {
     authArea = document.createElement('div');
@@ -79,15 +78,14 @@ document.addEventListener("DOMContentLoaded", () => {
     
     const langSwitch = headerRight.querySelector('.lang-switch');
     if (langSwitch) {
-      headerRight.insertBefore(authArea, langSwitch); 
+      headerRight.insertBefore(authArea, langSwitch);
     } else {
       headerRight.appendChild(authArea);
     }
   }
 
-  // 4. 隐藏原本写死的“登录”导航项
-  const navLinks = header.querySelectorAll('nav a');
-  navLinks.forEach(a => {
+  // 4. 隐藏静态 HTML 中写死的“登录”链接
+  header.querySelectorAll('nav a').forEach(a => {
     if (a.href.includes('/login') || a.getAttribute('data-i18n') === 'nav_login') {
       a.style.display = 'none';
     }
@@ -110,9 +108,7 @@ document.addEventListener("DOMContentLoaded", () => {
         window.location.href = '/'; 
       };
     } else {
-      authArea.innerHTML = `
-        <a href="/login.html" style="color: #fff; text-decoration: none; font-size: 14px; font-weight: 600; white-space: nowrap;">登录</a>
-      `;
+      authArea.innerHTML = `<a href="/login.html" style="color: #fff; text-decoration: none; font-size: 14px; font-weight: 600; white-space: nowrap;">登录</a>`;
     }
   });
 });
