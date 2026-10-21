@@ -225,5 +225,8 @@
   "dash_notif_empty": "Tiada pemberitahuan baharu",
   "dash_cancel_processing": "Memproses...",
   "dash_cancel_success": "Permintaan pembatalan anda telah direkodkan. Langganan akan tamat pada akhir tempoh semasa.",
-  "dash_invite_desc": "Jemput rakan. Apabila mereka membuat pembayaran sebenar pertama (selepas tempoh bertenang 14 hari), anda akan mendapat tambahan 120 hari Pro!"
+  "dash_invite_desc": "Jemput rakan. Apabila mereka membuat pembayaran sebenar pertama (selepas tempoh bertenang 14 hari), anda akan mendapat tambahan 120 hari Pro!",
+  "pricing_promo_title": "Jemput Rakan, Dapat Pro Percuma!",
+  "pricing_promo_desc": "Jemput rakan. Apabila mereka membuat pembayaran sebenar pertama (selepas tempoh bertenang 14 hari), anda akan mendapat tambahan 120 hari Pro!",
+  "pricing_promo_btn": "Dapatkan Pautan Rujukan Saya"
 }
