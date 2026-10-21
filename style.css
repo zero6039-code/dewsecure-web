@@ -420,3 +420,78 @@ body > .skiptranslate { display: none !important; }
     .login-right { padding: 30px 20px; }
     .site-footer { flex-direction: column; gap: 10px; text-align: center; }
 }
+
+/* ==========================================
+   Pricing 页面的邀请返利横幅
+   ========================================== */
+.invite-promo-banner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: linear-gradient(135deg, rgba(88, 166, 255, 0.1) 0%, rgba(139, 92, 246, 0.1) 100%);
+    border: 1px solid rgba(88, 166, 255, 0.3);
+    border-radius: 20px;
+    padding: 24px 40px;
+    margin: 60px auto;
+    max-width: 1000px;
+    width: 100%;
+    backdrop-filter: blur(12px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.invite-promo-banner:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 15px 40px rgba(88, 166, 255, 0.15);
+}
+
+.promo-icon {
+    font-size: 40px;
+    margin-right: 24px;
+}
+
+.promo-text {
+    flex: 1;
+}
+
+.promo-text h3 {
+    color: #fff;
+    font-size: 20px;
+    margin-bottom: 6px;
+    font-weight: 800;
+}
+
+.promo-text p {
+    color: #8b949e;
+    font-size: 15px;
+    margin: 0;
+}
+
+.btn-promo {
+    background: #fff;
+    color: #000;
+    padding: 12px 24px;
+    border-radius: 100px;
+    font-weight: 700;
+    font-size: 15px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s;
+    white-space: nowrap;
+    margin-left: 20px;
+}
+
+.btn-promo:hover {
+    background: #e6edf3;
+    box-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+}
+
+@media (max-width: 768px) {
+    .invite-promo-banner {
+        flex-direction: column;
+        text-align: center;
+        padding: 30px 20px;
+    }
+    .promo-icon { margin: 0 0 15px 0; }
+    .btn-promo { margin: 20px 0 0 0; width: 100%; }
+}
