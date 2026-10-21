@@ -2,15 +2,6 @@
 window.currentLang = 'en'; 
 window.fallbackTranslations = {};
 
-async function initFallback() {
-    try {
-        const response = await fetch('/locales/zh.json');
-        if (response.ok) {
-            window.fallbackTranslations = await response.json();
-        }
-    } catch(e) {}
-}
-
 async function loadLanguage(lang) {
     if (!['zh', 'en', 'ms'].includes(lang)) {
         alert("该语言正在开发中，目前仅支持中文、英文和马来文。");
@@ -23,32 +14,15 @@ async function loadLanguage(lang) {
         const translations = await response.json();
 
         window.fallbackTranslations = translations;
+        window.currentLang = lang;
         
-        document.querySelectorAll("[data-i18n]").forEach(element => {
-            const key = element.getAttribute("data-i18n");
-            let targetText = translations[key];
-            if (targetText !== undefined && targetText !== null) {
-                if (/<[a-z="']/i.test(targetText)) {
-                    element.innerHTML = targetText;
-                } else {
-                    element.textContent = targetText;
-                }
-            }
-        });
-
-        document.querySelectorAll("[data-i18n-placeholder]").forEach(element => {
-            const key = element.getAttribute("data-i18n-placeholder");
-            let targetAttrText = translations[key];
-            if (targetAttrText) {
-                element.setAttribute("placeholder", targetAttrText);
-            }
-        });
+        // 🌟 调用全局翻译方法
+        window.translatePage();
 
         localStorage.setItem("preferred_lang", lang);
-        window.currentLang = lang;
         updateDropdownUI(lang);
         
-        // 翻译完成，解锁全站透明度
+        // 解锁全站透明度护盾
         document.documentElement.classList.remove("i18n-loading");
         document.documentElement.setAttribute("data-i18n-ready", "true");
 
@@ -61,6 +35,31 @@ async function loadLanguage(lang) {
     }
 }
 
+// 🌟 暴露全局翻译函数，供 Swup 和 auth-nav 调用
+window.translatePage = function() {
+    const translations = window.fallbackTranslations;
+    if (!translations) return;
+    
+    // 翻译普通文本
+    document.querySelectorAll("[data-i18n]").forEach(element => {
+        const key = element.getAttribute("data-i18n");
+        let targetText = translations[key];
+        if (targetText !== undefined && targetText !== null) {
+            if (/<[a-z="']/i.test(targetText)) {
+                element.innerHTML = targetText;
+            } else {
+                element.textContent = targetText;
+            }
+        }
+    });
+
+    // 翻译 Placeholder
+    document.querySelectorAll("[data-i18n-placeholder]").forEach(element => {
+        const key = element.getAttribute("data-i18n-placeholder");
+        if (translations[key]) element.setAttribute("placeholder", translations[key]);
+    });
+};
+
 function updateDropdownUI(activeLang) {
     document.querySelectorAll(".lang-option").forEach(option => {
         if (option.getAttribute("data-lang") === activeLang) {
@@ -72,10 +71,8 @@ function updateDropdownUI(activeLang) {
 }
 
 (async () => {
-    await initFallback();
     let defaultLang = localStorage.getItem("preferred_lang") || 'en';
     if (!['zh', 'en', 'ms'].includes(defaultLang)) defaultLang = 'en';
-    
     await loadLanguage(defaultLang);
 
     document.addEventListener('click', (e) => {
