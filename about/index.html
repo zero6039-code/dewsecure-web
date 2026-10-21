@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DewSecure - About</title>
     <link rel="stylesheet" href="/style.css">
+    <link rel="stylesheet" href="https://unpkg.com/swup@4/dist/swup.css"> <!-- 🌟 新增 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="icon" type="image/png" href="/DewSecure.png">
 </head>
@@ -29,7 +30,7 @@
             </ul>
         </div>
     </header>
-
+<main id="swup" class="transition-fade"> <!-- 🌟 添加这一行 -->
     <div class="about-container">
         <div class="about-header">
             <h1 data-i18n="about_title">掌控你的数字生活</h1>
@@ -52,8 +53,9 @@
         <a href="https://github.com/zero6039-code/dewsecure-web" target="_blank" class="footer-github-link"><i class="fa-brands fa-github"></i> <span data-i18n="footer_link">在 GitHub 上查看开源代码</span></a>
         <p class="footer-copy"><span data-i18n="footer_text">核心引擎开源，数据绝不出户。</span><br>&copy; 2026 DewSecure. All rights reserved.</p>
     </footer>
-
+</main> <!-- 🌟 添加这一行 -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://unpkg.com/swup@4/dist/swup.min.js"></script> <!-- 🌟 添加这一行 -->
     <script src="/js/auth-nav.js"></script>
     <script src="/js/app-init.js"></script>
     <script src="/js/i18n.js"></script>
