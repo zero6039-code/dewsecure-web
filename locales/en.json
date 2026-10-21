@@ -217,5 +217,7 @@
   "login_error_otp_expired": "Invalid or expired code",
   "login_btn_resend": "Resend Code",
   "dash_gen_ing": "Generating...",
-  "dash_gen_fail": "Failed: "
+  "dash_gen_fail": "Failed: ",
+  "nav_dashboard": "Dashboard",
+  "nav_logout": "Log out",
 }
