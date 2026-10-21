@@ -64,6 +64,21 @@ function initPage() {
             }
         });
 
+        // 🌟 核心修复：支持 ENTER 键发送验证码和验证
+        emailInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                btnSendOtp.click();
+            }
+        });
+
+        otpInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                btnVerifyOtp.click();
+            }
+        });
+
         btnBack.addEventListener('click', () => {
             stepOtp.classList.add('hidden'); stepEmail.classList.remove('hidden'); otpInput.value = '';
             btnSendOtp.disabled = false; 
