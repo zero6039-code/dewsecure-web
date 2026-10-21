@@ -181,5 +181,8 @@
   "dash_notif_empty": "暂无新通知",
   "dash_cancel_processing": "处理中...",
   "dash_cancel_success": "您的取消请求已记录。订阅将在当前周期结束后失效。",
-  "dash_invite_desc": "邀请好友注册。当他们完成首次真实付费满 14 天后，您将获得额外 120 天高级版奖励！"
+  "dash_invite_desc": "邀请好友注册。当他们完成首次真实付费满 14 天后，您将获得额外 120 天高级版奖励！",
+  "pricing_promo_title": "邀请好友，共享免费高级版！",
+  "pricing_promo_desc": "邀请好友注册。当他们完成首次真实付费满 14 天后，您将获得额外 120 天高级版奖励！",
+  "pricing_promo_btn": "获取我的专属推广链接"
 }
