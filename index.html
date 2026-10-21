@@ -3,35 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DewSecure</title>
+    <title>DewSecure - Your Device, Your Rules</title>
     <link rel="stylesheet" href="/style.css">
+    <link rel="stylesheet" href="https://unpkg.com/swup@4/dist/swup.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        .i18n-loading [data-i18n] { visibility: hidden !important; }
-        /* 本地专属防抖和排版样式 */
-        .ds-wrap { display: flex !important; flex-direction: column !important; align-items: center !important; margin-top: 50px !important; width: 100% !important; position: relative !important; z-index: 10 !important; }
-        .ds-icons { display: flex !important; gap: 15px !important; margin-bottom: 30px !important; flex-wrap: wrap !important; justify-content: center !important; }
-        .ds-icon { width: 55px !important; height: 55px !important; border-radius: 14px !important; background: rgba(255, 255, 255, 0.05) !important; border: 1px solid rgba(255, 255, 255, 0.1) !important; display: flex !important; align-items: center !important; justify-content: center !important; font-size: 26px !important; color: #8b949e !important; cursor: pointer !important; transition: all 0.3s !important; }
-        .ds-icon:hover { transform: scale(1.1) translateY(-3px) !important; color: #fff !important; background: rgba(255, 255, 255, 0.1) !important; }
-        .ds-icon.active { color: #fff !important; background: rgba(88, 166, 255, 0.2) !important; border-color: #58a6ff !important; box-shadow: 0 0 15px rgba(88, 166, 255, 0.3) !important; transform: scale(1.05) !important; }
-        .ds-box { height: 320px !important; width: 100% !important; min-width: 650px !important; max-width: 800px !important; position: relative !important; background: rgba(22, 27, 34, 0.5) !important; border: 1px solid rgba(255, 255, 255, 0.1) !important; border-radius: 24px !important; backdrop-filter: blur(24px) !important; -webkit-backdrop-filter: blur(24px) !important; }
-        .ds-t { position: absolute !important; top: 50px !important; left: 5% !important; right: 5% !important; text-align: center !important; font-size: 28px !important; font-weight: 800 !important; color: #fff !important; margin: 0 !important; }
-        .ds-d { position: absolute !important; top: 110px !important; left: 5% !important; right: 5% !important; text-align: center !important; font-size: 16px !important; color: #8b949e !important; line-height: 1.6 !important; margin: 0 !important; }
-        .ds-btn { position: absolute !important; bottom: 40px !important; left: 50% !important; transform: translateX(-50%) !important; display: inline-flex !important; align-items: center !important; background: #fff !important; color: #000 !important; padding: 8px 24px 8px 8px !important; border-radius: 100px !important; text-decoration: none !important; font-weight: 700 !important; font-size: 16px !important; transition: all 0.3s !important; }
-        .ds-btn:hover { box-shadow: 0 0 30px rgba(255, 255, 255, 0.3) !important; background: #e6edf3 !important; }
-        .ds-btn-ic { width: 40px !important; height: 40px !important; background: #0d1117 !important; border-radius: 50% !important; display: flex !important; align-items: center !important; justify-content: center !important; margin-right: 15px !important; color: #fff !important; font-size: 20px !important; }
-        
-        .hero { min-height: calc(100vh - 80px); display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 40px 20px 60px 20px; position: relative; z-index: 10; }
-        .hero h1 { font-size: 64px; font-weight: 800; margin-top: 10px; margin-bottom: 24px; letter-spacing: -2px; background: linear-gradient(180deg, #fff 0%, #a1a1aa 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; line-height: 1.2; }
-        .hero p { font-size: 20px; color: #8b949e; max-width: 680px; margin-bottom: 40px; }
-    </style>
     <link rel="icon" type="image/png" href="/DewSecure.png">
 </head>
 <body>
     <header>
-        <a href="/index.html" class="logo"><img src="/DewSecure.png" alt="DewSecure" > DewSecure</a>
+        <a href="/index.html" class="logo"><img src="/DewSecure.png" alt="DewSecure"> DewSecure</a>
         <nav>
-            <a href="/index.html" class="active" data-i18n="nav_home">首页</a>
+            <a href="/index.html" data-i18n="nav_home">首页</a>
             <a href="/pricing.html" data-i18n="nav_pricing">定价</a>
             <a href="/pentest/" target="_blank" data-i18n="nav_pentest">安全审计</a>
             <a href="/update/" data-i18n="nav_update">更新日志</a>
@@ -49,121 +31,71 @@
         </div>
     </header>
 
-    <section class="hero">
-        <h1 data-i18n="hero_title">你的设备，你的规则。</h1>
-        <p data-i18n="hero_desc">融合设备端 AI 与云端联邦学习的内容优化与安全防护引擎。深度阻断恶意追踪与钓鱼威胁，极速加载，为您重塑纯净、安全、高效的上网体验。</p>
-        
-        <div class="ds-wrap">
-            <div class="ds-icons">
-                <div class="ds-icon active" data-target="chrome" title="Chrome"><i class="fa-brands fa-chrome"></i></div>
-                <div class="ds-icon" data-target="edge" title="Edge"><i class="fa-brands fa-edge"></i></div>
-                <div class="ds-icon" data-target="firefox" title="Firefox"><i class="fa-brands fa-firefox-browser"></i></div>
-                <div class="ds-icon" data-target="safari" title="Safari"><i class="fa-brands fa-safari"></i></div>
-                <div class="ds-icon" data-target="opera" title="Opera"><i class="fa-brands fa-opera"></i></div>
-                <div class="ds-icon" data-target="yandex" title="Yandex"><i class="fa-brands fa-yandex"></i></div>
-                <div class="ds-icon" data-target="android" title="Android"><i class="fa-brands fa-android"></i></div>
+    <!-- Swup 核心容器开始 -->
+    <main id="swup" class="transition-fade">
+        <section class="hero">
+            <h1 data-i18n="hero_title">你的设备，你的规则。</h1>
+            <p data-i18n="hero_desc">融合设备端 AI 与云端联邦学习的内容优化与安全防护引擎。深度阻断恶意追踪与钓鱼威胁，极速加载，为您重塑纯净、安全、高效的上网体验。</p>
+            
+            <div class="ds-wrap">
+                <div class="ds-icons">
+                    <div class="ds-icon active" data-target="chrome" title="Chrome"><i class="fa-brands fa-chrome"></i></div>
+                    <div class="ds-icon" data-target="edge" title="Edge"><i class="fa-brands fa-edge"></i></div>
+                    <div class="ds-icon" data-target="firefox" title="Firefox"><i class="fa-brands fa-firefox-browser"></i></div>
+                    <div class="ds-icon" data-target="safari" title="Safari"><i class="fa-brands fa-safari"></i></div>
+                    <div class="ds-icon" data-target="opera" title="Opera"><i class="fa-brands fa-opera"></i></div>
+                    <div class="ds-icon" data-target="yandex" title="Yandex"><i class="fa-brands fa-yandex"></i></div>
+                    <div class="ds-icon" data-target="android" title="Android"><i class="fa-brands fa-android"></i></div>
+                </div>
+
+                <div class="ds-box">
+                    <h2 id="ds-title" class="ds-t">重塑纯净、安全的上网体验</h2>
+                    <p id="ds-desc" class="ds-d">融合原生拦截与设备端 AI 引擎，毫秒级阻断恶意追踪与钓鱼威胁。</p>
+                    <a href="#" id="ds-btn" class="ds-btn">
+                        <div class="ds-btn-ic" id="ds-btn-icon"><i class="fa-brands fa-chrome"></i></div>
+                        <span id="ds-btn-text">下载 Chrome 扩展</span>
+                    </a>
+                </div>
             </div>
+        </section>
 
-            <div class="ds-box">
-                <h2 id="ds-title" class="ds-t">重塑纯净、安全的上网体验</h2>
-                <p id="ds-desc" class="ds-d">融合原生拦截与设备端 AI 引擎，毫秒级阻断恶意追踪与钓鱼威胁。</p>
-                <a href="#" id="ds-btn" class="ds-btn">
-                    <div class="ds-btn-ic" id="ds-btn-icon"><i class="fa-brands fa-chrome"></i></div>
-                    <span id="ds-btn-text">下载 Chrome 扩展</span>
-                </a>
+        <section class="features">
+            <div class="grid">
+                <div class="card"><h3 data-i18n="feat_title_1">🧠 智能安全引擎</h3><p data-i18n="feat_desc_1">内置 11 万条精准防御规则，结合设备端 AI 模型，精准拦截恶意钓鱼、追踪器及潜在威胁。</p></div>
+                <div class="card"><h3 data-i18n="feat_title_2">🛡️ 隐私数据不出设备</h3><p data-i18n="feat_desc_2">所有 URL 分析均在本地沙箱完成，零数据上传，我们不收集您的浏览记录，彻底杜绝隐私泄露。</p></div>
+                <div class="card"><h3 data-i18n="feat_title_3">⚡ 极致性能体验</h3><p data-i18n="feat_desc_3">毫秒级本地响应，大幅减少不必要的网络请求，不卡顿、不白屏，让网页加载速度肉眼可见地提升。</p></div>
+                <div class="card"><h3 data-i18n="feat_title_4">🧹 告别视觉噪音</h3><p data-i18n="feat_desc_4">彻底清理弹窗、横幅与视频广告，让你专注网页的核心内容，回归纯粹的浏览体验。</p></div>
+                <div class="card"><h3 data-i18n="feat_title_5">🛡️ 防钓鱼与木马拦截</h3><p data-i18n="feat_desc_5">实时识别并阻断钓鱼网站、恶意重定向以及木马病毒广告，为你构筑坚不可摧的安全防线。</p></div>
+                <div class="card"><h3 data-i18n="feat_title_6">🍪 智能 Cookie 管家</h3><p data-i18n="feat_desc_6">智能拦截烦人的 Cookie 同意横幅，同时精准放行必要配置，确保网站功能正常运转，拒绝一刀切。</p></div>
+                <div class="card"><h3 data-i18n="feat_title_7">⛏️ 拦截恶意挖矿</h3><p data-i18n="feat_desc_7">阻止恶意网页利用您的设备静默挖掘加密货币，节省 CPU 算力与电量消耗，让设备保持冷静流畅。</p></div>
             </div>
-        </div>
-    </section>
-
-    <section class="features">
-        <div class="grid">
-            <div class="card"><h3 data-i18n="feat_title_1">🧠 智能安全引擎</h3><p data-i18n="feat_desc_1">内置 11 万条精准防御规则，结合设备端 AI 模型，精准拦截恶意钓鱼、追踪器及潜在威胁。</p></div>
-            <div class="card"><h3 data-i18n="feat_title_2">🛡️ 隐私数据不出设备</h3><p data-i18n="feat_desc_2">所有 URL 分析均在本地沙箱完成，零数据上传，我们不收集您的浏览记录，彻底杜绝隐私泄露。</p></div>
-            <div class="card"><h3 data-i18n="feat_title_3">⚡ 极致性能体验</h3><p data-i18n="feat_desc_3">毫秒级本地响应，大幅减少不必要的网络请求，不卡顿、不白屏，让网页加载速度肉眼可见地提升。</p></div>
-            <div class="card"><h3 data-i18n="feat_title_4">🧹 告别视觉噪音</h3><p data-i18n="feat_desc_4">彻底清理弹窗、横幅与视频广告，让你专注网页的核心内容，回归纯粹的浏览体验。</p></div>
-            <div class="card"><h3 data-i18n="feat_title_5">🛡️ 防钓鱼与木马拦截</h3><p data-i18n="feat_desc_5">实时识别并阻断钓鱼网站、恶意重定向以及木马病毒广告，为你构筑坚不可摧的安全防线。</p></div>
-            <div class="card"><h3 data-i18n="feat_title_6">🍪 智能 Cookie 管家</h3><p data-i18n="feat_desc_6">智能拦截烦人的 Cookie 同意横幅，同时精准放行必要配置，确保网站功能正常运转，拒绝一刀切。</p></div>
-            <div class="card"><h3 data-i18n="feat_title_7">⛏️ 拦截恶意挖矿</h3><p data-i18n="feat_desc_7">阻止恶意网页利用您的设备静默挖掘加密货币，节省 CPU 算力与电量消耗，让设备保持冷静流畅。</p></div>
-        </div>
-        
-        <div class="transparency-card">
-            <div style="font-size: 28px;">🛡️</div>
-            <div>
-                <h4 data-i18n="trans_home_title">🤝 我们的透明承诺</h4>
-                <p data-i18n="trans_home_desc">网络环境瞬息万变，恶意追踪技术持续进化，我们无法保证 100% 的绝对拦截率。受限于平台底层机制，部分应用内广告（如 YouTube App）暂无法拦截。但 DewSecure 会通过 AI 持续学习进化，竭尽全力为您提供最强悍的过滤体验。</p>
+            
+            <div class="transparency-card">
+                <div style="font-size: 28px;">🛡️</div>
+                <div>
+                    <h4 data-i18n="trans_home_title">🤝 我们的透明承诺</h4>
+                    <p data-i18n="trans_home_desc">网络环境瞬息万变，恶意追踪技术持续进化，我们无法保证 100% 的绝对拦截率。受限于平台底层机制，部分应用内广告（如 YouTube App）暂无法拦截。但 DewSecure 会通过 AI 持续学习进化，竭尽全力为您提供最强悍的过滤体验。</p>
+                </div>
             </div>
-        </div>
-    </section>
+        </section>
 
-    <footer class="site-footer">
-        <a href="https://github.com/zero6039-code/dewsecure-web" target="_blank" class="footer-github-link">
-            <i class="fa-brands fa-github"></i>
-            <span data-i18n="footer_link">在 GitHub 上查看开源代码</span>
-        </a>
-        <p class="footer-copy">
-            <span data-i18n="footer_text">核心引擎开源，数据绝不出户。</span><br>
-            &copy; 2026 DewSecure. All rights reserved.
-        </p>
-    </footer>
+        <footer class="site-footer">
+            <a href="https://github.com/zero6039-code/dewsecure-web" target="_blank" class="footer-github-link">
+                <i class="fa-brands fa-github"></i>
+                <span data-i18n="footer_link">在 GitHub 上查看开源代码</span>
+            </a>
+            <p class="footer-copy">
+                <span data-i18n="footer_text">核心引擎开源，数据绝不出户。</span><br>
+                &copy; 2026 DewSecure. All rights reserved.
+            </p>
+        </footer>
+    </main>
+    <!-- Swup 核心容器结束 -->
 
-    <script>
-        document.addEventListener("DOMContentLoaded", () => {
-            const browserUrls = { chrome: 'https://chromewebstore.google.com/', edge: 'https://microsoftedge.microsoft.com/', firefox: 'https://addons.mozilla.org/', safari: '#', opera: '#', yandex: '#', android: '#' };
-            const browserIcons = { chrome: 'fa-chrome', edge: 'fa-edge', firefox: 'fa-firefox-browser', safari: 'fa-safari', opera: 'fa-opera', yandex: 'fa-yandex', android: 'fa-android' };
-
-            const icons = document.querySelectorAll('.ds-icon');
-            const titleEl = document.getElementById('ds-title');
-            const descEl = document.getElementById('ds-desc');
-            const btnIconEl = document.getElementById('ds-btn-icon');
-            const btnTextEl = document.getElementById('ds-btn-text');
-            const btnEl = document.getElementById('ds-btn');
-            let currentTarget = 'chrome'; 
-
-            function renderBrowserData(target) {
-                currentTarget = target;
-                const t = window.fallbackTranslations || {};
-                if (!t['dl_' + target + '_title']) return;
-
-                titleEl.textContent = t['dl_' + target + '_title'];
-                descEl.textContent = t['dl_' + target + '_desc'];
-                btnIconEl.innerHTML = '<i class="fa-brands ' + browserIcons[target] + '"></i>';
-                btnTextEl.textContent = t['dl_btn_' + target] || ('Download for ' + target);
-                btnEl.href = browserUrls[target];
-            }
-
-            icons.forEach(icon => {
-                icon.addEventListener('click', () => {
-                    icons.forEach(l => l.classList.remove('active'));
-                    icon.classList.add('active');
-                    renderBrowserData(icon.getAttribute('data-target'));
-                });
-            });
-
-            setTimeout(() => { if (icons.length > 0) icons[0].click(); }, 50);
-
-            btnEl.addEventListener('click', (e) => {
-                if (btnEl.getAttribute('href') === '#') {
-                    e.preventDefault();
-                    alert("商店链接即将上线！");
-                }
-            });
-
-            document.querySelector('.lang-switch').addEventListener('mouseenter', () => {
-                const dd = document.querySelector('.lang-dropdown');
-                dd.style.opacity = '1'; dd.style.visibility = 'visible'; dd.style.transform = 'translateY(0)';
-            });
-            document.querySelector('.lang-switch').addEventListener('mouseleave', () => {
-                const dd = document.querySelector('.lang-dropdown');
-                dd.style.opacity = '0'; dd.style.visibility = 'hidden'; dd.style.transform = 'translateY(10px)';
-            });
-
-            window.addEventListener('languageChanged', () => {
-                renderBrowserData(currentTarget);
-            });
-        });
-    </script>
-    <script src="/js/i18n.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://unpkg.com/swup@4/dist/swup.min.js"></script>
     <script src="/js/auth-nav.js"></script>
+    <script src="/js/app-init.js"></script>
+    <script src="/js/i18n.js"></script>
 </body>
 </html>
