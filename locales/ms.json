@@ -228,5 +228,11 @@
   "dash_invite_desc": "Jemput rakan. Apabila mereka membuat pembayaran sebenar pertama (selepas tempoh bertenang 14 hari), anda akan mendapat tambahan 120 hari Pro!",
   "pricing_promo_title": "Jemput Rakan, Dapat Pro Percuma!",
   "pricing_promo_desc": "Jemput rakan. Apabila mereka membuat pembayaran sebenar pertama (selepas tempoh bertenang 14 hari), anda akan mendapat tambahan 120 hari Pro!",
-  "pricing_promo_btn": "Dapatkan Pautan Rujukan Saya"
+  "pricing_promo_btn": "Dapatkan Pautan Rujukan Saya",
+  "dash_device_title": "Pengurusan Peranti",
+  "dash_device_desc": "Anda mempunyai {used} / {total} peranti terikat.",
+  "dash_device_empty": "Peranti Tidak Terikat",
+  "dash_device_unbind": "Nyahikat",
+  "dash_device_active": "Aktif"
+  
 }
