@@ -1,16 +1,14 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="dark"> <!-- 移除 i18n-loading，释放所有导航 -->
+<html lang="en" data-theme="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DewSecure - Dashboard</title>
     <link rel="stylesheet" href="/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         body { background: #0d1117; color: #c9d1d9; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif; margin: 0; }
         
-        /* 主内容区 */
         .dashboard-container { 
             max-width: 1200px; 
             margin: 40px auto; 
@@ -19,15 +17,7 @@
             grid-template-columns: 2fr 1fr; 
             gap: 24px; 
         }
-
-        .card { 
-            background: rgba(22, 27, 34, 0.6); 
-            backdrop-filter: blur(16px); 
-            border: 1px solid rgba(255, 255, 255, 0.08); 
-            border-radius: 20px; 
-            padding: 30px; 
-            margin-bottom: 24px; 
-        }
+        .card { background: rgba(22, 27, 34, 0.6); backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 20px; padding: 30px; margin-bottom: 24px; }
         .card h3 { color: #fff; margin-bottom: 20px; font-size: 20px; display: flex; align-items: center; gap: 10px; }
         .status-badge { display: inline-block; padding: 6px 12px; border-radius: 20px; font-size: 13px; font-weight: 600; background: rgba(88,166,255,0.15); color: #58a6ff; border: 1px solid rgba(88,166,255,0.3); }
         .status-pro { background: rgba(255, 196, 0, 0.15); color: #ffc400; border-color: rgba(255, 196, 0, 0.3); }
@@ -58,13 +48,17 @@
         .card-completed { position: relative; pointer-events: none; }
         .card-completed::after { content: "感谢您的分享！已达奖励上限。请留意通知中心，我们会定期发放福利。"; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(22,27,34,0.85); backdrop-filter: blur(8px); display: flex; align-items: center; justify-content: center; text-align: center; padding: 30px; color: #58a6ff; font-weight: bold; font-size: 16px; border-radius: 20px; z-index: 10; }
 
+        /* 骨架加载动画 */
+        .skeleton-text { color: #8b949e; font-size: 14px; animation: pulse 1.5s infinite; }
+        @keyframes pulse { 0% { opacity: .6; } 50% { opacity: 1; } 100% { opacity: .6; } }
+
         @media (max-width: 900px) {
             .dashboard-container { grid-template-columns: 1fr; }
         }
     </style>
 </head>
 <body>
-    <!-- 完全使用原生结构，不写死任何内联样式 -->
+    <!-- 导航栏 -->
     <header>
         <a href="/index.html" class="logo"><img src="/DewSecure.png" alt="DewSecure"> DewSecure</a>
         <nav>
@@ -74,8 +68,8 @@
             <a href="/update/">更新日志</a>
             <a href="/guide/">使用指南</a>
             <a href="/about/">关于我们</a>
-            <a href="/dashboard.html" style="display:none;">控制台</a> <!-- 默认隐藏，登录后由 JS 显示 -->
-            <a href="/login/">登录</a> <!-- 默认显示，由 JS 隐藏 -->
+            <a href="/dashboard.html" style="display:none;">控制台</a>
+            <a href="/login/" id="nav-login-btn">登录</a>
         </nav>
         <div class="lang-switch">
             <button class="lang-toggle-btn" style="background:none;border:none;color:#cbd5e1;font-size:24px;cursor:pointer;padding:0;">🌐</button>
@@ -87,14 +81,15 @@
         </div>
     </header>
 
-    <div class="dashboard-container" id="mainContent" style="display: none;">
+    <!-- 直接显示容器，绝不 display: none -->
+    <div class="dashboard-container" id="mainContent">
         <!-- 左侧：状态与邀请 -->
         <div class="left-column">
             <div class="card">
                 <h3><i class="fa-solid fa-shield-halved"></i> 当前订阅状态</h3>
                 <div class="data-row">
                     <span class="data-label">账户等级</span>
-                    <span id="tierBadge" class="status-badge">加载中...</span>
+                    <span id="tierBadge" class="status-badge skeleton-text">加载中...</span>
                 </div>
                 <div class="data-row">
                     <span class="data-label">剩余有效天数</span>
@@ -129,7 +124,7 @@
             <div class="card" style="height: 100%;">
                 <h3><i class="fa-solid fa-bell"></i> 通知中心</h3>
                 <ul class="notification-list" id="notificationList">
-                    <li class="notification-item" style="text-align:center; color:#8b949e;">暂无新通知</li>
+                    <li class="notification-item skeleton-text" style="text-align:center;">正在拉取通知...</li>
                 </ul>
             </div>
         </div>
@@ -149,24 +144,37 @@
         </div>
     </div>
 
+    <!-- 1. 加载 SDK -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <!-- 2. 加载鉴权与导航 -->
+    <script src="/js/auth-nav.js"></script>
+
+    <!-- 3. 业务代码 -->
     <script>
-        // 直接使用全局挂载的 supabaseClient，删掉多余的 const 声明
-        async function initDashboard() {
+        document.addEventListener("DOMContentLoaded", async () => {
             const client = window.supabaseClient;
             if (!client) {
-                // 如果 auth-nav.js 还没加载完，稍微等一下
-                setTimeout(initDashboard, 50);
+                alert('严重错误：Supabase 客户端未初始化，请检查网络是否拦截了 SDK。');
                 return;
             }
 
             try {
-                const { data: { session }, error } = await client.auth.getSession();
-                if (error || !session) {
+                // 1. 获取登录状态
+                const { data: { session }, error: sessionError } = await client.auth.getSession();
+                
+                if (sessionError || !session) {
+                    // 没登录直接踢回登录页
                     window.location.href = '/login.html';
                     return;
                 }
-                const currentUser = session.user;
 
+                const currentUser = session.user;
+                
+                // 静态 UI 先行激活
+                const loginBtn = document.getElementById('nav-login-btn');
+                if (loginBtn) loginBtn.style.display = 'none';
+
+                // 2. 拉取用户资料
                 const { data: profile, error: profileErr } = await client
                     .from('profiles')
                     .select('*')
@@ -175,62 +183,51 @@
                 
                 if (profileErr) throw profileErr;
 
-                const currentProfile = profile || { tier: 'free', trial_ends_at: null, invite_success_count: 0 };
+                const currentProfile = profile || { 
+                    id: currentUser.id, 
+                    tier: 'free', 
+                    trial_ends_at: null, 
+                    invite_success_count: 0 
+                };
 
-                // 渲染界面数据
-                await renderProfileStatus(currentProfile); 
+                // 3. 渲染订阅状态
+                renderProfileStatus(currentProfile);
+
+                // 4. 异步拉取邀请码
+                if (currentProfile.invite_success_count < 12) {
+                    fetchInviteCode(client, currentProfile.id);
+                } else {
+                    document.getElementById('inviteCard').classList.add('card-completed');
+                }
+
+                // 5. 异步拉取通知
                 fetchNotifications(client);
 
+                // 6. 绑定按钮事件
                 document.getElementById('btnGenInvite').onclick = () => generateInvite(client);
                 document.getElementById('btnCancelSub').onclick = () => document.getElementById('cancelModal').classList.add('active');
                 document.getElementById('btnCloseModal').onclick = () => document.getElementById('cancelModal').classList.remove('active');
                 document.getElementById('btnConfirmCancel').onclick = () => submitCancelSubscription(client, currentUser);
 
-                document.getElementById('mainContent').style.display = 'grid';
             } catch (err) {
                 console.error("Dashboard 初始化错误:", err);
-                alert("加载数据失败: " + (err.message || "未知错误，请检查网络或权限。"));
-                if (err.message === 'JWT expired' || err.code === 'PGRST301') {
-                    window.location.href = '/login.html';
-                }
+                document.getElementById('tierBadge').textContent = '加载失败';
+                document.getElementById('tierBadge').classList.remove('skeleton-text');
+                document.getElementById('tierBadge').style.color = '#f85149';
+                alert("加载数据失败: " + (err.message || "请检查网络连接"));
             }
-        }
+        });
 
-        async function renderProfileStatus(profile) {
-            if (!profile) return;
+        function renderProfileStatus(profile) {
             const tierBadge = document.getElementById('tierBadge');
             const daysLeftEl = document.getElementById('daysLeft');
             const expireDateEl = document.getElementById('expireDate');
             const btnCancel = document.getElementById('btnCancelSub');
             const btnUpgrade = document.getElementById('btnUpgrade');
 
-            const inviteCount = profile.invite_success_count || 0;
-            document.getElementById('inviteCount').textContent = inviteCount;
+            document.getElementById('inviteCount').textContent = profile.invite_success_count || 0;
 
-            if (inviteCount >= 12) {
-                document.getElementById('inviteCard').classList.add('card-completed');
-            } else {
-                const { data: inviteCode } = await window.supabaseClient
-                    .from('invitations')
-                    .select('code')
-                    .eq('inviter_id', profile.id)
-                    .eq('status', 'pending')
-                    .limit(1)
-                    .maybeSingle();
-
-                if (inviteCode && inviteCode.code) {
-                    document.getElementById('myInviteCode').textContent = inviteCode.code;
-                    document.getElementById('btnGenInvite').classList.add('hidden');
-                    
-                    const copyBtn = document.getElementById('btnCopyInvite');
-                    copyBtn.classList.remove('hidden');
-                    copyBtn.onclick = () => {
-                        navigator.clipboard.writeText(inviteCode.code);
-                        copyBtn.textContent = '已复制!';
-                        setTimeout(() => copyBtn.textContent = '复制', 2000);
-                    };
-                }
-            }
+            tierBadge.classList.remove('skeleton-text');
 
             let expireDate = profile.trial_ends_at ? new Date(profile.trial_ends_at) : null;
             const now = new Date();
@@ -264,6 +261,38 @@
             }
         }
 
+        async function fetchInviteCode(client, userId) {
+            const { data: inviteCode, error } = await client
+                .from('invitations')
+                .select('code')
+                .eq('inviter_id', userId)
+                .eq('status', 'pending')
+                .limit(1)
+                .maybeSingle();
+
+            if (error) {
+                console.error('读取邀请码失败:', error);
+                return;
+            }
+
+            if (inviteCode && inviteCode.code) {
+                document.getElementById('myInviteCode').textContent = inviteCode.code;
+                document.getElementById('btnGenInvite').classList.add('hidden');
+                
+                const copyBtn = document.getElementById('btnCopyInvite');
+                copyBtn.classList.remove('hidden');
+                copyBtn.onclick = async () => {
+                    try {
+                        await navigator.clipboard.writeText(inviteCode.code);
+                        copyBtn.textContent = '已复制!';
+                        setTimeout(() => copyBtn.textContent = '复制', 2000);
+                    } catch (err) {
+                        alert('复制失败。');
+                    }
+                };
+            }
+        }
+
         async function generateInvite(client) {
             const btn = document.getElementById('btnGenInvite');
             btn.disabled = true;
@@ -278,10 +307,14 @@
                 
                 const copyBtn = document.getElementById('btnCopyInvite');
                 copyBtn.classList.remove('hidden');
-                copyBtn.onclick = () => {
-                    navigator.clipboard.writeText(data);
-                    copyBtn.textContent = '已复制!';
-                    setTimeout(() => copyBtn.textContent = '复制', 2000);
+                copyBtn.onclick = async () => {
+                    try {
+                        await navigator.clipboard.writeText(data);
+                        copyBtn.textContent = '已复制!';
+                        setTimeout(() => copyBtn.textContent = '复制', 2000);
+                    } catch (err) {
+                        alert('复制失败。');
+                    }
                 };
             } catch (err) {
                 alert('生成失败: ' + err.message);
@@ -297,7 +330,10 @@
                 .order('created_at', { ascending: false });
 
             const list = document.getElementById('notificationList');
-            if (error || !data || data.length === 0) return;
+            if (error || !data || data.length === 0) {
+                list.innerHTML = '<li class="notification-item" style="text-align:center; color:#8b949e;">暂无新通知</li>';
+                return;
+            }
 
             list.innerHTML = '';
             const unreadIds = [];
@@ -307,19 +343,25 @@
 
                 const li = document.createElement('li');
                 li.className = `notification-item ${n.is_read ? '' : 'unread'}`;
-                li.innerHTML = `
-                    <div style="font-weight: 600; color: #fff; margin-bottom:4px;">${n.title}</div>
-                    <div style="color: #c9d1d9; line-height: 1.4;">${n.message}</div>
-                    <div class="notification-time">${new Date(n.created_at).toLocaleString()}</div>
-                `;
+                
+                const title = document.createElement('div');
+                title.style.cssText = 'font-weight:600;color:#fff;margin-bottom:4px;';
+                title.textContent = n.title ?? '';
+
+                const message = document.createElement('div');
+                message.style.cssText = 'color:#c9d1d9;line-height:1.4;';
+                message.textContent = n.message ?? '';
+
+                const time = document.createElement('div');
+                time.className = 'notification-time';
+                time.textContent = new Date(n.created_at).toLocaleString();
+
+                li.append(title, message, time);
                 list.appendChild(li);
             });
 
             if (unreadIds.length > 0) {
-                await client
-                    .from('notifications')
-                    .update({ is_read: true })
-                    .in('id', unreadIds);
+                await client.from('notifications').update({ is_read: true }).in('id', unreadIds);
             }
         }
 
@@ -330,13 +372,15 @@
             btn.textContent = '处理中...';
 
             try {
-                await client.from('reports').insert({
+                const { error } = await client.from('reports').insert({
                     user_id: currentUser.id,
                     reporter_email: currentUser.email,
                     report_type: 'other',
                     url: 'Cancel Subscription Flow',
                     description: `[取消订阅原因] ${reason || '用户未填写'}`
                 });
+
+                if (error) throw error;
 
                 alert('您的取消请求已记录。订阅将在当前周期结束后失效。');
                 document.getElementById('cancelModal').classList.remove('active');
@@ -349,9 +393,6 @@
                 btn.textContent = '确认取消';
             }
         }
-
-        // 启动
-        initDashboard();
     </script>
 </body>
 </html>
