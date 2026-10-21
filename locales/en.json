@@ -174,7 +174,7 @@
   "login_email_ph": "name@example.com",
   "login_btn": "Log in with Email (OTP)",
   "login_or": "Or continue with",
-  "login_trial": "🎁 30-Day Pro trial upon first registration"
+  "login_trial": "🎁 30-Day Pro trial upon first registration",
   "login_otp_title": "Enter Verification Code",
   "login_otp_sub": "We have sent an 8-digit code to ",
   "login_otp_label": "8-digit Code",
@@ -208,4 +208,14 @@
   "dash_cancel_ph": "e.g., Too expensive, missing features...",
   "dash_cancel_no": "Keep Subscription",
   "dash_cancel_yes": "Confirm Cancel",
+  
+  "login_error_email": "Please enter a valid email address",
+  "login_sending": "Sending...",
+  "login_error_send": "Send failed, please try again",
+  "login_error_otp": "Please enter the 8-digit code",
+  "login_verifying": "Verifying...",
+  "login_error_otp_expired": "Invalid or expired code",
+  "login_btn_resend": "Resend Code",
+  "dash_gen_ing": "Generating...",
+  "dash_gen_fail": "Failed: "
 }
