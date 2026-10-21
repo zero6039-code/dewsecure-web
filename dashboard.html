@@ -57,14 +57,15 @@
 
                 <div class="card" id="inviteCard">
                     <h3><i class="fa-solid fa-gift"></i> <span data-i18n="dash_invite_title">邀请好友，获取奖励</span></h3>
-                    <p style="color:#8b949e; font-size:14px;" data-i18n="dash_invite_desc">邀请好友注册并激活。每成功激活1次，您将获得额外 30天 高级版（上限12次）。</p>
+                    <!-- 🌟 更新文案：提示好友付费14天后发放 -->
+                    <p style="color:#8b949e; font-size:14px;" data-i18n="dash_invite_desc">邀请好友注册。当他们完成首次真实付费满 14 天后，您将获得额外 120 天高级版奖励！</p>
                     <div class="invite-box">
                         <div class="invite-input" id="myInviteCode" data-i18n="dash_invite_click">点击下方生成</div>
                         <button class="btn btn-primary" id="btnGenInvite" data-i18n="dash_invite_gen">生成邀请码</button>
                         <button class="btn btn-primary hidden" id="btnCopyInvite" style="background:#58a6ff; color:#fff;" data-i18n="dash_invite_copy">复制</button>
                     </div>
                     <div style="margin-top: 15px; font-size: 13px; color: #8b949e;">
-                        <span data-i18n="dash_invite_count">已成功邀请人数：</span><span id="inviteCount" style="color:#58a6ff; font-weight:bold;">0</span> / 12
+                        <span data-i18n="dash_invite_count">已成功邀请人数：</span><span id="inviteCount" style="color:#58a6ff; font-weight:bold;">0</span>
                     </div>
                 </div>
             </div>
