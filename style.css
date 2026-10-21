@@ -1,6 +1,11 @@
 /* ==========================================
-   DewSecure 纯净版全局样式 (V5.0 终极稳定版)
+   DewSecure 纯净版全局样式 (V6.0 原生平滑过渡版)
    ========================================== */
+
+/* 🌟 核心黑科技：启用原生跨文档视图过渡 (让多页应用切换如丝般顺滑) */
+@view-transition {
+    navigation: auto;
+}
 
 :root {
     --bg-color: #050505;
@@ -13,7 +18,7 @@
 * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
 
 html {
-    /* 核心：强制滚动条占位，彻底解决页面切换时的宽度抖动 */
+    /* 🌟 强制滚动条占位，彻底解决页面切换时的左右抖动 */
     overflow-y: scroll !important;
     scrollbar-gutter: stable !important;
 }
@@ -24,6 +29,9 @@ body {
     line-height: 1.6;
     overflow-x: hidden;
     padding-top: 80px;
+    /* 🌟 补偿滚动条宽度，防止页面跳动 */
+    padding-left: calc(100vw - 100%);
+    
     background-image: 
         radial-gradient(circle at 15% 0%, rgba(88, 166, 255, 0.15) 0%, transparent 40%),
         radial-gradient(circle at 85% 30%, rgba(139, 92, 246, 0.12) 0%, transparent 40%);
@@ -32,6 +40,12 @@ body {
 }
 
 a { color: inherit; text-decoration: none; }
+.hidden { display: none !important; }
+
+/* 针对页面主体内容应用过渡动画（可选） */
+main, .login-layout, .dashboard-container {
+    view-transition-name: main-content;
+}
 
 /* ==========================================
    Header 三列 Grid 布局
@@ -164,95 +178,33 @@ header .lang-switch {
 .footer-copy { color: #484f58; font-size: 13px; }
 
 /* ==========================================
-   定价页及对比表专属样式
+   登录页专属
    ========================================== */
-.pricing-wrapper { min-height: 100vh; display: flex; flex-direction: column; align-items: center; padding: 80px 20px; }
-.pricing-title { font-size: 48px; font-weight: 800; color: #fff; margin-bottom: 60px; letter-spacing: -1px; }
-.pricing-grid { display: flex; gap: 30px; justify-content: center; flex-wrap: wrap; max-width: 1200px; width: 100%; }
-.price-card { flex: 1; min-width: 300px; max-width: 360px; background: rgba(22, 27, 34, 0.4); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 24px; padding: 40px; backdrop-filter: blur(24px); text-align: center; transition: transform 0.3s, border-color 0.3s; position: relative; }
-.price-card:hover { transform: translateY(-8px); border-color: rgba(255, 255, 255, 0.2); }
-.price-card.highlight { border-color: #58a6ff; box-shadow: 0 0 40px rgba(88, 166, 255, 0.15); background: rgba(22, 27, 34, 0.6); }
-.price-card h3 { font-size: 22px; color: #fff; margin-bottom: 10px; }
-.price-amount { font-size: 42px; font-weight: 800; color: #fff; margin-bottom: 20px; }
-.price-amount span { font-size: 16px; color: #8b949e; font-weight: 400; }
-.price-desc { font-size: 14px; color: #8b949e; margin-bottom: 30px; min-height: 68px; }
-.price-features { list-style: none; text-align: left; margin-bottom: 30px; color: #c9d1d9; font-size: 15px; padding-left: 0; }
-.price-features li { margin-bottom: 12px; display: flex; align-items: flex-start; gap: 10px; }
-.price-features li i { color: #58a6ff; margin-top: 4px; }
-.btn-pricing { display: block; width: 100%; padding: 14px; border-radius: 100px; font-size: 16px; font-weight: 700; text-align: center; transition: all 0.3s; cursor: pointer; border: none; }
-.btn-free { background: rgba(255, 255, 255, 0.05); color: #fff; border: 1px solid rgba(255, 255, 255, 0.1); }
-.btn-free:hover { background: rgba(255, 255, 255, 0.1); }
-.btn-pro { background: #58a6ff; color: #000; }
-.btn-pro:hover { background: #79b8ff; box-shadow: 0 0 20px rgba(88, 166, 255, 0.4); }
-.btn-fam { background: #fff; color: #000; }
-.btn-fam:hover { background: #e6edf3; }
-
-.tooltip-container { position: relative; display: inline-block; margin-left: 6px; cursor: help; }
-.tooltip-icon { color: #58a6ff; font-size: 16px; margin-left: 6px; vertical-align: middle; transition: all 0.2s; }
-.tooltip-container:hover .tooltip-icon { color: #79b8ff; transform: scale(1.15); }
-.tooltip-content { visibility: hidden; opacity: 0; width: 300px; background: rgba(13, 17, 23, 0.95); backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.15); color: #c9d1d9; text-align: left; border-radius: 12px; padding: 16px; position: absolute; z-index: 100; bottom: 150%; left: 50%; transform: translateX(-50%) translateY(10px); transition: all 0.3s; font-size: 13px; line-height: 1.6; box-shadow: 0 10px 30px rgba(0,0,0,0.5); pointer-events: none; }
-.tooltip-container:hover .tooltip-content { visibility: visible; opacity: 1; transform: translateX(-50%) translateY(0); }
-.tooltip-content h5 { color: #58a6ff; font-size: 14px; margin-bottom: 8px; margin-top: 0; }
-
-.comparison-section { max-width: 1000px; margin: 80px auto 40px; width: 100%; }
-.comparison-header { text-align: center; margin-bottom: 40px; }
-.comparison-header h2 { font-size: 32px; color: #fff; font-weight: 800; margin-bottom: 10px; }
-.comparison-header p { color: #8b949e; font-size: 16px; }
-.comparison-table { background: rgba(22, 27, 34, 0.3); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 20px; overflow: hidden; backdrop-filter: blur(24px); }
-.comp-category { background: rgba(255, 255, 255, 0.03); color: #58a6ff; font-size: 16px; font-weight: 700; padding: 16px 30px; border-bottom: 1px solid rgba(255, 255, 255, 0.08); border-top: 1px solid rgba(255, 255, 255, 0.08); }
-.comp-row { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; align-items: center; padding: 20px 30px; border-bottom: 1px solid rgba(255, 255, 255, 0.05); transition: background 0.2s; }
-.comp-row:hover { background: rgba(255, 255, 255, 0.02); }
-.comp-row:last-child { border-bottom: none; }
-.comp-feature strong { display: block; color: #e6edf3; font-size: 16px; margin-bottom: 4px; }
-.comp-feature span { display: block; color: #8b949e; font-size: 13px; margin-top: 4px; line-height: 1.4; }
-.comp-val { text-align: center; font-size: 18px; }
-.comp-val.yes { color: #3fb950; }
-.comp-val.no { color: #f85149; opacity: 0.6; }
-.comp-val.text-val { color: #c9d1d9; font-size: 14px; font-weight: 500; }
-.comp-table-header { background: rgba(0, 0, 0, 0.2); border-bottom: 1px solid rgba(255, 255, 255, 0.1); padding: 15px 30px; }
-.comp-table-header .comp-val { font-size: 18px; font-weight: 700; color: #fff; }
-
-/* ==========================================
-   指南、关于、更新日志专属
-   ========================================== */
-.guide-wrapper { max-width: 1000px; margin: 60px auto; padding: 0 20px; }
-.guide-header { text-align: center; margin-bottom: 60px; }
-.guide-header h1 { font-size: 48px; color: #fff; margin-bottom: 16px; font-weight: 800; }
-.guide-header p { font-size: 20px; color: #8b949e; }
-.accordion-card { background: rgba(22, 27, 34, 0.4); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 16px; margin-bottom: 20px; backdrop-filter: blur(24px); overflow: hidden; transition: all 0.3s; }
-.accordion-header { padding: 24px 30px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; color: #fff; font-weight: 600; }
-.accordion-header h2 { display: flex; align-items: center; gap: 12px; margin: 0; color: #58a6ff; font-size: 22px; }
-.accordion-header .faq-q { color: #fff; font-size: 18px; font-weight: 600; margin: 0; }
-.accordion-icon { transition: transform 0.3s; color: #8b949e; font-size: 18px; }
-.accordion-content { max-height: 0; overflow: hidden; transition: max-height 0.4s ease-out, padding 0.4s ease; padding: 0 30px; background: rgba(0,0,0,0.2); border-top: 1px solid transparent; }
-.accordion-content p, .accordion-content .faq-a { color: #c9d1d9; font-size: 16px; line-height: 1.8; margin-top: 15px; }
-.accordion-card.active .accordion-icon { transform: rotate(180deg); }
-.accordion-card.active .accordion-content { max-height: 1000px; padding: 0 30px 30px; border-top-color: rgba(255,255,255,0.05); }
-.faq-section { margin-top: 80px; }
-.faq-title { font-size: 32px; color: #fff; font-weight: 700; margin-bottom: 30px; text-align: center; display: flex; align-items: center; justify-content: center; gap: 12px; }
-.img-placeholder { width: 100%; height: 250px; background: rgba(255, 255, 255, 0.03); border: 2px dashed rgba(255, 255, 255, 0.15); border-radius: 12px; display: flex; flex-direction: column; align-items: center; justify-content: center; color: #484f58; margin: 20px 0 30px; }
-.img-placeholder i { font-size: 40px; margin-bottom: 10px; }
-
-.about-container { max-width: 800px; margin: 60px auto 80px; padding: 60px; background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 24px; backdrop-filter: blur(24px); }
-.about-header { text-align: center; margin-bottom: 50px; }
-.about-header h1 { font-size: 48px; color: #fff; margin-bottom: 16px; font-weight: 800; background: linear-gradient(180deg, #fff 0%, #a1a1aa 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-.about-header p { font-size: 20px; color: #58a6ff; font-weight: 500; }
-.about-content p { font-size: 16px; color: #c9d1d9; line-height: 1.8; margin-bottom: 24px; text-align: justify; }
-.disclaimer-section { margin-top: 60px; padding-top: 30px; border-top: 1px dashed rgba(255, 255, 255, 0.1); }
-.disclaimer-section h3 { color: #ff7b72; font-size: 20px; margin-bottom: 20px; }
-.disclaimer-section p { color: #8b949e; font-size: 13px; line-height: 1.8; margin-bottom: 16px; background: rgba(255, 255, 255, 0.02); padding: 16px; border-radius: 8px; border-left: 3px solid rgba(255, 123, 114, 0.5); }
-
-.update-container { max-width: 800px; margin: 60px auto; padding: 40px; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.08); border-radius: 24px; backdrop-filter: blur(20px); }
-.translate-tip { display: flex; justify-content: space-between; align-items: center; font-size: 14px; color: #58a6ff; margin-bottom: 40px; background: rgba(88,166,255,0.1); padding: 12px 16px; border-radius: 8px; border: 1px solid rgba(88,166,255,0.2); }
-#google_translate_element { display: none; }
-#my-lang-select { background-color: #0d1117; color: #fff; border: 1px solid #30363d; padding: 8px 30px 8px 12px; border-radius: 6px; outline: none; cursor: pointer; font-size: 14px; appearance: none; background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23cbd5e1%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E"); background-repeat: no-repeat; background-position: right 10px top 50%; background-size: 10px auto; width: 150px; }
-body > .skiptranslate { display: none !important; }
-.update-container h1 { font-size: 36px; color: #fff; margin-bottom: 30px; }
-.log-entry { border-bottom: 1px solid rgba(255,255,255,0.08); padding-bottom: 24px; margin-bottom: 24px; }
-.log-entry:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
-.log-date { font-size: 14px; color: #8b949e; margin-bottom: 8px; font-family: monospace; }
-.log-title { font-size: 22px; color: #fff; margin-bottom: 12px; font-weight: 700; }
-.log-content { color: #c9d1d9; font-size: 15px; line-height: 1.7; }
+.login-layout { display: flex; min-height: calc(100vh - 80px); width: 100%; }
+.login-left { flex: 1; display: flex; flex-direction: column; justify-content: center; padding: 10%; background: radial-gradient(circle at 0% 50%, rgba(88, 166, 255, 0.08) 0%, transparent 60%); border-right: 1px solid rgba(255, 255, 255, 0.03); }
+.login-right { flex: 1; display: flex; align-items: center; justify-content: center; padding: 40px; }
+.login-card { width: 100%; max-width: 420px; background: rgba(22, 27, 34, 0.4); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 24px; padding: 40px; backdrop-filter: blur(24px); }
+.login-left h1 { font-size: 48px; color: #fff; margin-bottom: 20px; font-weight: 800; line-height: 1.2; }
+.login-left p { font-size: 18px; color: #8b949e; line-height: 1.6; max-width: 400px; }
+.login-card h2 { font-size: 24px; color: #fff; margin-bottom: 8px; }
+.login-card p.sub { font-size: 14px; color: #8b949e; margin-bottom: 30px; }
+.input-group { margin-bottom: 20px; }
+.input-group label { display: block; font-size: 13px; color: #c9d1d9; margin-bottom: 8px; }
+.input-wrapper { position: relative; }
+.input-wrapper i { position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: #8b949e; }
+.input-wrapper input { width: 100%; height: 48px; padding: 0 16px 0 44px; background: rgba(0, 0, 0, 0.2); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 12px; color: #fff; outline: none; transition: 0.3s; }
+.input-wrapper input:focus { border-color: #58a6ff; }
+.btn-login { width: 100%; height: 48px; background: #fff; color: #000; border-radius: 12px; font-size: 16px; font-weight: 700; cursor: pointer; border: none; margin-top: 10px; transition: 0.3s; }
+.btn-login:hover { background: #e6edf3; }
+.btn-login:disabled { opacity: 0.5; cursor: not-allowed; }
+.divider { display: flex; align-items: center; text-align: center; margin: 30px 0; color: #8b949e; font-size: 13px; }
+.divider::before, .divider::after { content: ''; flex: 1; border-bottom: 1px solid rgba(255,255,255,0.1); }
+.divider::before { margin-right: 15px; } .divider::after { margin-left: 15px; }
+.oauth-btns { display: flex; gap: 15px; }
+.oauth-btn { flex: 1; height: 48px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 18px; cursor: pointer; transition: 0.2s; }
+.oauth-btn:hover { background: rgba(255,255,255,0.1); }
+.trial-badge { margin-top: 25px; padding: 12px; background: rgba(88,166,255,0.1); border-radius: 8px; text-align: center; font-size: 13px; color: #58a6ff; }
+.error-msg { color: #f85149; font-size: 13px; margin-top: 5px; display: none; }
 
 /* ==========================================
    响应式
@@ -274,11 +226,9 @@ body > .skiptranslate { display: none !important; }
     body { padding-top: 140px !important; }
     .ds-box { min-width: 100%; padding: 30px 20px; }
     .features { padding: 60px 20px; }
-    .comp-row { grid-template-columns: 1.5fr 1fr 1fr 1fr; padding: 16px 15px; }
-    .comp-feature span { display: none; }
-    .comp-feature strong { font-size: 14px; }
-    .comp-val { font-size: 16px; }
-    .comp-val.text-val { font-size: 12px; }
-    .price-card { min-width: 100%; margin-bottom: 20px; }
+    .login-layout { flex-direction: column; }
+    .login-left { padding: 40px 20px; text-align: center; border-right: none; border-bottom: 1px solid rgba(255,255,255,0.05); }
+    .login-left h1 { font-size: 32px; }
+    .login-right { padding: 30px 20px; }
     .site-footer { flex-direction: column; gap: 10px; text-align: center; }
 }
