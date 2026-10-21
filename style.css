@@ -852,3 +852,26 @@ header .logo img {
     font-family: 'FontAwesome';
     font-display: swap;
 }
+
+/* ==========================================
+   终极修复：Header 右侧统一容器
+   ========================================== */
+header .header-right {
+    justify-self: end !important; /* 永远靠右 */
+    display: flex !important;
+    align-items: center !important;
+    gap: 15px !important;
+}
+
+@media (max-width: 1100px) {
+    header .header-right {
+        justify-self: end !important;
+        width: auto !important;
+    }
+}
+@media (max-width: 768px) {
+    header .header-right {
+        order: 2 !important;
+        width: auto !important;
+    }
+}
