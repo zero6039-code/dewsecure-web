@@ -26,9 +26,9 @@ export function initAuthPage() {
     const emailInput = document.getElementById('emailInput');
     const btnVerifyOtp = document.getElementById('btnVerifyOtp');
     const btnBack = document.getElementById('btnBack');
-    const otpInput = document.getElementById('otpInput');
+    const btnResendOtp = document.getElementById('btnResendOtp');
     let currentEmail = '';
-
+    const otpInput = document.getElementById('otpInput');
     btnSendOtp.addEventListener('click', async () => {
         const t = window.fallbackTranslations || {};
         const email = emailInput.value.trim();
@@ -41,7 +41,9 @@ export function initAuthPage() {
             document.getElementById('displayEmail').textContent = email;
             document.getElementById('otpInput').value = ''; 
             stepEmail.classList.add('hidden'); stepOtp.classList.remove('hidden');
-            startCountdown(btnSendOtp);
+            startCountdown(btnSendOtp, t['login_btn'] || '使用邮箱登录 (OTP)');
+            if (btnResendOtp) startCountdown(btnResendOtp, t['login_btn_resend'] || '重新发送验证码');
+            if (btnResendOtp) startCountdown(btnResendOtp, t['login_btn_resend'] || '重新发送验证码');
         } catch (err) {
             window.showError('emailError', err.message || t['login_error_send'] || '发送失败'); 
             btnSendOtp.disabled = false; btnSendOtp.textContent = t['login_btn'] || '使用邮箱登录 (OTP)';
@@ -72,6 +74,33 @@ export function initAuthPage() {
     emailInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') { e.preventDefault(); btnSendOtp.click(); } });
     otpInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') { e.preventDefault(); btnVerifyOtp.click(); } });
 
+    
+    if (btnResendOtp) {
+        btnResendOtp.addEventListener('click', async () => {
+            if (btnResendOtp.disabled) return;
+            const t = window.fallbackTranslations || {};
+            btnResendOtp.disabled = true;
+            btnResendOtp.textContent = t['login_sending'] || '正在发送...';
+            
+            try {
+                const { error } = await supabaseClient.auth.signInWithOtp({ email: currentEmail, options: { shouldCreateUser: true } });
+                if (error) throw error;
+                window.showToast('验证码已重新发送', 'success');
+                startCountdown(btnResendOtp, t['login_btn_resend'] || '重新发送验证码');
+            } catch (err) {
+                // 捕获 Supabase 的限流错误
+                if (err.message && err.message.toLowerCase().includes('rate limit')) {
+                    window.showToast('请求过于频繁，请稍后再试', 'error');
+                } else {
+                    window.showToast(err.message || '发送失败', 'error');
+                }
+                // 失败也恢复按钮，但可能有冷却
+                btnResendOtp.disabled = false;
+                btnResendOtp.textContent = t['login_btn_resend'] || '重新发送验证码';
+            }
+        });
+    }
+
     btnBack.addEventListener('click', () => {
         stepOtp.classList.add('hidden'); stepEmail.classList.remove('hidden'); otpInput.value = '';
         btnSendOtp.disabled = false; 
@@ -79,17 +108,21 @@ export function initAuthPage() {
     });
 }
 
-function startCountdown(btn) {
-    const t = window.fallbackTranslations || {};
-    let countdown = 60; btn.disabled = true;
+
+
+function startCountdown(btn, originalText, seconds = 60) {
+    let countdown = seconds; 
+    btn.disabled = true;
     const interval = setInterval(() => {
         if (countdown <= 0) { 
             clearInterval(interval); 
             btn.disabled = false; 
-            btn.textContent = t['login_btn_resend'] || '重新发送验证码'; 
+            btn.textContent = originalText; 
         } else { 
-            btn.textContent = `${t['login_btn_resend'] || '重新发送'} (${countdown}s)`; 
+            btn.textContent = `未收到？${countdown}s 后可重发`; 
             countdown--; 
         }
     }, 1000);
 }
+
+
