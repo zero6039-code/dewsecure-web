@@ -251,5 +251,11 @@
   "modal_btn_copy": "Salin Pautan",
   "modal_copied": "Disalin!",
   "modal_btn_close": "Tutup",
-  "toast_invite_self": "Tidak boleh menjemput diri sendiri ke kumpulan keluarga"
+  "toast_invite_self": "Tidak boleh menjemput diri sendiri ke kumpulan keluarga",
+  "dash_claim_trial_btn": "🎁 Dapatkan Percubaan Pro 30 Hari",
+  "invite_invalid": "Jemputan tidak sah",
+  "invite_already_joined": "Anda sudah berada dalam kumpulan keluarga ini",
+  "dash_bound_to": "Kumpulan Keluarga",
+  "dash_owner_email": "E-mel Pemilik",
+  "dash_no_invite": "Sub-akaun tidak boleh menjana pautan rujukan"
 }

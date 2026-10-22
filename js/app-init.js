@@ -4,7 +4,6 @@ let dashboardData = null;
 let currentDashboardClient = null;
 let dashboardNotifs = [];
 
-// 🌟 全局极光毛玻璃 Toast 提示框
 window.showToast = function(message, type = 'success') {
     try {
         let toast = document.getElementById('global-toast');
@@ -14,19 +13,14 @@ window.showToast = function(message, type = 'success') {
             document.body.appendChild(toast);
         }
         toast.style.cssText = `
-            position: fixed !important; 
-            top: 50% !important; left: 50% !important;
+            position: fixed !important; top: 50% !important; left: 50% !important;
             transform: translate(-50%, -50%) !important;
-            background: rgba(22, 27, 34, 0.95) !important; 
-            backdrop-filter: blur(24px) !important;
+            background: rgba(22, 27, 34, 0.95) !important; backdrop-filter: blur(24px) !important;
             border: 1px solid ${type === 'error' ? 'rgba(248, 81, 73, 0.5)' : 'rgba(88, 166, 255, 0.5)'} !important;
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8) !important; 
-            color: #fff !important; padding: 20px 30px !important; 
-            border-radius: 16px !important; font-size: 16px !important;
-            z-index: 2147483647 !important; display: flex !important; 
-            align-items: center !important; gap: 15px !important;
-            opacity: 0 !important; visibility: hidden !important; 
-            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8) !important; color: #fff !important; 
+            padding: 20px 30px !important; border-radius: 16px !important; font-size: 16px !important;
+            z-index: 2147483647 !important; display: flex !important; align-items: center !important; gap: 15px !important;
+            opacity: 0 !important; visibility: hidden !important; transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
         `;
         toast.innerHTML = `<i class="fa-solid ${type === 'error' ? 'fa-circle-exclamation' : 'fa-circle-check'}" style="font-size: 24px; color: ${type === 'error' ? '#f85149' : '#58a6ff'};"></i><span>${message}</span>`;
         setTimeout(() => { toast.style.setProperty('opacity', '1', 'important'); toast.style.setProperty('visibility', 'visible', 'important'); }, 10);
@@ -34,7 +28,6 @@ window.showToast = function(message, type = 'success') {
     } catch (e) { alert(message); }
 };
 
-// 🌟 全局邀请链接专属弹窗
 window.showInviteModal = function(link) {
     try {
         const t = window.fallbackTranslations || {};
@@ -43,103 +36,61 @@ window.showInviteModal = function(link) {
         
         modal = document.createElement('div');
         modal.id = 'invite-link-modal';
-        modal.style.cssText = `
-            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; 
-            background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(10px);
-            display: flex; align-items: center; justify-content: center; 
-            z-index: 2147483647;
-        `;
-        
+        modal.style.cssText = `position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(10px); display: flex; align-items: center; justify-content: center; z-index: 2147483647;`;
         modal.innerHTML = `
             <div style="background: rgba(22, 27, 34, 0.95); border: 1px solid rgba(88, 166, 255, 0.4); border-radius: 20px; padding: 40px; max-width: 500px; width: 90%; text-align: center;">
                 <h2 style="color: #fff; margin-bottom: 15px; font-size: 24px;">${t['modal_invite_title'] || '邀请已生成'}</h2>
-                <p style="color: #8b949e; font-size: 15px; margin-bottom: 25px;">${t['modal_invite_desc'] || '请将以下链接发送给您的家人。他们登录并同意后，即可加入家庭组：'}</p>
+                <p style="color: #8b949e; font-size: 15px; margin-bottom: 25px;">${t['modal_invite_desc'] || '请将以下链接发送给您的家人：'}</p>
                 <input type="text" id="invite-link-input" readonly value="${link}" style="width: 100%; background: rgba(0,0,0,0.5); border: 1px dashed rgba(88, 166, 255, 0.8); border-radius: 10px; padding: 15px; color: #58a6ff; font-family: monospace; font-size: 14px; text-align: center; margin-bottom: 25px; outline: none;">
                 <div style="display: flex; gap: 12px;">
-                    <button id="modal-copy-btn" class="btn btn-primary" style="flex: 1; height: 48px; font-size: 16px;">${t['modal_btn_copy'] || '复制链接'}</button>
-                    <button id="modal-close-btn" class="btn" style="flex: 1; height: 48px; font-size: 16px; background: transparent; border: 1px solid rgba(255,255,255,0.2); color: #c9d1d9;">${t['modal_btn_close'] || '关闭'}</button>
+                    <button id="modal-copy-btn" class="btn btn-primary" style="flex: 1; height: 48px;">${t['modal_btn_copy'] || '复制链接'}</button>
+                    <button id="modal-close-btn" class="btn" style="flex: 1; height: 48px; background: transparent; border: 1px solid rgba(255,255,255,0.2); color: #c9d1d9;">${t['modal_btn_close'] || '关闭'}</button>
                 </div>
-            </div>
-        `;
+            </div>`;
         document.body.appendChild(modal);
 
-        const inputEl = document.getElementById('invite-link-input');
-        const copyBtn = document.getElementById('modal-copy-btn');
-        const closeBtn = document.getElementById('modal-close-btn');
-
-        copyBtn.onclick = async () => {
-            try {
-                await navigator.clipboard.writeText(link);
-                copyBtn.textContent = t['modal_copied'] || '已复制！';
-                copyBtn.style.background = '#3fb950'; copyBtn.style.color = '#fff';
-                setTimeout(() => { copyBtn.textContent = t['modal_btn_copy'] || '复制链接'; copyBtn.style.background = '#fff'; copyBtn.style.color = '#000'; }, 2000);
-            } catch (err) {
-                inputEl.select(); document.execCommand('copy');
-            }
+        document.getElementById('modal-copy-btn').onclick = async function() {
+            await navigator.clipboard.writeText(link);
+            this.textContent = t['modal_copied'] || '已复制！'; this.style.background = '#3fb950'; this.style.color = '#fff';
         };
-
-        closeBtn.onclick = () => { modal.remove(); };
-    } catch (err) {
-        // 终极兜底：如果 DOM 渲染彻底崩溃，用浏览器自带的输入框展示链接，保证你能拿到数据
-        prompt("弹窗渲染异常。请手动复制此链接发送给家人：", link);
-    }
+        document.getElementById('modal-close-btn').onclick = () => modal.remove();
+    } catch (err) { prompt("请手动复制此链接：", link); }
 };
 
-// 🌟 核心事件监听
+document.addEventListener('keypress', function(e) {
+    if (e.key === 'Enter' && e.target && e.target.id === 'familyEmailInput') {
+        e.preventDefault();
+        document.getElementById('btnInviteFamily').click();
+    }
+});
+
 document.addEventListener('click', async function(e) {
     const inviteBtn = e.target.closest('#btnInviteFamily');
     if (!inviteBtn) return;
 
     const t = window.fallbackTranslations || {};
-    console.log("1. 捕获到点击事件");
-
-    if (!dashboardData || !currentDashboardClient) {
-        showToast("页面数据未就绪，请刷新", 'error');
-        return;
-    }
+    if (!dashboardData || !currentDashboardClient) return;
 
     try {
         const inputEl = document.getElementById('familyEmailInput');
-        if (!inputEl) return;
-        
         const email = inputEl.value.trim();
-        console.log("2. 输入的邮箱:", email);
-
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!email || !emailRegex.test(email)) { 
-            showToast(t['toast_invalid_email'] || '请输入有效的邮箱地址', 'error'); 
-            return; 
-        }
         
-        if (email.toLowerCase() === dashboardData.email.toLowerCase()) {
-            showToast(t['toast_invite_self'] || '不能邀请自己加入家庭组', 'error');
-            return;
-        }
+        if (!email || !emailRegex.test(email)) { showToast(t['toast_invalid_email'] || '请输入有效的邮箱', 'error'); return; }
+        if (email.toLowerCase() === dashboardData.email.toLowerCase()) { showToast(t['toast_invite_self'] || '不能邀请自己', 'error'); return; }
 
-        inviteBtn.disabled = true; 
-        inviteBtn.textContent = t['dash_gen_ing'] || '发送中...';
-        console.log("3. 开始请求数据库");
-
+        inviteBtn.disabled = true; inviteBtn.textContent = '...';
         const token = Math.random().toString(36).substring(2, 10) + Date.now().toString(36);
-        const { data, error } = await currentDashboardClient.from('family_invitations').insert({
-            owner_id: dashboardData.id,
-            invitee_email: email,
-            token: token,
-            status: 'pending'
+        
+        const { error } = await currentDashboardClient.from('family_invitations').insert({
+            owner_id: dashboardData.id, invitee_email: email, token: token, status: 'pending'
         });
 
-        if (error) {
-            console.error("4. 数据库返回错误:", error);
-            throw new Error(error.message || "数据库拒绝了请求");
-        }
-
-        console.log("4. 数据库插入成功，准备弹窗");
+        if (error) throw error;
         showInviteModal(window.location.origin + '/accept-invite.html?token=' + token);
         inputEl.value = '';
-        
     } catch (err) {
-        console.error("5. 捕获到异常:", err);
-        showToast((t['toast_invite_fail'] || '发送失败: ') + (err.message || '网络错误'), 'error');
+        showToast((t['toast_invite_fail'] || '失败: ') + err.message, 'error');
     } finally {
         inviteBtn.disabled = false;
         inviteBtn.textContent = t['dash_family_btn_invite'] || '发送邀请';
@@ -147,16 +98,53 @@ document.addEventListener('click', async function(e) {
 });
 
 function initPage() {
-    const path = window.location.pathname;
-    document.querySelectorAll('header nav a').forEach(link => {
-        link.classList.remove('active');
-        const href = link.getAttribute('href');
-        if (href === path || (path === '/' && href === '/index.html') || (path.includes(href.replace('.html', '')) && href !== '/')) {
-            link.classList.add('active');
-        }
-    });
+    if (window.location.pathname.includes('accept-invite')) {
+        const client = window.supabaseClient;
+        const urlParams = new URLSearchParams(window.location.search);
+        const token = urlParams.get('token');
+        const inviteDesc = document.getElementById('inviteDesc');
+        const btnAcceptInvite = document.getElementById('btnAcceptInvite');
+        const btnRejectInvite = document.getElementById('btnRejectInvite');
+        const t = window.fallbackTranslations || {};
 
-    // 登录页逻辑
+        if (!token) {
+            inviteDesc.textContent = "无效的邀请链接。"; btnAcceptInvite.style.display = 'none'; return;
+        }
+
+        client.auth.getSession().then(async ({ data: { session } }) => {
+            if (!session) {
+                sessionStorage.setItem('pending_family_token', token);
+                window.location.href = '/login/';
+                return;
+            }
+
+            const { data, error } = await client.rpc('get_family_invite_info', { p_token: token });
+            
+            if (error || !data.success) {
+                inviteDesc.textContent = t['invite_invalid'] || '邀请已失效或已被处理。';
+                btnAcceptInvite.style.display = 'none';
+                return;
+            }
+
+            let desc = t['invite_accept_desc'] || '{owner} 邀请你加入他的家庭组，共享高级版权益。';
+            inviteDesc.textContent = desc.replace('{owner}', data.owner_email);
+
+            btnAcceptInvite.onclick = async () => {
+                btnAcceptInvite.disabled = true;
+                const { data: acceptData, error: acceptError } = await client.rpc('accept_family_invite', { p_token: token });
+                if (acceptError || !acceptData.success) { 
+                    showToast(acceptError?.message || acceptData.message, 'error'); 
+                    btnAcceptInvite.disabled = false; 
+                    return; 
+                }
+                showToast(acceptData.message);
+                setTimeout(() => window.location.href = '/dashboard.html', 1500);
+            };
+
+            btnRejectInvite.onclick = () => window.location.href = '/';
+        });
+    }
+
     const btnSendOtp = document.getElementById('btnSendOtp');
     if (btnSendOtp && !btnSendOtp.dataset.bound) {
         btnSendOtp.dataset.bound = "true";
@@ -164,9 +152,13 @@ function initPage() {
         
         supabaseClient.auth.getSession().then(({ data: { session } }) => {
             if (session) {
-                const urlParams = new URLSearchParams(window.location.search);
-                const redirectUrl = urlParams.get('redirect') || '/dashboard.html';
-                window.location.href = redirectUrl;
+                const pendingToken = sessionStorage.getItem('pending_family_token');
+                if (pendingToken) {
+                    sessionStorage.removeItem('pending_family_token');
+                    window.location.href = '/accept-invite.html?token=' + pendingToken;
+                } else {
+                    window.location.href = '/dashboard.html';
+                }
             }
         });
 
@@ -205,9 +197,13 @@ function initPage() {
             try {
                 const { error } = await supabaseClient.auth.verifyOtp({ email: currentEmail, token, type: 'email' });
                 if (error) throw error;
-                const urlParams = new URLSearchParams(window.location.search);
-                const redirectUrl = urlParams.get('redirect') || '/dashboard.html';
-                window.location.href = redirectUrl;
+                const pendingToken = sessionStorage.getItem('pending_family_token');
+                if (pendingToken) {
+                    sessionStorage.removeItem('pending_family_token');
+                    window.location.href = '/accept-invite.html?token=' + pendingToken;
+                } else {
+                    window.location.href = '/dashboard.html';
+                }
             } catch (err) {
                 showError('otpError', t['login_error_otp_expired'] || '验证码错误或已过期'); 
                 btnVerifyOtp.disabled = false; btnVerifyOtp.textContent = t['login_btn_verify'] || '验证并登录';
@@ -224,7 +220,6 @@ function initPage() {
         });
     }
 
-    // 首页逻辑
     if (document.getElementById('ds-title') && !document.getElementById('ds-title').dataset.bound) {
         document.getElementById('ds-title').dataset.bound = "true";
         const browserUrls = { chrome: 'https://chromewebstore.google.com/', edge: 'https://microsoftedge.microsoft.com/', firefox: 'https://addons.mozilla.org/', safari: '#', opera: '#', yandex: '#', android: '#' };
@@ -260,71 +255,12 @@ function initPage() {
         window.addEventListener('languageChanged', () => renderBrowserData(currentTarget));
     }
 
-    // 指南页手风琴
     document.querySelectorAll('.accordion-header').forEach(header => {
         if (header.dataset.bound) return;
         header.dataset.bound = "true"; 
         header.addEventListener('click', () => header.parentElement.classList.toggle('active'));
     });
 
-    // 处理接受邀请页面
-    if (window.location.pathname.includes('accept-invite')) {
-        const client = window.supabaseClient;
-        const urlParams = new URLSearchParams(window.location.search);
-        const token = urlParams.get('token');
-        const inviteDesc = document.getElementById('inviteDesc');
-        const btnAcceptInvite = document.getElementById('btnAcceptInvite');
-        const btnRejectInvite = document.getElementById('btnRejectInvite');
-        
-        if (!token) {
-            inviteDesc.textContent = "无效的邀请链接。";
-            btnAcceptInvite.style.display = 'none';
-            return;
-        }
-
-        let currentOwnerEmail = '';
-
-        function renderInviteText() {
-            const t = window.fallbackTranslations || {};
-            let desc = t['invite_accept_desc'] || '{owner} 邀请你加入他的家庭组，共享高级版权益。';
-            inviteDesc.textContent = desc.replace('{owner}', currentOwnerEmail || '...');
-        }
-
-        window.addEventListener('languageChanged', renderInviteText);
-
-        client.auth.getSession().then(async ({ data: { session } }) => {
-            if (!session) {
-                inviteDesc.textContent = "请先登录以确认加入。";
-                btnAcceptInvite.textContent = "去登录";
-                btnAcceptInvite.onclick = () => {
-                    window.location.href = '/login/?redirect=' + encodeURIComponent('/accept-invite.html?token=' + token);
-                };
-                btnRejectInvite.onclick = () => window.location.href = '/';
-                return;
-            }
-
-            const { data: inv } = await client.from('family_invitations').select('owner_id, profiles!family_invitations_owner_id_fkey(email)').eq('token', token).maybeSingle();
-            
-            if (inv && inv.profiles) {
-                currentOwnerEmail = inv.profiles.email;
-                renderInviteText();
-            } else {
-                inviteDesc.textContent = "邀请已失效或已被处理。";
-            }
-
-            btnAcceptInvite.onclick = async () => {
-                btnAcceptInvite.disabled = true;
-                const { data, error } = await client.rpc('accept_family_invite', { p_token: token });
-                if (error || !data.success) { showToast(error?.message || data.message, 'error'); btnAcceptInvite.disabled = false; return; }
-                showToast(data.message);
-                setTimeout(() => window.location.href = '/dashboard.html', 1500);
-            };
-
-            btnRejectInvite.onclick = () => window.location.href = '/';
-        });
-    }
-
-    // Dashboard 逻辑
     if (document.getElementById('mainContent') && !document.getElementById('mainContent').dataset.bound) {
         document.getElementById('mainContent').dataset.bound = "true";
         initDashboardLogic();
@@ -382,12 +318,17 @@ async function renderDeviceCards() {
     const deviceSlots = document.getElementById('deviceSlots');
     const deviceDesc = document.getElementById('deviceDesc');
 
+    // 子账号禁止显示设备管理
+    if (dashboardData.family_owner_id) {
+        deviceCard.classList.add('hidden');
+        return;
+    }
+
     if (dashboardData.tier === 'pro' || dashboardData.tier === 'family') {
         deviceCard.classList.remove('hidden');
         const maxDevices = dashboardData.tier === 'pro' ? 3 : 9;
         const t = window.fallbackTranslations || {};
         
-        // 容错处理请求
         let devices = [];
         try {
             const { data } = await client.from('devices').select('*').eq('user_id', dashboardData.id).order('last_seen_at', { ascending: false });
@@ -439,9 +380,12 @@ async function renderFamilyCard() {
     const familyCard = document.getElementById('familyCard');
     const familyDesc = document.getElementById('familyDesc');
     const familyMembersList = document.getElementById('familyMembersList');
+    const inviteCard = document.getElementById('inviteCard'); // 裂变卡片
 
-    if (dashboardData.tier === 'family') {
+    // 🌟 核心修复：只有主账号才显示邀请好友裂变卡片和家庭成员管理
+    if (dashboardData.tier === 'family' && !dashboardData.family_owner_id) {
         familyCard.classList.remove('hidden');
+        if (inviteCard) inviteCard.classList.remove('hidden'); // 主号显示裂变
         const t = window.fallbackTranslations || {};
 
         const { data: members } = await client.from('profiles').select('id, email').eq('family_owner_id', dashboardData.id);
@@ -466,6 +410,8 @@ async function renderFamilyCard() {
         }
     } else {
         familyCard.classList.add('hidden');
+        // 🌟 子账号隐藏裂变卡片（图1中的 Invite Friends）
+        if (inviteCard) inviteCard.classList.add('hidden');
     }
 }
 
@@ -486,6 +432,21 @@ function renderDashboardTexts() {
     let expireDate = profile.trial_ends_at ? new Date(profile.trial_ends_at) : null;
     const now = new Date();
     
+    // 🌟 核心修复：如果是子账号，动态显示主号邮箱
+    let ownerEmailRow = document.getElementById('ownerEmailRow');
+    if (profile.family_owner_id && profile.owner_email) {
+        if (!ownerEmailRow) {
+            ownerEmailRow = document.createElement('div');
+            ownerEmailRow.id = 'ownerEmailRow';
+            ownerEmailRow.className = 'data-row';
+            // 插在账户等级下方
+            tierBadge.parentNode.parentNode.insertBefore(ownerEmailRow, tierBadge.parentNode.nextSibling);
+        }
+        ownerEmailRow.innerHTML = `<span class="data-label">${t['dash_bound_to'] || '所属家庭组'}</span><span class="data-value" style="color:#58a6ff;">${profile.owner_email}</span>`;
+    } else if (ownerEmailRow) {
+        ownerEmailRow.remove();
+    }
+
     if (profile.tier === 'free') {
         tierBadge.textContent = t['dash_tier_free'] || '免费版 (Free)'; 
         tierBadge.className = 'status-badge'; 
@@ -553,11 +514,7 @@ async function initDashboardLogic() {
     
     try {
         const { data: { session } } = await client.auth.getSession();
-        
-        if (!session) { 
-            window.location.href = '/login.html';
-            return; 
-        }
+        if (!session) { window.location.href = '/login.html'; return; }
         
         if (loader) {
             loader.style.transition = 'opacity 0.3s ease';
@@ -566,10 +523,22 @@ async function initDashboardLogic() {
         }
         
         const currentUser = session.user;
-        const { data: profile } = await client.from('profiles').select('*').eq('id', currentUser.id).maybeSingle();
+        let { data: profile } = await client.from('profiles').select('*').eq('id', currentUser.id).maybeSingle();
         
         dashboardData = profile || { id: currentUser.id, email: currentUser.email, tier: 'free', trial_ends_at: null, invite_success_count: 0 };
         if (!dashboardData.email) dashboardData.email = currentUser.email;
+
+        // 调用安全的 RPC 函数来获取家庭组共享状态
+        if (dashboardData.family_owner_id) {
+            try {
+                const { data: sharedStatus } = await client.rpc('get_family_shared_status');
+                if (sharedStatus && sharedStatus.success) {
+                    dashboardData.tier = 'family'; // 继承 UI 显示为家庭版
+                    dashboardData.trial_ends_at = sharedStatus.owner_expire; // 继承主号到期时间
+                    dashboardData.owner_email = sharedStatus.owner_email; // 保存主号邮箱用于UI展示
+                }
+            } catch (e) { console.error("获取家庭组状态失败:", e); }
+        }
 
         const { data: notifs } = await client.from('notifications').select('*').order('created_at', { ascending: false });
         dashboardNotifs = notifs || [];
@@ -578,27 +547,26 @@ async function initDashboardLogic() {
         
         renderDashboardTexts();
 
-        async function getFingerprint() {
-            const raw = navigator.userAgent + navigator.language + screen.width + 'x' + screen.height + new Date().getTimezoneOffset();
-            const msgBuffer = new TextEncoder().encode(raw);
-            const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
-            const hashArray = Array.from(new Uint8Array(hashBuffer));
-            return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-        }
-
-        if (dashboardData.tier === 'free' && !dashboardData.trial_ends_at) {
+        // 🌟 只有主号且没有过期，才显示免费试用按钮
+        if (dashboardData.tier === 'free' && !dashboardData.trial_ends_at && !dashboardData.family_owner_id) {
             const card = document.getElementById('inviteCard');
+            const t = window.fallbackTranslations || {};
             const claimBtn = document.createElement('button');
             claimBtn.className = 'btn btn-primary';
             claimBtn.style = 'width: 100%; margin-top: 20px; background: #58a6ff; color: #fff;';
-            claimBtn.textContent = '🎁 免费领取 30 天高级版体验';
+            claimBtn.textContent = t['dash_claim_trial_btn'] || '🎁 免费领取 30 天高级版体验';
             card.appendChild(claimBtn);
 
             claimBtn.onclick = async () => {
                 claimBtn.disabled = true;
-                claimBtn.textContent = '正在验证设备...';
+                claimBtn.textContent = '...';
                 try {
-                    const fp = await getFingerprint();
+                    const raw = navigator.userAgent + navigator.language + screen.width + 'x' + screen.height + new Date().getTimezoneOffset();
+                    const msgBuffer = new TextEncoder().encode(raw);
+                    const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
+                    const hashArray = Array.from(new Uint8Array(hashBuffer));
+                    const fp = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+                    
                     const { data, error } = await client.rpc('claim_free_trial', { p_fingerprint: fp });
                     if (error) throw error;
                     if (data.success) {
@@ -611,44 +579,47 @@ async function initDashboardLogic() {
                 } catch (err) {
                     showToast('领取失败: ' + err.message, 'error');
                     claimBtn.disabled = false;
-                    claimBtn.textContent = '🎁 重新领取 30 天';
+                    claimBtn.textContent = t['dash_claim_trial_btn'] || '🎁 免费领取 30 天高级版体验';
                 }
             };
         }
 
-        const { data: inviteCode } = await client.from('invitations').select('code').eq('inviter_id', dashboardData.id).eq('status', 'pending').limit(1).maybeSingle();
-        if (inviteCode?.code) {
-            const refLink = window.location.origin + '/pricing.html?ref=' + inviteCode.code;
-            document.getElementById('myInviteCode').textContent = refLink;
-            document.getElementById('btnGenInvite').classList.add('hidden');
-            const copyBtn = document.getElementById('btnCopyInvite');
-            copyBtn.classList.remove('hidden');
-            copyBtn.onclick = async () => { 
-                await navigator.clipboard.writeText(refLink);
+        // 只有主号才执行绑定裂变按钮的事件
+        if (!dashboardData.family_owner_id) {
+            const { data: inviteCode } = await client.from('invitations').select('code').eq('inviter_id', dashboardData.id).eq('status', 'pending').limit(1).maybeSingle();
+            if (inviteCode?.code) {
+                const refLink = window.location.origin + '/pricing.html?ref=' + inviteCode.code;
+                document.getElementById('myInviteCode').textContent = refLink;
+                document.getElementById('btnGenInvite').classList.add('hidden');
+                const copyBtn = document.getElementById('btnCopyInvite');
+                copyBtn.classList.remove('hidden');
+                copyBtn.onclick = async () => { 
+                    await navigator.clipboard.writeText(refLink);
+                    const t = window.fallbackTranslations || {};
+                    copyBtn.textContent = t['dash_copied'] || '已复制!'; 
+                    setTimeout(() => copyBtn.textContent = t['dash_invite_copy'] || '复制', 2000); 
+                };
+            }
+
+            document.getElementById('btnGenInvite').onclick = async () => {
                 const t = window.fallbackTranslations || {};
-                copyBtn.textContent = t['dash_copied'] || '已复制!'; 
-                setTimeout(() => copyBtn.textContent = t['dash_invite_copy'] || '复制', 2000); 
+                const btn = document.getElementById('btnGenInvite');
+                btn.disabled = true; btn.textContent = t['dash_gen_ing'] || '生成中...';
+                const { data, error } = await client.rpc('generate_invitation_code');
+                if (error) { showToast((t['dash_gen_fail'] || '生成失败: ') + error.message, 'error'); btn.disabled = false; btn.textContent = t['dash_invite_gen'] || '生成邀请码'; return; }
+                
+                const refLink = window.location.origin + '/pricing.html?ref=' + data;
+                document.getElementById('myInviteCode').textContent = refLink;
+                btn.classList.add('hidden');
+                const copyBtn = document.getElementById('btnCopyInvite');
+                copyBtn.classList.remove('hidden');
+                copyBtn.onclick = async () => {
+                    await navigator.clipboard.writeText(refLink); 
+                    copyBtn.textContent = t['dash_copied'] || '已复制!'; 
+                    setTimeout(() => copyBtn.textContent = t['dash_invite_copy'] || '复制', 2000); 
+                };
             };
         }
-
-        document.getElementById('btnGenInvite').onclick = async () => {
-            const t = window.fallbackTranslations || {};
-            const btn = document.getElementById('btnGenInvite');
-            btn.disabled = true; btn.textContent = t['dash_gen_ing'] || '生成中...';
-            const { data, error } = await client.rpc('generate_invitation_code');
-            if (error) { showToast((t['dash_gen_fail'] || '生成失败: ') + error.message, 'error'); btn.disabled = false; btn.textContent = t['dash_invite_gen'] || '生成邀请码'; return; }
-            
-            const refLink = window.location.origin + '/pricing.html?ref=' + data;
-            document.getElementById('myInviteCode').textContent = refLink;
-            btn.classList.add('hidden');
-            const copyBtn = document.getElementById('btnCopyInvite');
-            copyBtn.classList.remove('hidden');
-            copyBtn.onclick = async () => {
-                await navigator.clipboard.writeText(refLink); 
-                copyBtn.textContent = t['dash_copied'] || '已复制!'; 
-                setTimeout(() => copyBtn.textContent = t['dash_invite_copy'] || '复制', 2000); 
-            };
-        };
 
         document.getElementById('btnCancelSub').onclick = () => document.getElementById('cancelModal').classList.add('active');
         document.getElementById('btnCloseModal').onclick = () => document.getElementById('cancelModal').classList.remove('active');

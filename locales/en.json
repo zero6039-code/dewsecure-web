@@ -251,5 +251,11 @@
   "modal_btn_copy": "Copy Link",
   "modal_copied": "Copied!",
   "modal_btn_close": "Close",
-  "toast_invite_self": "Cannot invite yourself to the family group"
+  "toast_invite_self": "Cannot invite yourself to the family group",
+  "dash_claim_trial_btn": "🎁 Claim 30-Day Pro Trial",
+  "invite_invalid": "Invite is invalid",
+  "invite_already_joined": "You are already in this family group",
+  "dash_bound_to": "Family Group",
+  "dash_owner_email": "Owner Email",
+  "dash_no_invite": "Sub-accounts cannot generate referral links"
 }

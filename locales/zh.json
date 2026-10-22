@@ -251,5 +251,11 @@
   "modal_btn_copy": "复制链接",
   "modal_copied": "已复制！",
   "modal_btn_close": "关闭",
-  "toast_invite_self": "不能邀请自己加入家庭组"
+  "toast_invite_self": "不能邀请自己加入家庭组",
+  "dash_claim_trial_btn": "🎁 免费领取 30 天高级版体验",
+  "invite_invalid": "邀请已失效",
+  "invite_already_joined": "您已在该家庭组中",
+  "dash_bound_to": "所属家庭组",
+  "dash_owner_email": "主号邮箱",
+  "dash_no_invite": "家庭组子账号无法生成推广链接"
 }
