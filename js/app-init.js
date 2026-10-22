@@ -26,12 +26,14 @@ async function interceptToken() {
             window.history.replaceState({}, document.title, cleanUrl);
             
             if (!error) {
-                console.log("✅ 静默登录成功！");
-                // 如果当前不在控制台，强制跳转过去
-                if (!window.location.pathname.includes('dashboard')) {
-                    window.location.href = '/dashboard.html';
-                    return true; // 阻断后续
-                }
+                console.log("✅ 静默登录成功，正在刷新以应用状态...");
+                // 清除 URL 参数
+                const cleanUrl = window.location.pathname + window.location.hash;
+                window.history.replaceState({}, document.title, cleanUrl);
+                
+                // 强制刷新页面。刷新后 getSession 直接命中，不跳登录页
+                window.location.reload();
+                return true;
             } else {
                 console.error("❌ 静默登录失败:", error);
             }

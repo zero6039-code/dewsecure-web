@@ -16,7 +16,20 @@ export async function initDashboardLogic() {
     
     try {
         const { data: { session } } = await client.auth.getSession();
-        if (!session) { window.location.href = '/login/'; return; }
+        const urlParams = new URLSearchParams(window.location.search);
+        const hasTokenInUrl = urlParams.get('token');
+        
+        // 如果没 session，且 URL 带 token（说明正在 SSO），先等待不跳转
+        if (!session && !hasTokenInUrl) { 
+            window.location.href = '/login/'; 
+            return; 
+        }
+        
+        // 如果确实没 session 但带了 token，说明拦截失败或延迟了，直接刷新重新走流程
+        if (!session && hasTokenInUrl) {
+            window.location.reload();
+            return;
+        }
         
         if (loader) {
             loader.style.transition = 'opacity 0.3s ease';
