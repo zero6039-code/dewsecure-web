@@ -1,67 +1,74 @@
-import './utils.js';
 // ==========================================
 // 📁 app-init.js
-// 职责：作为极简入口，负责 Token 拦截与根据当前页面路由分发逻辑。
+// 职责：极简入口，处理 Token 拦截、路由分发、Swup 初始化
 // ==========================================
 
+import './utils.js';
 import { initAuthPage } from './page-auth.js';
 import { initDashboardLogic } from './page-dashboard.js';
 import { initComponentsPage, initAcceptInvitePage } from './page-components.js';
 
-async function routeAndInit() {
-    // 1. 优先拦截 URL 上的 Token
+// 🌟 全局 Token 拦截器（必须在路由前）
+async function interceptToken() {
     const urlParams = new URLSearchParams(window.location.search);
     const extToken = urlParams.get('token');
     
     if (extToken && window.supabaseClient) {
         try {
+            console.log("📥 检测到插件 Token，执行强制静默登录...");
             const { error } = await window.supabaseClient.auth.setSession({
                 access_token: extToken,
-                refresh_token: extToken
+                refresh_token: extToken 
             });
+            
+            // 无论如何，清理 URL 里的 token 参数
+            const cleanUrl = window.location.pathname + window.location.hash;
+            window.history.replaceState({}, document.title, cleanUrl);
+            
             if (!error) {
-                // 清除 URL 参数
-                const cleanUrl = window.location.pathname + window.location.hash;
-                window.history.replaceState({}, document.title, cleanUrl);
-                
-                // 如果不在 dashboard，强制跳转
+                console.log("✅ 静默登录成功！");
+                // 如果当前不在控制台，强制跳转过去
                 if (!window.location.pathname.includes('dashboard')) {
-                    window.location.replace('/dashboard.html');
-                    return; // 阻断后续初始化
+                    window.location.href = '/dashboard.html';
+                    return true; // 阻断后续
                 }
+            } else {
+                console.error("❌ 静默登录失败:", error);
             }
-        } catch (e) { console.warn('Token 拦截异常:', e); }
+        } catch (e) {
+            console.warn('Token 拦截异常:', e);
+        }
     }
+    return false;
+}
 
-    // 2. 根据路径分发初始化逻辑
+async function routeAndInit() {
+    // 1. 拦截 Token，如果成功跳转则终止本次执行
+    const redirected = await interceptToken();
+    if (redirected) return;
+
+    // 2. 根据路径分发初始化
     const path = window.location.pathname;
-
-    // 登录页
     if (path.includes('/login')) {
         initAuthPage();
-    }
-    // 控制台
-    else if (path.includes('/dashboard')) {
+    } else if (path.includes('/dashboard')) {
         initDashboardLogic();
-    }
-    // 邀请页
-    else if (path.includes('accept-invite')) {
+    } else if (path.includes('accept-invite')) {
         initAcceptInvitePage();
     }
-    
-    // 3. 通用组件（所有页面都可以有）
     initComponentsPage();
 }
 
-// ==========================================
-// 启动与 Swup 无刷新路由集成
-// ==========================================
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
+    const redirected = await interceptToken();
+    if (redirected) return; // 有 Token 且需要跳转，直接停止，不初始化 Swup
+
     routeAndInit();
 
     if (window.Swup) {
         window.swup = new Swup({ containers: ['#swup'] });
         window.swup.hooks.on('page:view', () => {
+            // 注意：Swup 切换页面后，不再执行 interceptToken，只执行页面业务逻辑
             routeAndInit();
             if (window.translatePage) window.translatePage();
         });
