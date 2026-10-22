@@ -46,7 +46,8 @@
                             <label data-i18n="login_email_label">电子邮件地址</label>
                             <div class="input-wrapper">
                                 <i class="fa-regular fa-envelope"></i>
-                                <input type="email" id="emailInput" data-i18n-placeholder="login_email_ph" placeholder="name@example.com">
+                                <!-- 🌟 强制关闭自动填充 -->
+                                <input type="email" id="emailInput" data-i18n-placeholder="login_email_ph" placeholder="name@example.com" autocomplete="off">
                             </div>
                             <div id="emailError" class="error-msg"></div>
                         </div>
@@ -62,14 +63,14 @@
                     </div>
 
                     <div id="step-otp" class="hidden">
-                        <!-- 🌟 补充了 data-i18n -->
                         <h2 data-i18n="login_otp_title">输入验证码</h2>
-                        <p class="sub" data-i18n="login_otp_sub">我们已向 <strong id="displayEmail"></strong> 发送了 8 位验证码。</p>
+                        <p class="sub"><span data-i18n="login_otp_sub_prefix">我们已向</span> <strong id="displayEmail"></strong> <span data-i18n="login_otp_sub_suffix">发送了 8 位验证码。</span></p>
                         <div class="input-group">
                             <label data-i18n="login_otp_label">8 位验证码</label>
                             <div class="input-wrapper">
                                 <i class="fa-solid fa-shield-halved"></i>
-                                <input type="text" id="otpInput" maxlength="8" placeholder="12345678" style="letter-spacing: 4px;">
+                                <!-- 🌟 强制设为 one-time-code，干掉所有浏览器记忆 -->
+                                <input type="text" id="otpInput" maxlength="8" placeholder="12345678" autocomplete="one-time-code" style="letter-spacing: 4px; background: rgba(0,0,0,0.3);">
                             </div>
                             <div id="otpError" class="error-msg"></div>
                         </div>

@@ -514,7 +514,7 @@ async function initDashboardLogic() {
     
     try {
         const { data: { session } } = await client.auth.getSession();
-        if (!session) { window.location.href = '/login.html'; return; }
+        if (!session) { window.location.href = '/login/'; return; }
         
         if (loader) {
             loader.style.transition = 'opacity 0.3s ease';
