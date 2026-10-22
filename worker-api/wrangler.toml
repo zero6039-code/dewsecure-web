@@ -2,7 +2,6 @@ name = "dewsecure-api"
 main = "src/worker.js"
 compatibility_date = "2024-09-23"
 
-# 核心修复：明确指定 assets 只扫描 src 目录，防止误扫 node_modules
 assets = { directory = "./src" }
 
 [[r2_buckets]]
@@ -10,4 +9,6 @@ binding = "R2_BUCKET"
 bucket_name = "dewsecure-models"
 
 [vars]
-MOCK_AUTH_ENABLED = "true"
+# 填入你的 Supabase 项目信息，以便 Worker 验证 JWT
+SUPABASE_URL = "https://uvbaioqqjqseapcancvi.supabase.co"
+SUPABASE_ANON_KEY = "sb_publishable_xiiA-yt_jRKkzRdkYkoWJA_CVZjNjq8"

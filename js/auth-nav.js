@@ -5,6 +5,7 @@
     if (window._authNavLoaded) return;
     window._authNavLoaded = true;
 
+    // ⚠️ 请确保这里是你真实的 Supabase 项目信息
     const SUPABASE_URL = 'https://uvbaioqqjqseapcancvi.supabase.co'; 
     const SUPABASE_ANON_KEY = 'sb_publishable_xiiA-yt_jRKkzRdkYkoWJA_CVZjNjq8';
     
@@ -12,6 +13,30 @@
         window.supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
     }
     const supabaseClient = window.supabaseClient;
+
+    // 向浏览器插件推送状态
+    function syncStateToExtension(session) {
+        if (!window.chrome || !chrome.runtime || !chrome.runtime.sendMessage) return;
+        
+        try {
+            if (session) {
+                // 用户已登录，把真实的 JWT 推给插件
+                chrome.runtime.sendMessage({
+                    type: 'SYNC_AUTH',
+                    payload: {
+                        token: session.access_token,
+                        email: session.user.email
+                        // tier 可由插件带着 token 去请求 Worker 获取
+                    }
+                }, () => { /* 忽略未安装插件时的报错 */ });
+            } else {
+                // 用户已登出
+                chrome.runtime.sendMessage({ type: 'LOGOUT' }, () => { /* 忽略报错 */ });
+            }
+        } catch (e) {
+            // 插件未安装时，这里会抛异常，静默处理即可
+        }
+    }
 
     function renderAuthState(session) {
         const header = document.querySelector('header');
@@ -49,7 +74,6 @@
             const dashLink = header.querySelector('nav a[href="/dashboard.html"]');
             if (dashLink) dashLink.style.display = 'block';
 
-            // 🌟 核心：使用 data-i18n 交给全局翻译
             authArea.innerHTML = `
                 <span title="${rawEmail}" style="color: #8b949e; font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 120px;">${displayEmail}</span>
                 <a href="/dashboard.html" data-i18n="nav_dashboard" style="color: #58a6ff; font-size: 14px; font-weight: 600; white-space: nowrap;">控制台</a>
@@ -64,14 +88,21 @@
             const dashLink = header.querySelector('nav a[href="/dashboard.html"]');
             if (dashLink) dashLink.style.display = 'none';
             
-            authArea.innerHTML = `<a href="/login/" data-i18n="nav_login" style="color: #58a6ff; font-size: 14px; font-weight: 600; white-space: nowrap;">登录</a>`;
+            authArea.innerHTML = `<a href="/login.html" data-i18n="nav_login" style="color: #58a6ff; font-size: 14px; font-weight: 600; white-space: nowrap;">登录</a>`;
         }
         
         if (window.translatePage) window.translatePage();
     }
 
+    // 监听登录状态变化
     supabaseClient.auth.onAuthStateChange((event, session) => {
         renderAuthState(session);
+        // 🌟 触发向插件推送
+        if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED' || event === 'INITIAL_SESSION') {
+            syncStateToExtension(session);
+        } else if (event === 'SIGNED_OUT') {
+            syncStateToExtension(null);
+        }
     });
     
     window.addEventListener('languageChanged', () => {

@@ -11,23 +11,42 @@ export default {
 
     const url = new URL(request.url);
 
-    const mockAuthEnabled = env.MOCK_AUTH_ENABLED === 'true' || env.MOCK_AUTH_ENABLED === '1';
-    const isMockAuthOk = (authHeader) => {
-      if (!mockAuthEnabled) return false;
-      const token = authHeader ? authHeader.split(' ')[1] : '';
-      return typeof token === 'string' && token.startsWith('mock_jwt_');
-    };
-
     if (url.pathname === '/api/download-model') {
       const authHeader = request.headers.get('Authorization');
-      if (!isMockAuthOk(authHeader)) {
-        if (!authHeader || !authHeader.startsWith('Bearer ') || authHeader.split(' ')[1] !== env.AUTH_TOKEN) {
-          return new Response(JSON.stringify({ error: 'Unauthorized' }), {
+      if (!authHeader || !authHeader.startsWith('Bearer ')) {
+        return new Response(JSON.stringify({ error: 'Missing or invalid Authorization header' }), {
+          status: 401, headers: { 'Content-Type': 'application/json' }
+        });
+      }
+
+      const token = authHeader.split(' ')[1];
+
+      // 🌟 核心安全验证：请求 Supabase 校验 JWT 是否真实有效
+      try {
+        const supabaseVerify = await fetch(`${env.SUPABASE_URL}/auth/v1/user`, {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'apikey': env.SUPABASE_ANON_KEY
+          }
+        });
+
+        if (!supabaseVerify.ok) {
+          return new Response(JSON.stringify({ error: 'Unauthorized: Invalid Token' }), {
             status: 401, headers: { 'Content-Type': 'application/json' }
           });
         }
+        
+        const user = await supabaseVerify.json();
+        // Token 验证通过，可以在这里进一步校验用户的 tier 是否是 pro
+        // 暂时仅校验登录状态，确保 model 只有真实用户能拉取
+
+      } catch (err) {
+        return new Response(JSON.stringify({ error: 'Auth Service Error' }), {
+          status: 500, headers: { 'Content-Type': 'application/json' }
+        });
       }
 
+      // --- 以下是原有的 R2 下载逻辑 ---
       const [modelObj, metaObj] = await Promise.all([
         env.R2_BUCKET.get('latest/classifier_int8.onnx'),
         env.R2_BUCKET.get('latest/model_meta.json'),
@@ -43,8 +62,7 @@ export default {
       let modelSha256 = '';
       if (metaObj !== null) {
         try {
-          const metaText = await metaObj.text();
-          const meta = JSON.parse(metaText);
+          const meta = JSON.parse(await metaObj.text());
           modelVersion = meta.trainedAt || '';
           modelSha256 = meta.sha256 || '';
         } catch (e) {}
