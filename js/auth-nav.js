@@ -25,8 +25,8 @@
                     type: 'SYNC_AUTH',
                     payload: {
                         token: session.access_token,
+                        refreshToken: session.refresh_token,
                         email: session.user.email
-                        // tier 可由插件带着 token 去请求 Worker 获取
                     }
                 }, () => { /* 忽略未安装插件时的报错 */ });
             } else {
