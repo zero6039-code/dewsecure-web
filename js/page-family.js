@@ -55,7 +55,7 @@ export async function initFamilyUI(client, profile) {
 
     // 🚀 提取出发送邀请的逻辑，方便点击和回车共用
     const handleSendInvite = async () => {
-        const email = inputEmail.value.trim();
+        const email = inputEmail.value.trim().toLowerCase();
         if(!email || !email.includes('@')) return window.showToast('请输入有效的邮箱地址', 'error');
         
         btnInvite.disabled = true; 

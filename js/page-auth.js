@@ -33,7 +33,7 @@ export function initAuthPage() {
     // 🚀 核心修复：防白嫖的发送逻辑
     btnSendOtp.addEventListener('click', async () => {
         const t = window.fallbackTranslations || {};
-        const email = emailInput.value.trim();
+        const email = emailInput.value.trim().toLowerCase();
         if (!email || !email.includes('@')) { window.showError('emailError', t['login_error_email'] || '请输入有效的邮箱地址'); return; }
         
         btnSendOtp.disabled = true; 
