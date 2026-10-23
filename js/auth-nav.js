@@ -18,20 +18,28 @@
     function syncStateToExtension(session) {
         if (!window.chrome || !chrome.runtime || !chrome.runtime.sendMessage) return;
         
+        // 插件 ID 已修正
+        const EXT_ID = "fgnijfomipmimnfocgofmmniglibgnak";
+        
         try {
             if (session) {
                 // 用户已登录，把真实的 JWT 推给插件
-                chrome.runtime.sendMessage({
+                chrome.runtime.sendMessage(EXT_ID, {
                     type: 'SYNC_AUTH',
                     payload: {
                         token: session.access_token,
                         refreshToken: session.refresh_token,
-                        email: session.user.email
+                        email: session.user.email,
+                        tier: session.user.user_metadata?.tier || 'premium' // 加上 tier 以防万一
                     }
-                }, () => { /* 忽略未安装插件时的报错 */ });
+                }, (response) => { 
+                    if (response && response.ok) console.log("✅ [网页端] 插件登录状态同步成功");
+                });
             } else {
                 // 用户已登出
-                chrome.runtime.sendMessage({ type: 'LOGOUT' }, () => { /* 忽略报错 */ });
+                chrome.runtime.sendMessage(EXT_ID, { type: 'LOGOUT' }, () => { 
+                    console.log("✅ [网页端] 插件登出状态同步成功");
+                });
             }
         } catch (e) {
             // 插件未安装时，这里会抛异常，静默处理即可
