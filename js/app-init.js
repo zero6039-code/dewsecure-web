@@ -82,7 +82,10 @@ document.addEventListener('DOMContentLoaded', async () => {
         window.swup = new Swup({ containers: ['#swup'] });
         window.swup.hooks.on('page:view', () => {
             routeAndInit();
-            if (window.translatePage) window.translatePage();
+            // 🌟 强力保险：延迟 50ms 强制重绘翻译，确保 DOM 已渲染完毕
+            setTimeout(() => {
+                if (window.translatePage) window.translatePage();
+            }, 50);
         });
     }
 });

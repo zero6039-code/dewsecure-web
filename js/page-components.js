@@ -76,75 +76,98 @@ export function initComponentsPage() {
 
 // 🚀 终极修复：读取 ?invite=，处理拒绝跳转
 export async function initAcceptInvitePage() {
-    if (!window.location.pathname.includes('accept-invite')) return;
-    
+    const t = window.fallbackTranslations || {};
     const client = window.supabaseClient;
     const urlParams = new URLSearchParams(window.location.search);
-    const token = urlParams.get('invite'); // 👈 改读取 invite
+    const inviteToken = urlParams.get('invite') || urlParams.get('token');
+
+    if (!inviteToken) {
+        document.getElementById('inviteDesc').textContent = "Invalid Invite Link / 邀请链接无效";
+        return;
+    }
+
     const inviteDesc = document.getElementById('inviteDesc');
     const btnAcceptInvite = document.getElementById('btnAcceptInvite');
     const btnRejectInvite = document.getElementById('btnRejectInvite');
-    
-    if (!inviteDesc) return;
 
-    // 秒绑拒绝按钮，不管有没有 token 都能点
+    // 🌟 提前绑定 Decline 按钮，防止因报错 return 导致按键失效
     if (btnRejectInvite) {
         btnRejectInvite.onclick = () => window.location.href = '/dashboard.html';
     }
 
-    if (!token) {
-        inviteDesc.innerHTML = '<span style="color:#f85149;">无效的邀请链接。</span>'; 
-        if(btnAcceptInvite) btnAcceptInvite.style.display = 'none'; 
-        return;
-    }
+    // 更新加载中文案
+    if (inviteDesc) inviteDesc.textContent = t['invite_loading'] || '加载中...';
 
-    const { data: { session } } = await client.auth.getSession();
-    if (!session) {
-        sessionStorage.setItem('pending_family_token', token);
-        window.location.href = '/login/';
-        return;
-    }
+    try {
+        const { data: { session } } = await client.auth.getSession();
+        if (!session) {
+            sessionStorage.setItem('pending_family_token', inviteToken);
+            window.location.href = '/login/';
+            return;
+        }
 
-    const { data: invite, error } = await client.from('family_invitations')
-        .select('*')
-        .eq('token', token)
-        .eq('status', 'pending')
-        .maybeSingle();
+        // 查询邀请详情
+        const { data: invite, error } = await client
+            .from('family_invitations')
+            .select('*')
+            .eq('token', inviteToken)
+            .maybeSingle();
 
-    if (error || !invite) {
-        inviteDesc.innerHTML = '<span style="color:#f85149;">该邀请链接已过期或已被使用。</span>';
-        if(btnAcceptInvite) btnAcceptInvite.style.display = 'none';
-        return;
-    }
+        if (error || !invite) {
+            if (inviteDesc) inviteDesc.textContent = t['invite_invalid'] || '邀请已失效或不存在';
+            return;
+        }
 
-    if (invite.invitee_email !== session.user.email) {
-        inviteDesc.innerHTML = `<span style="color:#f85149;">该邀请仅限 ${invite.invitee_email} 领取，您当前登录的是 ${session.user.email}。</span>`;
-        if(btnAcceptInvite) btnAcceptInvite.style.display = 'none';
-        return;
-    }
+        // 检查是否是自己邀请自己，或已加入
+        if (invite.invitee_email.toLowerCase() !== session.user.email.toLowerCase()) {
+            let mismatchMsg = t['invite_email_mismatch'] || '该邀请仅限 {invitee} 领取，您当前登录的是 {current}。';
+            mismatchMsg = mismatchMsg.replace('{invitee}', invite.invitee_email).replace('{current}', session.user.email);
+            inviteDesc.innerHTML = `<span style="color:#f85149;">${mismatchMsg}</span>`;
+            if (btnAcceptInvite) btnAcceptInvite.style.display = 'none';
+            return;
+        }
 
-    inviteDesc.textContent = `您被邀请加入家庭组，共享高级版权益。是否接受？`;
-    if (btnAcceptInvite) {
-        btnAcceptInvite.style.display = 'inline-block';
-        btnAcceptInvite.onclick = async () => {
-            btnAcceptInvite.disabled = true;
-            btnAcceptInvite.textContent = '正在加入...';
+        // 成功查找到，渲染描述
+        // 🌟 终极兜底：优先读邀请表里的字段，为空则直接调用 RPC 查
+        let ownerEmail = invite.owner_email;
+        
+        if (!ownerEmail && invite.owner_id) {
+            const { data: rpcEmail } = await client.rpc('get_profile_email', { target_user_id: invite.owner_id });
+            if (rpcEmail) ownerEmail = rpcEmail;
+        }
+        
+        if (!ownerEmail) ownerEmail = '对方';
 
-            const { error: updateError } = await client.from('profiles').update({
-                family_owner_id: invite.owner_id,
-                tier: 'family'
-            }).eq('id', session.user.id);
+        inviteDesc.textContent = (t['invite_accept_desc'] || '{owner} 邀请您加入家庭组，共享高级版权益。是否接受？')
+            .replace('{owner}', ownerEmail);
 
-            if (updateError) {
-                window.showToast('加入失败: ' + updateError.message, 'error');
-                btnAcceptInvite.disabled = false;
-                btnAcceptInvite.textContent = 'Accept & Join';
-                return;
-            }
+        if (btnAcceptInvite) {
+            btnAcceptInvite.style.display = 'inline-block';
+            btnAcceptInvite.onclick = async () => {
+                btnAcceptInvite.disabled = true;
+                btnAcceptInvite.textContent = t['invite_joining'] || '正在加入...';
+                
+                // 调用之前你写好的 RPC 或者直接更新
+                const { error: updateError } = await client.rpc('accept_family_invite', { invite_token: inviteToken });
+                
+                if (updateError) {
+                    window.showToast(updateError.message, 'error');
+                    btnAcceptInvite.disabled = false;
+                    btnAcceptInvite.textContent = t['invite_accept_btn'] || 'Accept & Join';
+                    return;
+                }
 
-            await client.from('family_invitations').update({ status: 'accepted' }).eq('id', invite.id);
-            window.showToast('成功加入家庭组！');
-            window.location.href = '/dashboard.html';
-        };
+                window.showToast(t['invite_accept_success'] || '成功加入家庭组！');
+                setTimeout(() => window.location.href = '/dashboard.html', 1000);
+            };
+        }
+
+        if (btnRejectInvite) {
+            btnRejectInvite.onclick = () => window.location.href = '/dashboard.html';
+        }
+
+    } catch (err) {
+        console.error("Accept Invite Error:", err);
+        if (inviteDesc) inviteDesc.textContent = "Error: " + err.message;
     }
 }

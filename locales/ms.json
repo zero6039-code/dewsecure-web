@@ -237,7 +237,7 @@
   "dash_family_member_list": "Ahli Yang Disertai",
   "dash_family_member_remove": "Alih keluar",
   "invite_accept_title": "Jemputan Kumpulan Keluarga",
-  "invite_accept_desc": "{owner} telah menjemput anda untuk menyertai kumpulan keluarga mereka.",
+  "invite_accept_desc": "{owner} menjemput anda untuk menyertai kumpulan keluarga mereka untuk berkongsi faedah Pro. Terima?",
   "invite_accept_btn": "Terima & Sertai",
   "invite_reject_btn": "Tolak",
   "invite_sent_success": "E-mel jemputan dihantar!",
@@ -257,5 +257,17 @@
   "invite_already_joined": "Anda sudah berada dalam kumpulan keluarga ini",
   "dash_bound_to": "Kumpulan Keluarga",
   "dash_owner_email": "E-mel Pemilik",
-  "dash_no_invite": "Sub-akaun tidak boleh menjana pautan rujukan"
+  "dash_no_invite": "Sub-akaun tidak boleh menjana pautan rujukan",
+  "pricing_promo_title": "Jemput Rakan, Dapatkan Pro Percuma!",
+  "pricing_promo_desc": "Jemput rakan. Apabila mereka melengkapkan pembayaran sebenar pertama (selepas tempoh bertenang 14 hari), anda akan memperoleh tambahan 120 hari Pro!",
+  "pricing_promo_btn": "Dapatkan Pautan Rujukan Saya",
+  "invite_joining": "Menyertai...",
+  "invite_email_mismatch": "Jemputan ini hanya untuk {invitee}. Anda kini log masuk sebagai {current}.",
+  "dash_btn_leave_family": "Keluar Kumpulan Keluarga",
+  "dash_leave_family_title": "Keluar Kumpulan Keluarga",
+  "dash_leave_family_desc": "Anda akan kehilangan faedah Pro selepas keluar. Adakah anda pasti?",
+  "dash_leave_success": "Telah keluar dari kumpulan keluarga",
+  "dash_cancel_tip": "Faedah Pro/Keluarga anda akan kekal sehingga {date}, kemudian diturunkan ke Percuma secara automatik.",
+  "confirm_cancel": "Batal",
+  "confirm_ok": "Sahkan"
 }

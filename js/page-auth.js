@@ -30,7 +30,7 @@ export function initAuthPage() {
     let currentEmail = '';
     const otpInput = document.getElementById('otpInput');
 
-    // 🚀 核心修复：防白嫖的发送逻辑
+    // 🚀 核心修复：直接允许自动创建用户
     btnSendOtp.addEventListener('click', async () => {
         const t = window.fallbackTranslations || {};
         const email = emailInput.value.trim().toLowerCase();
@@ -40,25 +40,15 @@ export function initAuthPage() {
         btnSendOtp.textContent = t['login_sending'] || '正在发送...';
         
         try {
-            // 1. 先尝试作为已有用户登录 (不创建新用户)
-            let { error } = await supabaseClient.auth.signInWithOtp({ 
+            // 直接传 true，存在则发码，不存在则注册并发码
+            const { error } = await supabaseClient.auth.signInWithOtp({ 
                 email, 
-                options: { shouldCreateUser: false } 
+                options: { shouldCreateUser: true } 
             });
 
-            // 2. 如果报错说用户不存在，再自动走注册流程
-            if (error && (error.message.includes('not found') || error.message.includes('User not found') || error.status === 400)) {
-                console.log("用户不存在，自动切换至注册模式...");
-                const { error: signUpError } = await supabaseClient.auth.signInWithOtp({ 
-                    email, 
-                    options: { shouldCreateUser: true } 
-                });
-                if (signUpError) throw signUpError;
-            } else if (error) {
-                throw error;
-            }
+            if (error) throw error;
 
-            // 3. 进入验证码输入界面
+            // 进入验证码输入界面
             currentEmail = email;
             document.getElementById('displayEmail').textContent = email;
             document.getElementById('otpInput').value = ''; 
@@ -107,7 +97,6 @@ export function initAuthPage() {
             btnResendOtp.textContent = t['login_sending'] || '正在发送...';
             
             try {
-                // 重新发送就不需要判断了，直接用 true
                 const { error } = await supabaseClient.auth.signInWithOtp({ email: currentEmail, options: { shouldCreateUser: true } });
                 if (error) throw error;
                 window.showToast('验证码已重新发送', 'success');
@@ -136,7 +125,7 @@ function startCountdown(btn, originalText, seconds = 60) {
             btn.disabled = false; 
             btn.textContent = originalText; 
         } else { 
-            btn.textContent = `未收到？${countdown}s 后可重发`; 
+            btn.textContent = (window.fallbackTranslations || {})['login_wait_resend'] ? (window.fallbackTranslations['login_wait_resend']).replace('{s}', countdown) : `未收到？${countdown}s 后可重发`; 
             countdown--; 
         }
     }, 1000);

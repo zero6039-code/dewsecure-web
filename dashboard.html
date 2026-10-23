@@ -57,6 +57,7 @@
                     <div style="margin-top: 25px; display: flex; gap: 10px;">
                         <button class="btn btn-primary" id="btnUpgrade" onclick="window.location.href='/pricing.html'" data-i18n="dash_btn_upgrade">升级/续费高级版</button>
                         <button class="btn btn-danger hidden" id="btnCancelSub" data-i18n="dash_btn_cancel">取消订阅</button>
+                        <button class="btn btn-danger hidden" id="btnLeaveFamily" data-i18n="dash_btn_leave_family">退出家庭组</button>
                     </div>
                 </div>
 
@@ -79,18 +80,18 @@
                     </div>
                 </div>
 
-                <div class="card" id="inviteCard">
-                    <h3><i class="fa-solid fa-gift"></i> <span data-i18n="dash_invite_title">邀请好友，获取奖励</span></h3>
-                    <p style="color:#8b949e; font-size:14px;" data-i18n="dash_invite_desc">邀请好友注册。当他们完成首次真实付费满 14 天后，您将获得额外 120 天高级版奖励！</p>
-                    <div class="invite-box">
-                        <div class="invite-input" id="myInviteCode">点击下方生成</div>
-                        <button class="btn btn-primary" id="btnGenInvite" data-i18n="dash_invite_gen">生成邀请码</button>
-                        <button class="btn btn-primary hidden" id="btnCopyInvite" style="background:#58a6ff; color:#fff;" data-i18n="dash_invite_copy">复制</button>
-                    </div>
-                    <div style="margin-top: 15px; font-size: 13px; color: #8b949e;">
-                        <span data-i18n="dash_invite_count">已成功邀请人数：</span><span id="inviteCount" style="color:#58a6ff; font-weight:bold;">0</span>
-                    </div>
-                </div>
+                <div class="card" id="inviteCard" style="margin-top: 24px;">
+    <h3><i class="fa-solid fa-gift"></i> <span data-i18n="dash_invite_title">邀请好友，共享免费高级版！</span></h3>
+    <p style="color:#8b949e; font-size:14px;" data-i18n="dash_invite_desc">邀请好友注册。当他们完成首次真实付费满 14 天后，您将获得额外 120 天高级版奖励！</p>
+    <div class="invite-box">
+        <div class="invite-input" id="myInviteCode"></div>
+        <button class="btn btn-primary" id="btnGenInvite" data-i18n="dash_invite_gen">获取我的专属推广链接</button>
+        <button class="btn btn-primary hidden" id="btnCopyInvite" style="background:#58a6ff; color:#fff;" data-i18n="dash_invite_copy">复制</button>
+    </div>
+    <div style="margin-top: 15px; font-size: 13px; color: #8b949e;">
+        <span data-i18n="dash_invite_count">已成功邀请人数：</span><span id="inviteCount" style="color:#58a6ff; font-weight:bold;">0</span>
+    </div>
+</div>
             </div>
 
             <div class="right-column">
@@ -107,6 +108,7 @@
             <div class="modal-content">
                 <h3 data-i18n="dash_cancel_title">确认取消订阅？</h3>
                 <p style="font-size:14px; color:#8b949e; margin-bottom:15px;" data-i18n="dash_cancel_desc">您的订阅将持续有效直到当前周期结束。在此期间，您可以继续享受所有高级功能。</p>
+                <p id="cancelTip" style="font-size:14px; color:#58a6ff; font-weight:bold; margin-bottom:15px;"></p>
                 <p style="font-size:14px; color:#c9d1d9;" data-i18n="dash_cancel_reason">如果不介意，能告诉我们取消的原因吗？(选填)</p>
                 <textarea id="cancelReason" placeholder="例如：太贵了、功能不符合预期、体验不好..." data-i18n-placeholder="dash_cancel_ph"></textarea>
                 <div class="modal-actions">
