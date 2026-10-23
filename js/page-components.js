@@ -1,6 +1,5 @@
 // ==========================================
-// 📁 page-components.js
-// 职责：主页浏览器 Tab 切换、手风琴、邀请页面逻辑
+// 📁 page-components.js (精简版，仅替换末尾)
 // ==========================================
 
 window.showInviteModal = function(link) {
@@ -33,7 +32,6 @@ window.showInviteModal = function(link) {
 };
 
 export function initComponentsPage() {
-    // 1. 浏览器 Tab 切换 (主页)
     if (document.getElementById('ds-title') && !document.getElementById('ds-title').dataset.bound) {
         document.getElementById('ds-title').dataset.bound = "true";
         const browserUrls = { chrome: 'https://chromewebstore.google.com/', edge: 'https://microsoftedge.microsoft.com/', firefox: 'https://addons.mozilla.org/', safari: '#', opera: '#', yandex: '#', android: '#' };
@@ -69,7 +67,6 @@ export function initComponentsPage() {
         window.addEventListener('languageChanged', () => renderBrowserData(currentTarget));
     }
 
-    // 2. 手风琴
     document.querySelectorAll('.accordion-header').forEach(header => {
         if (header.dataset.bound) return;
         header.dataset.bound = "true"; 
@@ -77,46 +74,77 @@ export function initComponentsPage() {
     });
 }
 
-export function initAcceptInvitePage() {
+// 🚀 终极修复：读取 ?invite=，处理拒绝跳转
+export async function initAcceptInvitePage() {
     if (!window.location.pathname.includes('accept-invite')) return;
+    
     const client = window.supabaseClient;
     const urlParams = new URLSearchParams(window.location.search);
-    const token = urlParams.get('token');
+    const token = urlParams.get('invite'); // 👈 改读取 invite
     const inviteDesc = document.getElementById('inviteDesc');
     const btnAcceptInvite = document.getElementById('btnAcceptInvite');
     const btnRejectInvite = document.getElementById('btnRejectInvite');
-    const t = window.fallbackTranslations || {};
+    
+    if (!inviteDesc) return;
 
-    if (!token) {
-        inviteDesc.textContent = "无效的邀请链接。"; btnAcceptInvite.style.display = 'none'; return;
+    // 秒绑拒绝按钮，不管有没有 token 都能点
+    if (btnRejectInvite) {
+        btnRejectInvite.onclick = () => window.location.href = '/dashboard.html';
     }
 
-    client.auth.getSession().then(async ({ data: { session } }) => {
-        if (!session) {
-            sessionStorage.setItem('pending_family_token', token);
-            window.location.href = '/login/';
-            return;
-        }
-        const { data, error } = await client.rpc('get_family_invite_info', { p_token: token });
-        if (error || !data.success) {
-            inviteDesc.textContent = t['invite_invalid'] || '邀请已失效或已被处理。';
-            btnAcceptInvite.style.display = 'none';
-            return;
-        }
-        let desc = t['invite_accept_desc'] || '{owner} 邀请你加入他的家庭组，共享高级版权益。';
-        inviteDesc.textContent = desc.replace('{owner}', data.owner_email);
+    if (!token) {
+        inviteDesc.innerHTML = '<span style="color:#f85149;">无效的邀请链接。</span>'; 
+        if(btnAcceptInvite) btnAcceptInvite.style.display = 'none'; 
+        return;
+    }
 
+    const { data: { session } } = await client.auth.getSession();
+    if (!session) {
+        sessionStorage.setItem('pending_family_token', token);
+        window.location.href = '/login/';
+        return;
+    }
+
+    const { data: invite, error } = await client.from('family_invitations')
+        .select('*')
+        .eq('token', token)
+        .eq('status', 'pending')
+        .maybeSingle();
+
+    if (error || !invite) {
+        inviteDesc.innerHTML = '<span style="color:#f85149;">该邀请链接已过期或已被使用。</span>';
+        if(btnAcceptInvite) btnAcceptInvite.style.display = 'none';
+        return;
+    }
+
+    if (invite.invitee_email !== session.user.email) {
+        inviteDesc.innerHTML = `<span style="color:#f85149;">该邀请仅限 ${invite.invitee_email} 领取，您当前登录的是 ${session.user.email}。</span>`;
+        if(btnAcceptInvite) btnAcceptInvite.style.display = 'none';
+        return;
+    }
+
+    inviteDesc.textContent = `您被邀请加入家庭组，共享高级版权益。是否接受？`;
+    if (btnAcceptInvite) {
+        btnAcceptInvite.style.display = 'inline-block';
         btnAcceptInvite.onclick = async () => {
             btnAcceptInvite.disabled = true;
-            const { data: acceptData, error: acceptError } = await client.rpc('accept_family_invite', { p_token: token });
-            if (acceptError || !acceptData.success) { 
-                window.showToast(acceptError?.message || acceptData.message, 'error'); 
-                btnAcceptInvite.disabled = false; 
-                return; 
+            btnAcceptInvite.textContent = '正在加入...';
+
+            const { error: updateError } = await client.from('profiles').update({
+                family_owner_id: invite.owner_id,
+                tier: 'family'
+            }).eq('id', session.user.id);
+
+            if (updateError) {
+                window.showToast('加入失败: ' + updateError.message, 'error');
+                btnAcceptInvite.disabled = false;
+                btnAcceptInvite.textContent = 'Accept & Join';
+                return;
             }
-            window.showToast(acceptData.message);
-            setTimeout(() => window.location.href = '/dashboard.html', 1500);
+
+            await client.from('family_invitations').update({ status: 'accepted' }).eq('id', invite.id);
+            window.showToast('成功加入家庭组！');
+            window.location.href = '/dashboard.html';
         };
-        btnRejectInvite.onclick = () => window.location.href = '/';
-    });
+    }
 }

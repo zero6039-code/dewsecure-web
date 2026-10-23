@@ -1,7 +1,10 @@
 // ==========================================
-// 📁 page-dashboard.js
-// 职责：控制台页面的全部逻辑（数据拉取、设备、家庭、通知、订阅）
+// 📁 page-dashboard.js (主调度中心)
+// 职责：获取 Session 与用户数据，渲染基础信息，按需调用子模块
 // ==========================================
+
+import { initDevicesUI } from './page-devices.js';
+import { initFamilyUI } from './page-family.js';
 
 let dashboardData = null;
 let currentDashboardClient = null;
@@ -19,13 +22,11 @@ export async function initDashboardLogic() {
         const urlParams = new URLSearchParams(window.location.search);
         const hasTokenInUrl = urlParams.get('token');
         
-        // 如果没 session，且 URL 带 token（说明正在 SSO），先等待不跳转
         if (!session && !hasTokenInUrl) { 
             window.location.href = '/login/'; 
             return; 
         }
         
-        // 如果确实没 session 但带了 token，说明拦截失败或延迟了，直接刷新重新走流程
         if (!session && hasTokenInUrl) {
             window.location.reload();
             return;
@@ -43,6 +44,7 @@ export async function initDashboardLogic() {
         dashboardData = profile || { id: currentUser.id, email: currentUser.email, tier: 'free', trial_ends_at: null, invite_success_count: 0 };
         if (!dashboardData.email) dashboardData.email = currentUser.email;
 
+        // 处理家庭组共享状态
         if (dashboardData.family_owner_id) {
             try {
                 const { data: sharedStatus } = await client.rpc('get_family_shared_status');
@@ -72,7 +74,7 @@ export async function initDashboardLogic() {
 function bindDashboardButtons(currentUser) {
     const client = currentDashboardClient;
     
-    // 邀请好友
+    // 邀请好友 (保持原样)
     if (!dashboardData.family_owner_id) {
         const btnGen = document.getElementById('btnGenInvite');
         if (btnGen) {
@@ -96,7 +98,7 @@ function bindDashboardButtons(currentUser) {
         }
     }
 
-    // 取消订阅
+    // 取消订阅 (保持原样)
     const btnCancelSub = document.getElementById('btnCancelSub');
     if (btnCancelSub) {
         btnCancelSub.onclick = () => document.getElementById('cancelModal').classList.add('active');
@@ -176,8 +178,16 @@ function renderDashboardTexts() {
     }
 
     renderNotifications();
-    renderDeviceCards();
-    renderFamilyCard();
+
+    // 🚀 核心调度：分发数据给独立的模块处理
+    if (dashboardData) {
+        if (dashboardData.tier !== 'free') {
+            initDevicesUI(currentDashboardClient, dashboardData);
+        }
+        if (dashboardData.tier === 'family') {
+            initFamilyUI(currentDashboardClient, dashboardData);
+        }
+    }
 }
 
 function renderNotifications() {
@@ -199,7 +209,3 @@ function renderNotifications() {
         list.innerHTML = `<li class="notification-item" style="text-align:center; color:#8b949e;">${t['dash_notif_empty'] || '暂无新通知'}</li>`;
     }
 }
-
-// 注意：设备渲染和家庭组渲染因篇幅原因，此处保留接口
-function renderDeviceCards() { /* 原有逻辑 */ }
-function renderFamilyCard() { /* 原有逻辑 */ }

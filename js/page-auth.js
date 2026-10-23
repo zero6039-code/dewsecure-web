@@ -29,24 +29,49 @@ export function initAuthPage() {
     const btnResendOtp = document.getElementById('btnResendOtp');
     let currentEmail = '';
     const otpInput = document.getElementById('otpInput');
+
+    // 🚀 核心修复：防白嫖的发送逻辑
     btnSendOtp.addEventListener('click', async () => {
         const t = window.fallbackTranslations || {};
         const email = emailInput.value.trim();
         if (!email || !email.includes('@')) { window.showError('emailError', t['login_error_email'] || '请输入有效的邮箱地址'); return; }
-        btnSendOtp.disabled = true; btnSendOtp.textContent = t['login_sending'] || '正在发送...';
+        
+        btnSendOtp.disabled = true; 
+        btnSendOtp.textContent = t['login_sending'] || '正在发送...';
+        
         try {
-            const { error } = await supabaseClient.auth.signInWithOtp({ email, options: { shouldCreateUser: true } });
-            if (error) throw error;
+            // 1. 先尝试作为已有用户登录 (不创建新用户)
+            let { error } = await supabaseClient.auth.signInWithOtp({ 
+                email, 
+                options: { shouldCreateUser: false } 
+            });
+
+            // 2. 如果报错说用户不存在，再自动走注册流程
+            if (error && (error.message.includes('not found') || error.message.includes('User not found') || error.status === 400)) {
+                console.log("用户不存在，自动切换至注册模式...");
+                const { error: signUpError } = await supabaseClient.auth.signInWithOtp({ 
+                    email, 
+                    options: { shouldCreateUser: true } 
+                });
+                if (signUpError) throw signUpError;
+            } else if (error) {
+                throw error;
+            }
+
+            // 3. 进入验证码输入界面
             currentEmail = email;
             document.getElementById('displayEmail').textContent = email;
             document.getElementById('otpInput').value = ''; 
-            stepEmail.classList.add('hidden'); stepOtp.classList.remove('hidden');
+            stepEmail.classList.add('hidden'); 
+            stepOtp.classList.remove('hidden');
+            
             startCountdown(btnSendOtp, t['login_btn'] || '使用邮箱登录 (OTP)');
             if (btnResendOtp) startCountdown(btnResendOtp, t['login_btn_resend'] || '重新发送验证码');
-            if (btnResendOtp) startCountdown(btnResendOtp, t['login_btn_resend'] || '重新发送验证码');
+
         } catch (err) {
             window.showError('emailError', err.message || t['login_error_send'] || '发送失败'); 
-            btnSendOtp.disabled = false; btnSendOtp.textContent = t['login_btn'] || '使用邮箱登录 (OTP)';
+            btnSendOtp.disabled = false; 
+            btnSendOtp.textContent = t['login_btn'] || '使用邮箱登录 (OTP)';
         }
     });
 
@@ -74,7 +99,6 @@ export function initAuthPage() {
     emailInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') { e.preventDefault(); btnSendOtp.click(); } });
     otpInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') { e.preventDefault(); btnVerifyOtp.click(); } });
 
-    
     if (btnResendOtp) {
         btnResendOtp.addEventListener('click', async () => {
             if (btnResendOtp.disabled) return;
@@ -83,18 +107,13 @@ export function initAuthPage() {
             btnResendOtp.textContent = t['login_sending'] || '正在发送...';
             
             try {
+                // 重新发送就不需要判断了，直接用 true
                 const { error } = await supabaseClient.auth.signInWithOtp({ email: currentEmail, options: { shouldCreateUser: true } });
                 if (error) throw error;
                 window.showToast('验证码已重新发送', 'success');
                 startCountdown(btnResendOtp, t['login_btn_resend'] || '重新发送验证码');
             } catch (err) {
-                // 捕获 Supabase 的限流错误
-                if (err.message && err.message.toLowerCase().includes('rate limit')) {
-                    window.showToast('请求过于频繁，请稍后再试', 'error');
-                } else {
-                    window.showToast(err.message || '发送失败', 'error');
-                }
-                // 失败也恢复按钮，但可能有冷却
+                window.showToast(err.message || '发送失败', 'error');
                 btnResendOtp.disabled = false;
                 btnResendOtp.textContent = t['login_btn_resend'] || '重新发送验证码';
             }
@@ -107,8 +126,6 @@ export function initAuthPage() {
         btnSendOtp.textContent = (window.fallbackTranslations || {})['login_btn'] || '使用邮箱登录 (OTP)';
     });
 }
-
-
 
 function startCountdown(btn, originalText, seconds = 60) {
     let countdown = seconds; 
@@ -124,5 +141,3 @@ function startCountdown(btn, originalText, seconds = 60) {
         }
     }, 1000);
 }
-
-
