@@ -1,10 +1,12 @@
 // ==========================================
-// 📁 page-dashboard.js (主调度中心)
-// 职责：获取 Session 与用户数据，渲染基础信息，按需调用子模块
+// 📁 page-dashboard.js (精简调度中心)
+// 职责：调度数据获取、UI 渲染与插件同步
 // ==========================================
 
 import { initDevicesUI } from './page-devices.js';
 import { initFamilyUI } from './page-family.js';
+import { fetchDashboardData } from './dashboard-fetcher.js';
+import { pushAuthStateToExtension } from './dashboard-sync.js';
 
 let dashboardData = null;
 let currentDashboardClient = null;
@@ -39,30 +41,18 @@ export async function initDashboardLogic() {
         }
         
         const currentUser = session.user;
-        let { data: profile } = await client.from('profiles').select('*').eq('id', currentUser.id).maybeSingle();
         
-        dashboardData = profile || { id: currentUser.id, email: currentUser.email, tier: 'free', trial_ends_at: null, invite_success_count: 0 };
-        if (!dashboardData.email) dashboardData.email = currentUser.email;
+        // 1. 调用独立的 Fetcher 拉取数据
+        const dataResult = await fetchDashboardData(client, currentUser);
+        dashboardData = dataResult.dashboardData;
+        dashboardNotifs = dataResult.dashboardNotifs;
 
-        // 处理家庭组共享状态
-        if (dashboardData.family_owner_id) {
-            try {
-                const { data: sharedStatus } = await client.rpc('get_family_shared_status');
-                if (sharedStatus && sharedStatus.success) {
-                    dashboardData.tier = 'family';
-                    dashboardData.trial_ends_at = sharedStatus.owner_expire;
-                    dashboardData.owner_email = sharedStatus.owner_email;
-                }
-            } catch (e) { console.error("获取家庭组状态失败:", e); }
-        }
-
-        const { data: notifs } = await client.from('notifications').select('*').order('created_at', { ascending: false });
-        dashboardNotifs = notifs || [];
-        const unreadIds = dashboardNotifs.filter(n => !n.is_read).map(n => n.id);
-        if (unreadIds.length > 0) await client.from('notifications').update({ is_read: true }).in('id', unreadIds);
-        
+        // 2. 渲染 UI
         renderDashboardTexts();
         bindDashboardButtons(currentUser);
+
+        // 3. 同步给插件
+        pushAuthStateToExtension(session, dashboardData);
 
     } catch (err) { 
         console.error("Dashboard 初始化失败:", err); 
@@ -74,7 +64,6 @@ export async function initDashboardLogic() {
 function bindDashboardButtons(currentUser) {
     const client = currentDashboardClient;
     
-    // 邀请好友 (保持原样)
     if (!dashboardData.family_owner_id) {
         const btnGen = document.getElementById('btnGenInvite');
         if (btnGen) {
@@ -98,7 +87,6 @@ function bindDashboardButtons(currentUser) {
         }
     }
 
-    // 取消订阅 (保持原样)
     const btnCancelSub = document.getElementById('btnCancelSub');
     if (btnCancelSub) {
         btnCancelSub.onclick = () => document.getElementById('cancelModal').classList.add('active');
@@ -179,7 +167,6 @@ function renderDashboardTexts() {
 
     renderNotifications();
 
-    // 🚀 核心调度：分发数据给独立的模块处理
     if (dashboardData) {
         if (dashboardData.tier !== 'free') {
             initDevicesUI(currentDashboardClient, dashboardData);
