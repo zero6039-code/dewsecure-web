@@ -511,3 +511,14 @@ body > .skiptranslate { display: none !important; }
     max-height: 400px;
     overflow-y: auto;
 }
+/* 隐藏 details 原生小三角 */
+details > summary {
+    list-style: none;
+}
+details > summary::-webkit-details-marker {
+    display: none;
+}
+/* 展开时图标旋转 */
+details[open] .accordion-icon {
+    transform: rotate(180deg);
+}
