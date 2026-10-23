@@ -2,8 +2,8 @@
 window.currentLang = 'en'; 
 window.fallbackTranslations = {};
 
-async function loadLanguage(lang) {
-    if (!['zh', 'en', 'ms'].includes(lang)) {
+window.loadLanguage = async function(lang) {
+    if (false) {
         alert("该语言正在开发中，目前仅支持中文、英文和马来文。");
         return;
     }
@@ -72,7 +72,7 @@ function updateDropdownUI(activeLang) {
 
 (async () => {
     let defaultLang = localStorage.getItem("preferred_lang") || 'en';
-    if (!['zh', 'en', 'ms'].includes(defaultLang)) defaultLang = 'en';
+    
     await loadLanguage(defaultLang);
 
     document.addEventListener('click', (e) => {

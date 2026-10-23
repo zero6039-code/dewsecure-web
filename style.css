@@ -507,3 +507,7 @@ body > .skiptranslate { display: none !important; }
     -webkit-text-security: none;
     font-family: monospace !important;
 }
+.lang-dropdown {
+    max-height: 400px;
+    overflow-y: auto;
+}

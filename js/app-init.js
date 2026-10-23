@@ -82,10 +82,15 @@ document.addEventListener('DOMContentLoaded', async () => {
         window.swup = new Swup({ containers: ['#swup'] });
         window.swup.hooks.on('page:view', () => {
             routeAndInit();
-            // 🌟 强力保险：延迟 50ms 强制重绘翻译，确保 DOM 已渲染完毕
+            // 🌟 强力保险：延迟 100ms 重新加载当前语言包，确保 Swup 替换的 DOM 被完美翻译
             setTimeout(() => {
-                if (window.translatePage) window.translatePage();
-            }, 50);
+                const currentLang = localStorage.getItem('preferred_lang') || 'en';
+                if (window.loadLanguage) {
+                    window.loadLanguage(currentLang);
+                } else if (window.translatePage) {
+                    window.translatePage();
+                }
+            }, 100);
         });
     }
 });
