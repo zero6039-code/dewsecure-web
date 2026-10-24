@@ -9,15 +9,28 @@ export function initAuthPage() {
     btnSendOtp.dataset.bound = "true";
     const supabaseClient = window.supabaseClient;
     
+    // 🌟 统一处理登录后的跳转逻辑
+    function getRedirectTarget() {
+        // 优先级 1：处理家庭组邀请
+        const pendingToken = sessionStorage.getItem('pending_family_token');
+        if (pendingToken) {
+            sessionStorage.removeItem('pending_family_token');
+            return '/accept-invite.html?invite=' + pendingToken;
+        }
+        // 优先级 2：处理 URL 带的 redirect 参数（如从定价页跳来的）
+        const urlParams = new URLSearchParams(window.location.search);
+        const redirectPath = urlParams.get('redirect');
+        if (redirectPath) {
+            // 清理参数，避免重复携带，同时保证以 / 开头
+            return redirectPath.startsWith('/') ? redirectPath : '/' + redirectPath;
+        }
+        // 默认：进入控制台
+        return '/dashboard.html';
+    }
+
     supabaseClient.auth.getSession().then(({ data: { session } }) => {
         if (session) {
-            const pendingToken = sessionStorage.getItem('pending_family_token');
-            if (pendingToken) {
-                sessionStorage.removeItem('pending_family_token');
-                window.location.href = '/accept-invite.html?token=' + pendingToken;
-            } else {
-                window.location.href = '/dashboard.html';
-            }
+            window.location.href = getRedirectTarget();
         }
     });
 
@@ -30,7 +43,6 @@ export function initAuthPage() {
     let currentEmail = '';
     const otpInput = document.getElementById('otpInput');
 
-    // 🚀 核心修复：直接允许自动创建用户
     btnSendOtp.addEventListener('click', async () => {
         const t = window.fallbackTranslations || {};
         const email = emailInput.value.trim().toLowerCase();
@@ -40,7 +52,6 @@ export function initAuthPage() {
         btnSendOtp.textContent = t['login_sending'] || '正在发送...';
         
         try {
-            // 直接传 true，存在则发码，不存在则注册并发码
             const { error } = await supabaseClient.auth.signInWithOtp({ 
                 email, 
                 options: { shouldCreateUser: true } 
@@ -48,7 +59,6 @@ export function initAuthPage() {
 
             if (error) throw error;
 
-            // 进入验证码输入界面
             currentEmail = email;
             document.getElementById('displayEmail').textContent = email;
             document.getElementById('otpInput').value = ''; 
@@ -73,13 +83,10 @@ export function initAuthPage() {
         try {
             const { error } = await supabaseClient.auth.verifyOtp({ email: currentEmail, token, type: 'email' });
             if (error) throw error;
-            const pendingToken = sessionStorage.getItem('pending_family_token');
-            if (pendingToken) {
-                sessionStorage.removeItem('pending_family_token');
-                window.location.href = '/accept-invite.html?token=' + pendingToken;
-            } else {
-                window.location.href = '/dashboard.html';
-            }
+            
+            // 🌟 验证成功后，执行统一跳转
+            window.location.href = getRedirectTarget();
+            
         } catch (err) {
             window.showError('otpError', t['login_error_otp_expired'] || '验证码错误或已过期'); 
             btnVerifyOtp.disabled = false; btnVerifyOtp.textContent = t['login_btn_verify'] || '验证并登录';

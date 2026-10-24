@@ -7,5 +7,10 @@
   },
   "devDependencies": {
     "wrangler": "^4.0.0"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.118.0",
+    "hono": "^4.13.13",
+    "stripe": "^23.0.1"
   }
 }

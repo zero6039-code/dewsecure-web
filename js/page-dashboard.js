@@ -1,6 +1,5 @@
 // ==========================================
-// 📁 page-dashboard.js (精简调度中心)
-// 职责：调度数据获取、UI 渲染与插件同步
+// 📁 page-dashboard.js (商业级闭环最终版)
 // ==========================================
 
 import { initDevicesUI } from './page-devices.js';
@@ -12,6 +11,8 @@ let dashboardData = null;
 let currentDashboardClient = null;
 let dashboardNotifs = [];
 
+const API_BASE = (window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost') ? 'http://127.0.0.1:8787' : '';
+
 export async function initDashboardLogic() {
     const client = window.supabaseClient;
     if (!client) return;
@@ -20,18 +21,38 @@ export async function initDashboardLogic() {
     const loader = document.getElementById('page-loader');
     
     try {
-        const { data: { session } } = await client.auth.getSession();
+        let session = null;
+        const { data } = await client.auth.getSession();
+        session = data.session;
+
+        if (!session) {
+            await new Promise((resolve) => {
+                const { data: { subscription } } = client.auth.onAuthStateChange((event, newSession) => {
+                    if (newSession) {
+                        session = newSession;
+                        subscription.unsubscribe();
+                        resolve();
+                    }
+                });
+                setTimeout(() => { subscription.unsubscribe(); resolve(); }, 2000);
+            });
+        }
+
         const urlParams = new URLSearchParams(window.location.search);
         const hasTokenInUrl = urlParams.get('token');
+        const isCheckoutSuccess = urlParams.get('checkout') === 'success';
         
-        if (!session && !hasTokenInUrl) { 
-            window.location.href = '/login/'; 
-            return; 
-        }
+        if (!session && !hasTokenInUrl) { window.location.href = '/login/'; return; }
+        if (!session && hasTokenInUrl) { window.location.reload(); return; }
         
-        if (!session && hasTokenInUrl) {
-            window.location.reload();
-            return;
+        // 🌟 核心修复：如果是支付成功跳回来的，等待 2.5 秒让 Webhook 写入数据库
+        if (isCheckoutSuccess) {
+            const t = window.fallbackTranslations || {};
+            if (window.showToast) {
+                window.showToast(t['dash_syncing'] || 'Syncing payment status, please wait...', 'success');
+            }
+            await new Promise(r => setTimeout(r, 2500));
+            window.history.replaceState({}, document.title, window.location.pathname);
         }
         
         if (loader) {
@@ -41,17 +62,12 @@ export async function initDashboardLogic() {
         }
         
         const currentUser = session.user;
-        
-        // 1. 调用独立的 Fetcher 拉取数据
         const dataResult = await fetchDashboardData(client, currentUser);
         dashboardData = dataResult.dashboardData;
         dashboardNotifs = dataResult.dashboardNotifs;
 
-        // 2. 渲染 UI
         renderDashboardTexts();
         bindDashboardButtons(currentUser);
-
-        // 3. 同步给插件
         pushAuthStateToExtension(session, dashboardData);
 
     } catch (err) { 
@@ -63,16 +79,17 @@ export async function initDashboardLogic() {
 
 function bindDashboardButtons(currentUser) {
     const client = currentDashboardClient;
-    const t = window.fallbackTranslations || {};
+    const getT = () => window.fallbackTranslations || {};
     
-    // 🌟 1. 邀请好友逻辑
+    // 1. 邀请好友
     if (!dashboardData.family_owner_id) {
         const btnGen = document.getElementById('btnGenInvite');
         if (btnGen) {
             btnGen.onclick = async () => {
+                const t = getT();
                 btnGen.disabled = true; btnGen.textContent = t['dash_gen_ing'] || '生成中...';
                 const { data, error } = await client.rpc('generate_invitation_code');
-                if (error) { window.showToast((t['dash_gen_fail'] || '生成失败: ') + error.message, 'error'); btnGen.disabled = false; btnGen.textContent = t['dash_invite_gen'] || '获取推广链接'; return; }
+                if (error) { window.showToast((t['dash_gen_fail'] || '生成失败: ') + error.message, 'error'); btnGen.disabled = false; btnGen.textContent = t['dash_invite_gen'] || '获取我的专属推广链接'; return; }
                 
                 const refLink = window.location.origin + '/pricing.html?ref=' + data;
                 document.getElementById('myInviteCode').textContent = refLink;
@@ -88,57 +105,138 @@ function bindDashboardButtons(currentUser) {
         }
     }
 
-    // 🌟 2. 取消订阅逻辑 (主号/Pro)
+    // 2. 领取 30 天试用
+    const btnClaimTrial = document.getElementById('btnClaimTrial');
+    if (btnClaimTrial) {
+        btnClaimTrial.onclick = async () => {
+            const t = getT();
+            btnClaimTrial.disabled = true;
+            btnClaimTrial.textContent = t['dash_cancel_processing'] || '处理中...';
+            try {
+                const { data: { session } } = await client.auth.getSession();
+                const res = await fetch(API_BASE + '/api/claim-trial', {
+                    method: 'POST',
+                    headers: { 'Authorization': 'Bearer ' + session.access_token, 'Content-Type': 'application/json' }
+                });
+                if (!res.ok) throw new Error('Failed');
+                window.showToast(t['dash_trial_success'] || '领取成功！', 'success');
+                setTimeout(() => window.location.reload(), 1000);
+            } catch (e) {
+                window.showToast(t['dash_trial_fail'] || '领取失败，请重试', 'error');
+                btnClaimTrial.disabled = false;
+                btnClaimTrial.textContent = t['dash_btn_claim_trial'] || '领取试用';
+            }
+        };
+    }
+
+    // 3. 管理订阅 (Stripe Portal) / 升级正式版
+    const btnManageSub = document.getElementById('btnManageSub');
+    if (btnManageSub) {
+        btnManageSub.onclick = async () => {
+            const t = getT();
+            
+            if (!dashboardData.stripe_customer_id) {
+                window.location.href = '/pricing.html';
+                return;
+            }
+
+            btnManageSub.disabled = true;
+            btnManageSub.textContent = t['dash_cancel_processing'] || '处理中...';
+            try {
+                const { data: { session } } = await client.auth.getSession();
+                const res = await fetch(API_BASE + '/api/portal', {
+                    method: 'POST',
+                    headers: { 'Authorization': 'Bearer ' + session.access_token, 'Content-Type': 'application/json' }
+                });
+                const data = await res.json();
+                if (data.url) window.location.href = data.url;
+                else throw new Error('No portal URL');
+            } catch (err) {
+                window.showToast('无法打开管理页面', 'error');
+                btnManageSub.disabled = false;
+                btnManageSub.textContent = t['dash_btn_manage'] || '管理订阅';
+            }
+        };
+    }
+
+    // 4. 取消订阅
     const btnCancelSub = document.getElementById('btnCancelSub');
     if (btnCancelSub) {
         btnCancelSub.onclick = () => {
-            const expireDateStr = dashboardData.trial_ends_at ? new Date(dashboardData.trial_ends_at).toLocaleDateString() : '未知';
+            const t = getT();
+            const expireDateStr = dashboardData.subscription_ends_at ? new Date(dashboardData.subscription_ends_at).toLocaleDateString() : '未知';
             const tip = (t['dash_cancel_tip'] || '您的权益将持续到 {date}。').replace('{date}', expireDateStr);
-            document.getElementById('cancelTip').textContent = tip; // 在弹窗里显示
+            document.getElementById('cancelTip').textContent = tip;
             document.getElementById('cancelModal').classList.add('active');
         };
         
         document.getElementById('btnCloseModal').onclick = () => document.getElementById('cancelModal').classList.remove('active');
         
         document.getElementById('btnConfirmCancel').onclick = async () => {
+            const t = getT();
             const btn = document.getElementById('btnConfirmCancel');
             const reason = document.getElementById('cancelReason').value.trim();
             btn.disabled = true; 
             btn.textContent = t['dash_cancel_processing'] || '处理中...';
             
-            const { error } = await client.from('reports').insert({
-                user_id: currentUser.id, reporter_email: currentUser.email, report_type: 'other', url: 'Cancel Sub', description: `[取消原因] ${reason || '未填写'}`
-            });
-            
-            if (error) { 
-                window.showToast('提交失败: ' + error.message, 'error'); 
+            try {
+                const { data: { session } } = await client.auth.getSession();
+                const res = await fetch(API_BASE + '/api/cancel', {
+                    method: 'POST',
+                    headers: { 'Authorization': 'Bearer ' + session.access_token, 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ reason })
+                });
+                
+                if (!res.ok) throw new Error('Failed to cancel');
+                
+                window.showToast(t['dash_cancel_success'] || '您的取消请求已成功记录。'); 
+                document.getElementById('cancelModal').classList.remove('active'); 
+                btnCancelSub.classList.add('hidden'); 
+                document.getElementById('btnUpgrade').classList.remove('hidden');
+                setTimeout(() => window.location.reload(), 1000);
+            } catch (err) {
+                window.showToast(t['dash_cancel_fail'] || '取消失败，请稍后再试。', 'error');
                 btn.disabled = false; btn.textContent = t['dash_cancel_yes'] || '确认取消'; 
-                return; 
             }
-            
-            window.showToast(t['dash_cancel_success'] || '您的取消请求已记录。'); 
-            document.getElementById('cancelModal').classList.remove('active'); 
-            btnCancelSub.classList.add('hidden'); 
-            document.getElementById('btnUpgrade').classList.remove('hidden');
-            btn.disabled = false; btn.textContent = t['dash_cancel_yes'] || '确认取消';
         };
     }
 
-    // 🌟 3. 退出家庭组 (子号)
+    // 5. 恢复自动续费
+    const btnUpgrade = document.getElementById('btnUpgrade');
+    if (btnUpgrade && dashboardData.cancel_at_period_end) {
+        btnUpgrade.onclick = async () => {
+            const t = getT();
+            btnUpgrade.disabled = true;
+            btnUpgrade.textContent = t['dash_cancel_processing'] || '处理中...';
+            try {
+                const { data: { session } } = await client.auth.getSession();
+                const res = await fetch(API_BASE + '/api/resume', {
+                    method: 'POST',
+                    headers: { 'Authorization': 'Bearer ' + session.access_token, 'Content-Type': 'application/json' }
+                });
+                if (!res.ok) throw new Error('Failed');
+                window.showToast(t['dash_resume_success'] || '恢复成功！', 'success');
+                setTimeout(() => window.location.reload(), 1000);
+            } catch (e) {
+                window.showToast(t['dash_resume_fail'] || '操作失败，请重试', 'error');
+                btnUpgrade.disabled = false;
+                btnUpgrade.textContent = t['dash_btn_resume'] || '恢复自动续费';
+            }
+        };
+    }
+
+    // 6. 退出家庭组
     const btnLeave = document.getElementById('btnLeaveFamily');
     if (btnLeave) {
         btnLeave.onclick = () => {
+            const t = getT();
             window.showGlassConfirm(
                 t['dash_leave_family_title'] || '退出家庭组', 
                 t['dash_leave_family_desc'] || '退出后您将失去高级版权益，确定吗？', 
                 async () => {
                     const { error } = await client.rpc('remove_family_member', { p_invitee_email: currentUser.email });
-                    if (!error) {
-                        window.showToast(t['dash_leave_success'] || '已退出家庭组');
-                        window.location.reload();
-                    } else {
-                        window.showToast('Error: ' + error.message, 'error');
-                    }
+                    if (!error) { window.showToast(t['dash_leave_success'] || '已退出家庭组'); window.location.reload(); } 
+                    else { window.showToast('Error: ' + error.message, 'error'); }
                 }
             );
         };
@@ -155,11 +253,13 @@ function renderDashboardTexts() {
     const expireDateEl = document.getElementById('expireDate');
     const btnCancel = document.getElementById('btnCancelSub');
     const btnUpgrade = document.getElementById('btnUpgrade');
+    const btnManageSub = document.getElementById('btnManageSub');
+    const btnClaimTrial = document.getElementById('btnClaimTrial');
 
     document.getElementById('inviteCount').textContent = profile.invite_success_count || 0;
     tierBadge.classList.remove('skeleton-text');
-    let expireDate = profile.trial_ends_at ? new Date(profile.trial_ends_at) : null;
-    // 🌟 兜底：如果是付费版但没有过期时间，默认给从今天起算 365 天
+    
+    let expireDate = profile.subscription_ends_at ? new Date(profile.subscription_ends_at) : (profile.trial_ends_at ? new Date(profile.trial_ends_at) : null);
     if (!expireDate && (profile.tier === 'pro' || profile.tier === 'family' || profile.tier === 'sub-family')) {
         expireDate = new Date();
         expireDate.setDate(expireDate.getDate() + 365);
@@ -185,10 +285,11 @@ function renderDashboardTexts() {
     // 默认隐藏所有按钮
     if (btnCancel) btnCancel.classList.add('hidden');
     if (btnUpgrade) btnUpgrade.classList.add('hidden');
+    if (btnManageSub) btnManageSub.classList.add('hidden');
     if (btnLeaveFamily) btnLeaveFamily.classList.add('hidden');
+    if (btnClaimTrial) btnClaimTrial.classList.add('hidden');
 
     if (profile.tier === 'free') {
-        // 免费版
         tierBadge.textContent = t['dash_tier_free'] || '免费版 (Free)'; 
         tierBadge.className = 'status-badge'; 
         daysLeftEl.textContent = t['dash_forever'] || '永久有效'; 
@@ -198,50 +299,55 @@ function renderDashboardTexts() {
             btnUpgrade.classList.remove('hidden');
             btnUpgrade.textContent = t['dash_btn_upgrade'] || '升级/续费高级版';
         }
+        if(btnClaimTrial && !profile.trial_ends_at) {
+            btnClaimTrial.classList.remove('hidden');
+        }
     } else {
-        // 付费版 (Pro / Family 主号 / Family 子号)
-        tierBadge.textContent = profile.tier === 'pro' ? (t['dash_tier_pro'] || '高级版 (Pro)') : (t['dash_tier_family'] || '家庭版 (Family)');
+        if (profile.tier === 'pro') {
+            tierBadge.textContent = (profile.trial_ends_at && !profile.stripe_customer_id) ? (t['dash_tier_trial'] || 'Pro 试用版') : (t['dash_tier_pro'] || '高级版 (Pro)');
+        } else {
+            tierBadge.textContent = t['dash_tier_family'] || '家庭版 (Family)';
+        }
         tierBadge.className = 'status-badge status-pro';
         
         if (expireDate && expireDate > now) {
             const diffDays = Math.ceil(Math.abs(expireDate - now) / (1000 * 60 * 60 * 24)); 
             daysLeftEl.textContent = `${diffDays} ${t['dash_days'] || '天'}`; 
-            expireDateEl.textContent = expireDate.toLocaleDateString('zh-CN');
+            expireDateEl.textContent = expireDate.toLocaleDateString();
             
             if (isSubAccount) {
-                // 🌟 子号：只显示退出按钮
                 if (btnLeaveFamily) btnLeaveFamily.classList.remove('hidden');
             } else {
-                // 🌟 主号/Pro：显示续费和取消
-                if(btnCancel) {
-                    btnCancel.classList.remove('hidden'); 
-                    btnCancel.textContent = t['dash_btn_cancel'] || '取消订阅';
-                }
-                if(btnUpgrade) {
-                    btnUpgrade.classList.remove('hidden');
-                    btnUpgrade.textContent = t['dash_btn_renew'] || '续费 / 延长订阅';
+                if (profile.cancel_at_period_end) {
+                    if(btnUpgrade) {
+                        btnUpgrade.classList.remove('hidden');
+                        btnUpgrade.textContent = t['dash_btn_resume'] || '恢复自动续费';
+                    }
+                } else {
+                    if (profile.stripe_customer_id) {
+                        if(btnManageSub) { 
+                            btnManageSub.classList.remove('hidden'); 
+                            btnManageSub.textContent = t['dash_btn_manage'] || '管理订阅'; 
+                        }
+                        if(btnCancel) { btnCancel.classList.remove('hidden'); btnCancel.textContent = t['dash_btn_cancel'] || '取消订阅'; }
+                    } else {
+                        if(btnManageSub) { 
+                            btnManageSub.classList.remove('hidden'); 
+                            btnManageSub.textContent = t['dash_btn_upgrade_full'] || '升级到正式版'; 
+                        }
+                    }
                 }
             }
         } else {
-            // 已过期
             daysLeftEl.textContent = t['dash_expired'] || '已过期'; 
-            if(btnUpgrade) {
-                btnUpgrade.classList.remove('hidden');
-                btnUpgrade.textContent = t['dash_btn_upgrade'] || '升级/续费高级版';
-            }
+            if(btnUpgrade) { btnUpgrade.classList.remove('hidden'); btnUpgrade.textContent = t['dash_btn_upgrade'] || '升级/续费高级版'; }
         }
     }
 
     renderNotifications();
 
-    if (dashboardData) {
-        if (dashboardData.tier !== 'free') {
-            initDevicesUI(currentDashboardClient, dashboardData);
-        }
-        if (dashboardData.tier === 'family') {
-            initFamilyUI(currentDashboardClient, dashboardData);
-        }
-    }
+    if (dashboardData.tier !== 'free') initDevicesUI(currentDashboardClient, dashboardData);
+    if (dashboardData.tier === 'family') initFamilyUI(currentDashboardClient, dashboardData);
 }
 
 function renderNotifications() {
@@ -264,7 +370,6 @@ function renderNotifications() {
     }
 }
 
-// 🌟 监听全局语言切换事件，重绘动态数据（如账户等级、剩余天数等）
 window.addEventListener('languageChanged', () => {
     if (dashboardData && typeof renderDashboardTexts === 'function') {
         renderDashboardTexts();

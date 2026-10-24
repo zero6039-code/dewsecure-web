@@ -1,3 +1,4 @@
+import { trackReferral } from './referral-tracker.js';
 import './utils.js';
 import './auth-nav.js'; 
 import { initAuthPage } from './page-auth.js';
@@ -94,3 +95,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
     }
 });
+
+window.addEventListener('load', trackReferral);
+document.addEventListener('swup:page:view', trackReferral);

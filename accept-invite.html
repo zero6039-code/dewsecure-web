@@ -56,7 +56,7 @@
         <div class="invite-modal-wrapper">
             <div class="invite-modal">
                 <h2 data-i18n="invite_accept_title" style="color: #fff; font-size: 28px; margin-bottom: 20px;">Family Group Invitation</h2>
-                <p style="color: #8b949e; font-size: 16px; margin-bottom: 30px;" id="inviteDesc">加载中...</p>
+                <p style="color: #8b949e; font-size: 16px; margin-bottom: 30px;" id="inviteDesc" data-i18n="invite_loading">Loading...</p>
                 <button class="btn btn-primary" id="btnAcceptInvite" style="width: 100%; margin-bottom: 15px; display: none;" data-i18n="invite_accept_btn">Accept & Join</button>
                 <button class="btn btn-decline" id="btnRejectInvite" style="width: 100%; padding: 10px 20px; border-radius: 10px; font-weight: 600;" data-i18n="invite_reject_btn">Decline</button>
             </div>
@@ -68,5 +68,9 @@
     <script src="/js/auth-nav.js"></script>
     <script type="module" src="/js/app-init.js"></script>
     <script src="/js/i18n.js"></script>
+<script type="module">
+import { initInviteLogic } from "/js/accept-invite.js";
+window.addEventListener("load", () => { setTimeout(initInviteLogic, 100); });
+</script>
 </body>
 </html>

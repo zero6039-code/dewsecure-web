@@ -60,9 +60,21 @@
                         <span class="data-label" data-i18n="dash_expire_date">到期时间</span>
                         <span class="data-value" id="expireDate">-</span>
                     </div>
-                    <div style="margin-top: 25px; display: flex; gap: 10px;">
+                    
+                    <!-- 🌟 按钮控制区：已注入所有需要的按钮 -->
+                    <div style="margin-top: 25px; display: flex; flex-wrap: wrap; gap: 10px;">
                         <button class="btn btn-primary" id="btnUpgrade" onclick="window.location.href='/pricing.html'" data-i18n="dash_btn_upgrade">升级/续费高级版</button>
+                        
+                        <!-- 领取试用按钮 (绿色) -->
+                        <button class="btn hidden" id="btnClaimTrial" style="background:#238636; color:#fff; border:none;" data-i18n="dash_btn_claim_trial">🎁 领取 30 天 Pro 试用</button>
+                        
+                        <!-- 管理订阅按钮 (蓝色) -->
+                        <button class="btn btn-primary hidden" id="btnManageSub" data-i18n="dash_btn_manage">管理订阅</button>
+                        
+                        <!-- 取消订阅按钮 (红色) -->
                         <button class="btn btn-danger hidden" id="btnCancelSub" data-i18n="dash_btn_cancel">取消订阅</button>
+                        
+                        <!-- 退出家庭组按钮 (红色) -->
                         <button class="btn btn-danger hidden" id="btnLeaveFamily" data-i18n="dash_btn_leave_family">退出家庭组</button>
                     </div>
                 </div>
@@ -78,7 +90,7 @@
                     <p style="color:#8b949e; font-size:14px; margin-bottom: 15px;" id="familyDesc"></p>
                     
                     <div style="display: flex; gap: 10px; margin-bottom: 15px;">
-                        <input type="email" id="familyEmailInput" placeholder="输入家人的邮箱地址" data-i18n-placeholder="dash_family_input_ph" style="flex: 1; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; padding: 10px; color: #fff; outline: none;">
+                        <input type="email" id="familyEmailInput" placeholder="Family member email" data-i18n-placeholder="dash_family_input_ph" style="flex: 1; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; padding: 10px; color: #fff; outline: none;">
                         <button class="btn btn-primary" id="btnInviteFamily" data-i18n="dash_family_btn_invite">发送邀请</button>
                     </div>
 
@@ -87,17 +99,17 @@
                 </div>
 
                 <div class="card" id="inviteCard" style="margin-top: 24px;">
-    <h3><i class="fa-solid fa-gift"></i> <span data-i18n="dash_invite_title">邀请好友，共享免费高级版！</span></h3>
-    <p style="color:#8b949e; font-size:14px;" data-i18n="dash_invite_desc">邀请好友注册。当他们完成首次真实付费满 14 天后，您将获得额外 120 天高级版奖励！</p>
-    <div class="invite-box">
-        <div class="invite-input" id="myInviteCode"></div>
-        <button class="btn btn-primary" id="btnGenInvite" data-i18n="dash_invite_gen">获取我的专属推广链接</button>
-        <button class="btn btn-primary hidden" id="btnCopyInvite" style="background:#58a6ff; color:#fff;" data-i18n="dash_invite_copy">复制</button>
-    </div>
-    <div style="margin-top: 15px; font-size: 13px; color: #8b949e;">
-        <span data-i18n="dash_invite_count">已成功邀请人数：</span><span id="inviteCount" style="color:#58a6ff; font-weight:bold;">0</span>
-    </div>
-</div>
+                    <h3><i class="fa-solid fa-gift"></i> <span data-i18n="dash_invite_title">邀请好友，共享免费高级版！</span></h3>
+                    <p style="color:#8b949e; font-size:14px;" data-i18n="dash_invite_desc">邀请好友注册。当他们完成首次真实付费满 14 天后，您将获得额外 120 天高级版奖励！</p>
+                    <div class="invite-box">
+                        <div class="invite-input" id="myInviteCode"></div>
+                        <button class="btn btn-primary" id="btnGenInvite" data-i18n="dash_invite_gen">获取我的专属推广链接</button>
+                        <button class="btn btn-primary hidden" id="btnCopyInvite" style="background:#58a6ff; color:#fff;" data-i18n="dash_invite_copy">复制</button>
+                    </div>
+                    <div style="margin-top: 15px; font-size: 13px; color: #8b949e;">
+                        <span data-i18n="dash_invite_count">已成功邀请人数：</span><span id="inviteCount" style="color:#58a6ff; font-weight:bold;">0</span>
+                    </div>
+                </div>
             </div>
 
             <div class="right-column">
@@ -110,13 +122,14 @@
             </div>
         </div>
 
+        <!-- 取消订阅确认弹窗 -->
         <div class="modal-overlay" id="cancelModal">
             <div class="modal-content">
                 <h3 data-i18n="dash_cancel_title">确认取消订阅？</h3>
                 <p style="font-size:14px; color:#8b949e; margin-bottom:15px;" data-i18n="dash_cancel_desc">您的订阅将持续有效直到当前周期结束。在此期间，您可以继续享受所有高级功能。</p>
                 <p id="cancelTip" style="font-size:14px; color:#58a6ff; font-weight:bold; margin-bottom:15px;"></p>
                 <p style="font-size:14px; color:#c9d1d9;" data-i18n="dash_cancel_reason">如果不介意，能告诉我们取消的原因吗？(选填)</p>
-                <textarea id="cancelReason" placeholder="例如：太贵了、功能不符合预期、体验不好..." data-i18n-placeholder="dash_cancel_ph"></textarea>
+                <textarea id="cancelReason" placeholder="e.g., Too expensive, missing features..." data-i18n-placeholder="dash_cancel_ph"></textarea>
                 <div class="modal-actions">
                     <button class="btn" style="background:transparent; color:#8b949e;" id="btnCloseModal" data-i18n="dash_cancel_no">暂不取消</button>
                     <button class="btn btn-danger" id="btnConfirmCancel" data-i18n="dash_cancel_yes">确认取消</button>
