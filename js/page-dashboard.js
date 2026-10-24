@@ -1,5 +1,5 @@
 // ==========================================
-// 📁 page-dashboard.js (商业级闭环最终版)
+// 📁 page-dashboard.js (最终容错版)
 // ==========================================
 
 import { initDevicesUI } from './page-devices.js';
@@ -45,12 +45,9 @@ export async function initDashboardLogic() {
         if (!session && !hasTokenInUrl) { window.location.href = '/login/'; return; }
         if (!session && hasTokenInUrl) { window.location.reload(); return; }
         
-        // 🌟 核心修复：如果是支付成功跳回来的，等待 2.5 秒让 Webhook 写入数据库
         if (isCheckoutSuccess) {
             const t = window.fallbackTranslations || {};
-            if (window.showToast) {
-                window.showToast(t['dash_syncing'] || 'Syncing payment status, please wait...', 'success');
-            }
+            if (window.showToast) window.showToast(t['dash_syncing'] || 'Syncing payment status...', 'success');
             await new Promise(r => setTimeout(r, 2500));
             window.history.replaceState({}, document.title, window.location.pathname);
         }
@@ -129,12 +126,11 @@ function bindDashboardButtons(currentUser) {
         };
     }
 
-    // 3. 管理订阅 (Stripe Portal) / 升级正式版
+    // 3. 管理订阅
     const btnManageSub = document.getElementById('btnManageSub');
     if (btnManageSub) {
         btnManageSub.onclick = async () => {
             const t = getT();
-            
             if (!dashboardData.stripe_customer_id) {
                 window.location.href = '/pricing.html';
                 return;
@@ -259,13 +255,23 @@ function renderDashboardTexts() {
     document.getElementById('inviteCount').textContent = profile.invite_success_count || 0;
     tierBadge.classList.remove('skeleton-text');
     
-    let expireDate = profile.subscription_ends_at ? new Date(profile.subscription_ends_at) : (profile.trial_ends_at ? new Date(profile.trial_ends_at) : null);
-    if (!expireDate && (profile.tier === 'pro' || profile.tier === 'family' || profile.tier === 'sub-family')) {
-        expireDate = new Date();
-        expireDate.setDate(expireDate.getDate() + 365);
-    }
     const now = new Date();
+    const balance = profile.referral_days_balance || 0;
     
+    let baseTime = now.getTime();
+    if (profile.subscription_ends_at && new Date(profile.subscription_ends_at).getTime() > baseTime) {
+        baseTime = new Date(profile.subscription_ends_at).getTime();
+    } else if (profile.trial_ends_at && new Date(profile.trial_ends_at).getTime() > baseTime) {
+        baseTime = new Date(profile.trial_ends_at).getTime();
+    }
+
+    let expireDate = null;
+    if (profile.subscription_ends_at || profile.trial_ends_at || balance > 0) {
+        expireDate = new Date(baseTime + (balance * 86400000));
+    }
+
+    const isPremium = (expireDate && expireDate > now);
+
     let ownerEmailRow = document.getElementById('ownerEmailRow');
     if (profile.family_owner_id && profile.owner_email) {
         if (!ownerEmailRow) {
@@ -282,14 +288,16 @@ function renderDashboardTexts() {
     const btnLeaveFamily = document.getElementById('btnLeaveFamily');
     const isSubAccount = !!profile.family_owner_id;
 
-    // 默认隐藏所有按钮
     if (btnCancel) btnCancel.classList.add('hidden');
     if (btnUpgrade) btnUpgrade.classList.add('hidden');
     if (btnManageSub) btnManageSub.classList.add('hidden');
     if (btnLeaveFamily) btnLeaveFamily.classList.add('hidden');
     if (btnClaimTrial) btnClaimTrial.classList.add('hidden');
 
-    if (profile.tier === 'free') {
+    let displayTier = profile.tier;
+    if (displayTier === 'free' && balance > 0) displayTier = 'pro';
+
+    if (!isPremium && profile.tier === 'free') {
         tierBadge.textContent = t['dash_tier_free'] || '免费版 (Free)'; 
         tierBadge.className = 'status-badge'; 
         daysLeftEl.textContent = t['dash_forever'] || '永久有效'; 
@@ -303,51 +311,60 @@ function renderDashboardTexts() {
             btnClaimTrial.classList.remove('hidden');
         }
     } else {
-        if (profile.tier === 'pro') {
+        if (displayTier === 'pro') {
             tierBadge.textContent = (profile.trial_ends_at && !profile.stripe_customer_id) ? (t['dash_tier_trial'] || 'Pro 试用版') : (t['dash_tier_pro'] || '高级版 (Pro)');
         } else {
             tierBadge.textContent = t['dash_tier_family'] || '家庭版 (Family)';
         }
         tierBadge.className = 'status-badge status-pro';
         
-        if (expireDate && expireDate > now) {
+        if (expireDate) {
             const diffDays = Math.ceil(Math.abs(expireDate - now) / (1000 * 60 * 60 * 24)); 
             daysLeftEl.textContent = `${diffDays} ${t['dash_days'] || '天'}`; 
             expireDateEl.textContent = expireDate.toLocaleDateString();
-            
-            if (isSubAccount) {
-                if (btnLeaveFamily) btnLeaveFamily.classList.remove('hidden');
+        }
+        
+        if (isSubAccount) {
+            if (btnLeaveFamily) btnLeaveFamily.classList.remove('hidden');
+        } else {
+            if (profile.cancel_at_period_end) {
+                if(btnUpgrade) {
+                    btnUpgrade.classList.remove('hidden');
+                    btnUpgrade.textContent = t['dash_btn_resume'] || '恢复自动续费';
+                }
             } else {
-                if (profile.cancel_at_period_end) {
+                if (profile.stripe_customer_id) {
+                    if(btnManageSub) { 
+                        btnManageSub.classList.remove('hidden'); 
+                        btnManageSub.textContent = t['dash_btn_manage'] || '管理订阅'; 
+                    }
+                    if(btnCancel) { btnCancel.classList.remove('hidden'); btnCancel.textContent = t['dash_btn_cancel'] || '取消订阅'; }
+                } else if (balance > 0) {
                     if(btnUpgrade) {
                         btnUpgrade.classList.remove('hidden');
-                        btnUpgrade.textContent = t['dash_btn_resume'] || '恢复自动续费';
+                        btnUpgrade.textContent = t['dash_btn_upgrade'] || '升级/续费高级版';
                     }
                 } else {
-                    if (profile.stripe_customer_id) {
-                        if(btnManageSub) { 
-                            btnManageSub.classList.remove('hidden'); 
-                            btnManageSub.textContent = t['dash_btn_manage'] || '管理订阅'; 
-                        }
-                        if(btnCancel) { btnCancel.classList.remove('hidden'); btnCancel.textContent = t['dash_btn_cancel'] || '取消订阅'; }
-                    } else {
-                        if(btnManageSub) { 
-                            btnManageSub.classList.remove('hidden'); 
-                            btnManageSub.textContent = t['dash_btn_upgrade_full'] || '升级到正式版'; 
-                        }
+                    if(btnManageSub) { 
+                        btnManageSub.classList.remove('hidden'); 
+                        btnManageSub.textContent = t['dash_btn_upgrade_full'] || '升级到正式版'; 
                     }
                 }
             }
-        } else {
-            daysLeftEl.textContent = t['dash_expired'] || '已过期'; 
-            if(btnUpgrade) { btnUpgrade.classList.remove('hidden'); btnUpgrade.textContent = t['dash_btn_upgrade'] || '升级/续费高级版'; }
         }
     }
 
     renderNotifications();
 
-    if (dashboardData.tier !== 'free') initDevicesUI(currentDashboardClient, dashboardData);
-    if (dashboardData.tier === 'family') initFamilyUI(currentDashboardClient, dashboardData);
+    // 🌟 核心修复：将组件渲染包裹在 try-catch 中，避免局部报错导致全局崩溃
+    if (displayTier !== 'free') {
+        try { initDevicesUI(currentDashboardClient, dashboardData); } 
+        catch (e) { console.warn("Device UI render warning:", e); }
+    }
+    if (displayTier === 'family') {
+        try { initFamilyUI(currentDashboardClient, dashboardData); } 
+        catch (e) { console.warn("Family UI render warning:", e); }
+    }
 }
 
 function renderNotifications() {
