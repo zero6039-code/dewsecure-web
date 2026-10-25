@@ -1,5 +1,5 @@
 // ==========================================
-// 📁 page-dashboard.js (最终完美版)
+// 📁 page-dashboard.js (极简托管版)
 // ==========================================
 
 import { initDevicesUI } from './page-devices.js';
@@ -54,7 +54,7 @@ export async function initDashboardLogic() {
             window.history.replaceState({}, document.title, window.location.pathname);
         }
         
-        // 🌟 核心修复：在数据请求回来之前，先隐藏掉所有按钮，防止 HTML 默认按钮闪烁
+        // 🌟 防闪烁：先隐藏所有按钮
         ['btnUpgrade', 'btnManageSub', 'btnCancelSub', 'btnClaimTrial', 'btnLeaveFamily'].forEach(id => {
             const el = document.getElementById(id);
             if (el) el.classList.add('hidden');
@@ -134,11 +134,13 @@ function bindDashboardButtons(currentUser) {
         };
     }
 
-    // 3. 管理订阅 (Stripe Portal)
+    // 3. 唯一按钮：管理订阅 (Stripe Portal)
     const btnManageSub = document.getElementById('btnManageSub');
     if (btnManageSub) {
         btnManageSub.onclick = async () => {
             const t = getT();
+            
+            // 如果没有付费记录，直接去定价页
             if (!dashboardData.stripe_customer_id) {
                 window.location.href = '/pricing.html';
                 return;
@@ -163,73 +165,7 @@ function bindDashboardButtons(currentUser) {
         };
     }
 
-    // 4. 取消订阅
-    const btnCancelSub = document.getElementById('btnCancelSub');
-    if (btnCancelSub) {
-        btnCancelSub.onclick = () => {
-            const t = getT();
-            const expireDateStr = dashboardData.subscription_ends_at ? new Date(dashboardData.subscription_ends_at).toLocaleDateString() : '未知';
-            const tip = (t['dash_cancel_tip'] || '您的权益将持续到 {date}。').replace('{date}', expireDateStr);
-            document.getElementById('cancelTip').textContent = tip;
-            document.getElementById('cancelModal').classList.add('active');
-        };
-        
-        document.getElementById('btnCloseModal').onclick = () => document.getElementById('cancelModal').classList.remove('active');
-        
-        document.getElementById('btnConfirmCancel').onclick = async () => {
-            const t = getT();
-            const btn = document.getElementById('btnConfirmCancel');
-            const reason = document.getElementById('cancelReason').value.trim();
-            btn.disabled = true; 
-            btn.textContent = t['dash_cancel_processing'] || '处理中...';
-            
-            try {
-                const { data: { session } } = await client.auth.getSession();
-                const res = await fetch(API_BASE + '/api/cancel', {
-                    method: 'POST',
-                    headers: { 'Authorization': 'Bearer ' + session.access_token, 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ reason })
-                });
-                
-                if (!res.ok) throw new Error('Failed to cancel');
-                
-                window.showToast(t['dash_cancel_success'] || '您的取消请求已成功记录。'); 
-                document.getElementById('cancelModal').classList.remove('active'); 
-                btnCancelSub.classList.add('hidden'); 
-                document.getElementById('btnUpgrade').classList.remove('hidden');
-                setTimeout(() => window.location.reload(), 1000);
-            } catch (err) {
-                window.showToast(t['dash_cancel_fail'] || '取消失败，请稍后再试。', 'error');
-                btn.disabled = false; btn.textContent = t['dash_cancel_yes'] || '确认取消'; 
-            }
-        };
-    }
-
-    // 5. 恢复自动续费
-    const btnUpgrade = document.getElementById('btnUpgrade');
-    if (btnUpgrade && dashboardData.cancel_at_period_end) {
-        btnUpgrade.onclick = async () => {
-            const t = getT();
-            btnUpgrade.disabled = true;
-            btnUpgrade.textContent = t['dash_cancel_processing'] || '处理中...';
-            try {
-                const { data: { session } } = await client.auth.getSession();
-                const res = await fetch(API_BASE + '/api/resume', {
-                    method: 'POST',
-                    headers: { 'Authorization': 'Bearer ' + session.access_token, 'Content-Type': 'application/json' }
-                });
-                if (!res.ok) throw new Error('Failed');
-                window.showToast(t['dash_resume_success'] || '恢复成功！', 'success');
-                setTimeout(() => window.location.reload(), 1000);
-            } catch (e) {
-                window.showToast(t['dash_resume_fail'] || '操作失败，请重试', 'error');
-                btnUpgrade.disabled = false;
-                btnUpgrade.textContent = t['dash_btn_resume'] || '恢复自动续费';
-            }
-        };
-    }
-
-    // 6. 退出家庭组
+    // 4. 退出家庭组 (子号保留)
     const btnLeave = document.getElementById('btnLeaveFamily');
     if (btnLeave) {
         btnLeave.onclick = () => {
@@ -255,10 +191,13 @@ function renderDashboardTexts() {
     const tierBadge = document.getElementById('tierBadge');
     const daysLeftEl = document.getElementById('daysLeft');
     const expireDateEl = document.getElementById('expireDate');
-    const btnCancel = document.getElementById('btnCancelSub');
     const btnUpgrade = document.getElementById('btnUpgrade');
     const btnManageSub = document.getElementById('btnManageSub');
     const btnClaimTrial = document.getElementById('btnClaimTrial');
+    const btnCancel = document.getElementById('btnCancelSub');
+
+    // 🌟 彻底隐藏取消按钮
+    if (btnCancel) btnCancel.classList.add('hidden');
 
     document.getElementById('inviteCount').textContent = profile.invite_success_count || 0;
     tierBadge.classList.remove('skeleton-text');
@@ -281,7 +220,6 @@ function renderDashboardTexts() {
     const isPremium = (expireDate && expireDate > now);
 
     // 默认隐藏所有按钮
-    if (btnCancel) btnCancel.classList.add('hidden');
     if (btnUpgrade) btnUpgrade.classList.add('hidden');
     if (btnManageSub) btnManageSub.classList.add('hidden');
     if (btnClaimTrial) btnClaimTrial.classList.add('hidden');
@@ -336,25 +274,18 @@ function renderDashboardTexts() {
         }
         
         if (profile.family_owner_id) {
+            // 子号只能退出家庭组
             if (btnLeaveFamily) btnLeaveFamily.classList.remove('hidden');
         } else {
-            // 🌟 核心判定：严格区分“真实付费”与“白嫖”
+            // 🌟 全局唯一操作按钮
             if (profile.stripe_customer_id) {
-                // 真实付费用户
-                if (profile.cancel_at_period_end) {
-                    if(btnUpgrade) {
-                        btnUpgrade.classList.remove('hidden');
-                        btnUpgrade.textContent = t['dash_btn_resume'] || '恢复自动续费';
-                    }
-                } else {
-                    if(btnManageSub) { 
-                        btnManageSub.classList.remove('hidden'); 
-                        btnManageSub.textContent = t['dash_btn_manage'] || '管理订阅'; 
-                    }
-                    if(btnCancel) { btnCancel.classList.remove('hidden'); btnCancel.textContent = t['dash_btn_cancel'] || '取消订阅'; }
+                // 有真实付费记录，只显示“管理订阅”（不管是否已经点了取消）
+                if(btnManageSub) { 
+                    btnManageSub.classList.remove('hidden'); 
+                    btnManageSub.textContent = t['dash_btn_manage'] || '管理订阅'; 
                 }
             } else {
-                // 纯试用或纯返利用户，强制只显示升级
+                // 纯试用 / 纯返利用户，显示“升级到正式版”
                 if(btnManageSub) { 
                     btnManageSub.classList.remove('hidden'); 
                     btnManageSub.textContent = t['dash_btn_upgrade_full'] || '升级到正式版'; 
