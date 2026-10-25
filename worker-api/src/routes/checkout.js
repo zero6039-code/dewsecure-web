@@ -61,7 +61,7 @@ checkoutRoute.post('/checkout', async (c) => {
 
   try {
     const session = await stripe.checkout.sessions.create({
-      ui_mode: 'embedded',
+      ui_mode: 'embedded_page',
       mode: 'subscription',
       line_items: [{ price: price_id, quantity: 1 }],
       client_reference_id: user.id,

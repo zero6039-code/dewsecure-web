@@ -14,8 +14,8 @@ function getSubIdFromInvoice(invoice) {
 }
 
 function getTierFromPriceId(priceId) {
-  if (priceId === 'price_1UTuyUPLgzklfWuMrMw8kW0b') return 'family';
-  if (priceId === 'price_1UTuxqPLgzklfWuMDuFjH5ec') return 'pro';
+  if (priceId === 'price_1UUF9SAB28DjNkOqrt3BX9Dr') return 'family';
+  if (priceId === 'price_1UUF86AB28DjNkOqNGl2YoBN') return 'pro';
   return 'pro';
 }
 
@@ -35,8 +35,12 @@ webhookRoute.post('/webhook', async (c) => {
 
   console.log(`\n================ 收到 Webhook: ${event.type} ================`);
 
+  // 去重机制
   const { error: dupErr } = await supabaseAdmin.from('stripe_webhook_events').insert({ event_id: event.id, event_type: event.type });
-  if (dupErr?.code === '23505') return c.text('Already processed', 200);
+  if (dupErr?.code === '23505') {
+    console.log(`⚠️ 事件已处理过，跳过: ${event.id}`);
+    return c.text('Already processed', 200);
+  }
 
   try {
     switch (event.type) {
@@ -74,12 +78,25 @@ webhookRoute.post('/webhook', async (c) => {
           userId = sub.metadata?.user_id || (invoice.parent?.subscription_details?.metadata?.user_id);
         }
 
+        // 🌟 核心修复1：如果 Metadata 找不到，通过 Customer ID 查用户
         if (!userId && invoice.customer) {
           const { data: profile } = await supabaseAdmin.from('profiles').select('id').eq('stripe_customer_id', invoice.customer).maybeSingle();
           if (profile) userId = profile.id;
         }
 
-        if (!userId) break;
+        // 🌟 核心修复2：终极兜底，如果还找不到，通过 Email 强行查找并绑定
+        if (!userId && invoice.customer_email) {
+          const { data: profile } = await supabaseAdmin.from('profiles').select('id').eq('email', invoice.customer_email).maybeSingle();
+          if (profile) {
+            userId = profile.id;
+            await supabaseAdmin.from('profiles').update({ stripe_customer_id: invoice.customer }).eq('id', userId);
+          }
+        }
+
+        if (!userId) {
+          console.log('❌ [invoice] 彻底找不到用户，跳过');
+          break;
+        }
 
         if (sub) {
           const priceId = sub.items.data[0].price.id;
@@ -98,59 +115,26 @@ webhookRoute.post('/webhook', async (c) => {
           else if (userProfile?.trial_ends_at && new Date(userProfile.trial_ends_at) > base) base = new Date(userProfile.trial_ends_at);
           
           const newEnd = new Date(base.getTime() + 365 * 86400000).toISOString();
+          console.log(`[invoice] 正常续费/购买，准备写入顺延时间: ${newEnd}`);
           await supabaseAdmin.from('profiles').update({ subscription_ends_at: newEnd }).eq('id', userId);
         }
 
-        // 🌟 核心修复：抛弃 RPC，改用最稳妥的查+改
         const { data: inviteeProfile } = await supabaseAdmin.from('profiles').select('referred_by').eq('id', userId).single();
         if (inviteeProfile?.referred_by) {
-          const inviterId = inviteeProfile.referred_by;
-          
-          const { data: existingReward } = await supabaseAdmin.from('referral_rewards')
-            .select('id, status')
-            .eq('inviter_id', inviterId)
-            .eq('invitee_id', userId)
-            .maybeSingle();
+          const { error: insertErr } = await supabaseAdmin.from('referral_rewards').insert({
+            inviter_id: inviteeProfile.referred_by, invitee_id: userId, reward_days: 120,
+            status: 'pending', unlock_at: new Date(Date.now() + 14 * 86400000).toISOString(),
+          }).select().maybeSingle();
 
-          let needIncrement = false;
-
-          if (existingReward) {
-             if (existingReward.status === 'voided') {
-                 await supabaseAdmin.from('referral_rewards').update({
-                     status: 'pending',
-                     unlock_at: new Date(Date.now() + 14 * 86400000).toISOString(),
-                     created_at: new Date().toISOString()
-                 }).eq('id', existingReward.id);
-                 needIncrement = true;
-                 console.log(`[invoice] 发现已退款的二次购买，重新激活返利记录`);
-             }
-          } else {
-             const { error: insertErr } = await supabaseAdmin.from('referral_rewards').insert({
-               inviter_id: inviterId, invitee_id: userId, reward_days: 120,
-               status: 'pending', unlock_at: new Date(Date.now() + 14 * 86400000).toISOString(),
-             });
-             if (!insertErr) {
-                 needIncrement = true;
-                 console.log(`[invoice] 新增返利记录`);
-             }
-          }
-
-          if (needIncrement) {
-             // 查出邀请人当前人数
-             const { data: inviter } = await supabaseAdmin.from('profiles').select('invite_success_count').eq('id', inviterId).single();
-             const currentCount = inviter?.invite_success_count || 0;
-             
-             const { error: updateErr } = await supabaseAdmin.from('profiles').update({ 
-                 invite_success_count: currentCount + 1 
-             }).eq('id', inviterId);
-
-             if (updateErr) {
-                 console.error(`❌ [invoice] 更新邀请人人数失败:`, updateErr.message);
-             } else {
-                 console.log(`✅ [invoice] 邀请人 ${inviterId} 成功邀请人数 +1 (当前: ${currentCount + 1})`);
+          if (!insertErr) {
+             const { data: inviter } = await supabaseAdmin.from('profiles').select('invite_success_count').eq('id', inviteeProfile.referred_by).single();
+             if (inviter) {
+                 await supabaseAdmin.from('profiles').update({ invite_success_count: (inviter.invite_success_count || 0) + 1 }).eq('id', inviteeProfile.referred_by);
+                 console.log(`✅ [invoice] 邀请人 ${inviteeProfile.referred_by} 成功邀请人数 +1`);
              }
           }
         }
+        console.log(`✅ [invoice] 处理完成`);
         break;
       }
 
@@ -162,27 +146,23 @@ webhookRoute.post('/webhook', async (c) => {
           const { data: profile } = await supabaseAdmin.from('profiles').select('id').eq('stripe_customer_id', charge.customer).maybeSingle();
           if (profile) userId = profile.id;
         }
+        if (!userId && charge.billing_details?.email) {
+          const { data: profile } = await supabaseAdmin.from('profiles').select('id').eq('email', charge.billing_details.email).maybeSingle();
+          if (profile) userId = profile.id;
+        }
 
         if (userId) {
           console.log(`[refund] 发现退款用户: ${userId}，立即降级并收回权益`);
-          await supabaseAdmin.from('profiles').update({ 
-              tier: 'free', subscription_ends_at: null, family_owner_id: null 
-          }).eq('id', userId);
+          await supabaseAdmin.from('profiles').update({ tier: 'free', subscription_ends_at: null, family_owner_id: null }).eq('id', userId);
 
-          const { data: voidedRecords } = await supabaseAdmin.from('referral_rewards')
-            .update({ status: 'voided' })
-            .eq('invitee_id', userId)
-            .eq('status', 'pending')
-            .select();
+          const { data: voidedRecords } = await supabaseAdmin.from('referral_rewards').update({ status: 'voided' }).eq('invitee_id', userId).eq('status', 'pending').select();
 
           if (voidedRecords && voidedRecords.length > 0) {
               for (const record of voidedRecords) {
                   const inviterId = record.inviter_id;
                   const { data: inviter } = await supabaseAdmin.from('profiles').select('invite_success_count').eq('id', inviterId).single();
                   if (inviter && inviter.invite_success_count > 0) {
-                      await supabaseAdmin.from('profiles').update({ 
-                          invite_success_count: inviter.invite_success_count - 1 
-                      }).eq('id', inviterId);
+                      await supabaseAdmin.from('profiles').update({ invite_success_count: inviter.invite_success_count - 1 }).eq('id', inviterId);
                       console.log(`✅ [refund] 邀请人 ${inviterId} 人数 -1 并作废返利`);
                   }
               }
@@ -217,6 +197,8 @@ webhookRoute.post('/webhook', async (c) => {
     }
   } catch (err) {
     console.error('❌ Webhook handler error:', err);
+    // 如果业务报错，把去重记录删掉，这样 Stripe 重试时还能重新进来
+    await supabaseAdmin.from('stripe_webhook_events').delete().eq('event_id', event.id);
     return c.text('Handler error', 500);
   }
 
