@@ -1,5 +1,5 @@
 // ==========================================
-// 📁 page-dashboard.js (最终容错版)
+// 📁 page-dashboard.js (最终防呆闭环版)
 // ==========================================
 
 import { initDevicesUI } from './page-devices.js';
@@ -126,11 +126,12 @@ function bindDashboardButtons(currentUser) {
         };
     }
 
-    // 3. 管理订阅
+    // 3. 管理订阅 (Stripe Portal) - 只有绑了卡才生效
     const btnManageSub = document.getElementById('btnManageSub');
     if (btnManageSub) {
         btnManageSub.onclick = async () => {
             const t = getT();
+            // 双重防呆：如果没有 stripe_customer_id，绝不应该点进这里，强制跳转定价页
             if (!dashboardData.stripe_customer_id) {
                 window.location.href = '/pricing.html';
                 return;
@@ -148,7 +149,7 @@ function bindDashboardButtons(currentUser) {
                 if (data.url) window.location.href = data.url;
                 else throw new Error('No portal URL');
             } catch (err) {
-                window.showToast('无法打开管理页面', 'error');
+                window.showToast(t['dash_portal_fail'] || '无法打开管理页面', 'error');
                 btnManageSub.disabled = false;
                 btnManageSub.textContent = t['dash_btn_manage'] || '管理订阅';
             }
@@ -288,6 +289,7 @@ function renderDashboardTexts() {
     const btnLeaveFamily = document.getElementById('btnLeaveFamily');
     const isSubAccount = !!profile.family_owner_id;
 
+    // 默认隐藏所有按钮
     if (btnCancel) btnCancel.classList.add('hidden');
     if (btnUpgrade) btnUpgrade.classList.add('hidden');
     if (btnManageSub) btnManageSub.classList.add('hidden');
@@ -322,50 +324,48 @@ function renderDashboardTexts() {
             const diffDays = Math.ceil(Math.abs(expireDate - now) / (1000 * 60 * 60 * 24)); 
             daysLeftEl.textContent = `${diffDays} ${t['dash_days'] || '天'}`; 
             expireDateEl.textContent = expireDate.toLocaleDateString();
+        }
 
-            // 🌟 渲染锁定中天数
-            let pendingEl = document.getElementById('pendingRewardsRow');
-            if (profile.pending_referral_days > 0) {
-                if (!pendingEl) {
-                    pendingEl = document.createElement('div');
-                    pendingEl.id = 'pendingRewardsRow';
-                    pendingEl.className = 'data-row';
-                    pendingEl.style.color = '#8b949e';
-                    pendingEl.style.fontSize = '13px';
-                    pendingEl.style.marginTop = '-5px';
-                    // 插入到 daysLeft 的父节点后面
-                    daysLeftEl.parentNode.parentNode.insertBefore(pendingEl, daysLeftEl.parentNode.nextSibling);
-                }
-                pendingEl.innerHTML = `<span class="data-label">${t['dash_pending_days'] || '待解锁返利'}</span><span class="data-value" style="color:#f1e05a;">+${profile.pending_referral_days} ${t['dash_days'] || '天'}</span>`;
-            } else if (pendingEl) {
-                pendingEl.remove();
+        // 🌟 渲染锁定中天数
+        let pendingEl = document.getElementById('pendingRewardsRow');
+        if (profile.pending_referral_days > 0) {
+            if (!pendingEl) {
+                pendingEl = document.createElement('div');
+                pendingEl.id = 'pendingRewardsRow';
+                pendingEl.className = 'data-row';
+                pendingEl.style.color = '#8b949e';
+                pendingEl.style.fontSize = '13px';
+                pendingEl.style.marginTop = '-5px';
+                daysLeftEl.parentNode.parentNode.insertBefore(pendingEl, daysLeftEl.parentNode.nextSibling);
             }
+            pendingEl.innerHTML = `<span class="data-label">${t['dash_pending_days'] || '待解锁返利'}</span><span class="data-value" style="color:#f1e05a;">+${profile.pending_referral_days} ${t['dash_days'] || '天'}</span>`;
+        } else if (pendingEl) {
+            pendingEl.remove();
         }
         
         if (isSubAccount) {
             if (btnLeaveFamily) btnLeaveFamily.classList.remove('hidden');
         } else {
             if (profile.cancel_at_period_end) {
+                // 状态：已取消续费，等待到期
                 if(btnUpgrade) {
                     btnUpgrade.classList.remove('hidden');
                     btnUpgrade.textContent = t['dash_btn_resume'] || '恢复自动续费';
                 }
             } else {
+                // 正常状态
                 if (profile.stripe_customer_id) {
+                    // 1. 真正的付费用户：有管理订阅，有取消订阅
                     if(btnManageSub) { 
                         btnManageSub.classList.remove('hidden'); 
                         btnManageSub.textContent = t['dash_btn_manage'] || '管理订阅'; 
                     }
                     if(btnCancel) { btnCancel.classList.remove('hidden'); btnCancel.textContent = t['dash_btn_cancel'] || '取消订阅'; }
-                } else if (balance > 0) {
+                } else {
+                    // 2. 纯白嫖用户（试用或返利）：隐藏管理，隐藏取消，只留升级
                     if(btnUpgrade) {
                         btnUpgrade.classList.remove('hidden');
                         btnUpgrade.textContent = t['dash_btn_upgrade'] || '升级/续费高级版';
-                    }
-                } else {
-                    if(btnManageSub) { 
-                        btnManageSub.classList.remove('hidden'); 
-                        btnManageSub.textContent = t['dash_btn_upgrade_full'] || '升级到正式版'; 
                     }
                 }
             }
