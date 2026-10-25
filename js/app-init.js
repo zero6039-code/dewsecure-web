@@ -5,7 +5,9 @@ import { initAuthPage } from './page-auth.js';
 import { initDashboardLogic } from './page-dashboard.js';
 import { initComponentsPage, initAcceptInvitePage } from './page-components.js';
 
-const EXTENSION_ID = 'fgnijfomipmimnfocgofmmniglibgnak';
+// 🌟 动态适配 Chrome 与 Edge 扩展 ID
+const isEdge = navigator.userAgent.includes('Edg/');
+const EXTENSION_ID = isEdge ? 'a3cf7aef410249ee92300bc5c1a4e297' : 'fgnijfomipmimnfocgofmmniglibgnak';
 let lastPushedToken = null;
 
 // ==========================================
