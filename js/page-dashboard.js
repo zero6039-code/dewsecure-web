@@ -1,5 +1,5 @@
 // ==========================================
-// 📁 page-dashboard.js (最终防呆闭环版)
+// 📁 page-dashboard.js (最终完美版)
 // ==========================================
 
 import { initDevicesUI } from './page-devices.js';
@@ -11,7 +11,9 @@ let dashboardData = null;
 let currentDashboardClient = null;
 let dashboardNotifs = [];
 
-const API_BASE = (window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost') ? 'http://127.0.0.1:8787' : 'https://api.dewsecure.com';
+const API_BASE = (window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost') 
+    ? 'http://127.0.0.1:8787' 
+    : 'https://dewsecure-api.zero6039.workers.dev';
 
 export async function initDashboardLogic() {
     const client = window.supabaseClient;
@@ -52,6 +54,12 @@ export async function initDashboardLogic() {
             window.history.replaceState({}, document.title, window.location.pathname);
         }
         
+        // 🌟 核心修复：在数据请求回来之前，先隐藏掉所有按钮，防止 HTML 默认按钮闪烁
+        ['btnUpgrade', 'btnManageSub', 'btnCancelSub', 'btnClaimTrial', 'btnLeaveFamily'].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.classList.add('hidden');
+        });
+
         if (loader) {
             loader.style.transition = 'opacity 0.3s ease';
             loader.style.opacity = '0';
@@ -126,12 +134,11 @@ function bindDashboardButtons(currentUser) {
         };
     }
 
-    // 3. 管理订阅 (Stripe Portal) - 只有绑了卡才生效
+    // 3. 管理订阅 (Stripe Portal)
     const btnManageSub = document.getElementById('btnManageSub');
     if (btnManageSub) {
         btnManageSub.onclick = async () => {
             const t = getT();
-            // 双重防呆：如果没有 stripe_customer_id，绝不应该点进这里，强制跳转定价页
             if (!dashboardData.stripe_customer_id) {
                 window.location.href = '/pricing.html';
                 return;
@@ -149,7 +156,7 @@ function bindDashboardButtons(currentUser) {
                 if (data.url) window.location.href = data.url;
                 else throw new Error('No portal URL');
             } catch (err) {
-                window.showToast(t['dash_portal_fail'] || '无法打开管理页面', 'error');
+                window.showToast('无法打开管理页面', 'error');
                 btnManageSub.disabled = false;
                 btnManageSub.textContent = t['dash_btn_manage'] || '管理订阅';
             }
@@ -273,28 +280,13 @@ function renderDashboardTexts() {
 
     const isPremium = (expireDate && expireDate > now);
 
-    let ownerEmailRow = document.getElementById('ownerEmailRow');
-    if (profile.family_owner_id && profile.owner_email) {
-        if (!ownerEmailRow) {
-            ownerEmailRow = document.createElement('div');
-            ownerEmailRow.id = 'ownerEmailRow';
-            ownerEmailRow.className = 'data-row';
-            tierBadge.parentNode.parentNode.insertBefore(ownerEmailRow, tierBadge.parentNode.nextSibling);
-        }
-        ownerEmailRow.innerHTML = `<span class="data-label">${t['dash_bound_to'] || '所属家庭组'}</span><span class="data-value" style="color:#58a6ff;">${profile.owner_email}</span>`;
-    } else if (ownerEmailRow) {
-        ownerEmailRow.remove();
-    }
-
-    const btnLeaveFamily = document.getElementById('btnLeaveFamily');
-    const isSubAccount = !!profile.family_owner_id;
-
     // 默认隐藏所有按钮
     if (btnCancel) btnCancel.classList.add('hidden');
     if (btnUpgrade) btnUpgrade.classList.add('hidden');
     if (btnManageSub) btnManageSub.classList.add('hidden');
-    if (btnLeaveFamily) btnLeaveFamily.classList.add('hidden');
     if (btnClaimTrial) btnClaimTrial.classList.add('hidden');
+    const btnLeaveFamily = document.getElementById('btnLeaveFamily');
+    if (btnLeaveFamily) btnLeaveFamily.classList.add('hidden');
 
     let displayTier = profile.tier;
     if (displayTier === 'free' && balance > 0) displayTier = 'pro';
@@ -326,7 +318,7 @@ function renderDashboardTexts() {
             expireDateEl.textContent = expireDate.toLocaleDateString();
         }
 
-        // 🌟 渲染锁定中天数
+        // 渲染锁定中天数
         let pendingEl = document.getElementById('pendingRewardsRow');
         if (profile.pending_referral_days > 0) {
             if (!pendingEl) {
@@ -343,30 +335,29 @@ function renderDashboardTexts() {
             pendingEl.remove();
         }
         
-        if (isSubAccount) {
+        if (profile.family_owner_id) {
             if (btnLeaveFamily) btnLeaveFamily.classList.remove('hidden');
         } else {
-            if (profile.cancel_at_period_end) {
-                // 状态：已取消续费，等待到期
-                if(btnUpgrade) {
-                    btnUpgrade.classList.remove('hidden');
-                    btnUpgrade.textContent = t['dash_btn_resume'] || '恢复自动续费';
-                }
-            } else {
-                // 正常状态
-                if (profile.stripe_customer_id) {
-                    // 1. 真正的付费用户：有管理订阅，有取消订阅
+            // 🌟 核心判定：严格区分“真实付费”与“白嫖”
+            if (profile.stripe_customer_id) {
+                // 真实付费用户
+                if (profile.cancel_at_period_end) {
+                    if(btnUpgrade) {
+                        btnUpgrade.classList.remove('hidden');
+                        btnUpgrade.textContent = t['dash_btn_resume'] || '恢复自动续费';
+                    }
+                } else {
                     if(btnManageSub) { 
                         btnManageSub.classList.remove('hidden'); 
                         btnManageSub.textContent = t['dash_btn_manage'] || '管理订阅'; 
                     }
                     if(btnCancel) { btnCancel.classList.remove('hidden'); btnCancel.textContent = t['dash_btn_cancel'] || '取消订阅'; }
-                } else {
-                    // 2. 纯白嫖用户（试用或返利）：隐藏管理，隐藏取消，只留升级
-                    if(btnUpgrade) {
-                        btnUpgrade.classList.remove('hidden');
-                        btnUpgrade.textContent = t['dash_btn_upgrade'] || '升级/续费高级版';
-                    }
+                }
+            } else {
+                // 纯试用或纯返利用户，强制只显示升级
+                if(btnManageSub) { 
+                    btnManageSub.classList.remove('hidden'); 
+                    btnManageSub.textContent = t['dash_btn_upgrade_full'] || '升级到正式版'; 
                 }
             }
         }
@@ -374,7 +365,6 @@ function renderDashboardTexts() {
 
     renderNotifications();
 
-    // 🌟 核心修复：将组件渲染包裹在 try-catch 中，避免局部报错导致全局崩溃
     if (displayTier !== 'free') {
         try { initDevicesUI(currentDashboardClient, dashboardData); } 
         catch (e) { console.warn("Device UI render warning:", e); }
