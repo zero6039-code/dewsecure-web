@@ -346,5 +346,6 @@
   "faq_27_q": "Will clicking 'Manage Subscription' to the Stripe page charge me?",
   "faq_27_a": "No. This is Stripe's official self-service portal. You can safely update cards, download invoices, or upgrade to Family with prorated pricing calculated transparently by Stripe.",
   "faq_28_q": "What to do if cross-device login says 'Token expired' or the extension won't sync?",
-  "faq_28_a": "Login sessions typically last 1 hour. The website silently pushes the latest Token to the extension instantly. If it fails, ensure you are logged in on the website and refresh the extension."
+  "faq_28_a": "Login sessions typically last 1 hour. The website silently pushes the latest Token to the extension instantly. If it fails, ensure you are logged in on the website and refresh the extension.",
+  "dash_pending_days": "Locked Rewards"
 }

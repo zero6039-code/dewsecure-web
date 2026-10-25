@@ -346,5 +346,6 @@
   "faq_27_q": "¿Me cobrarán si hago clic en 'Gestionar Suscripción' a la página de Stripe?",
   "faq_27_a": "No. Este es el portal de autoservicio oficial de Stripe. Puedes actualizar tarjetas, descargar facturas o actualizar a Familiar con precios prorrateados calculados de forma transparente por Stripe.",
   "faq_28_q": "¿Qué hacer si el inicio de sesión entre dispositivos dice 'Token expirado' o la extensión no se sincroniza?",
-  "faq_28_a": "Las sesiones suelen durar 1 hora. El sitio web envía silenciosamente el Token más reciente a la extensión al instante. Si falla, asegúrate de estar conectado en el sitio web y refresca la extensión."
+  "faq_28_a": "Las sesiones suelen durar 1 hora. El sitio web envía silenciosamente el Token más reciente a la extensión al instante. Si falla, asegúrate de estar conectado en el sitio web y refresca la extensión.",
+  "dash_pending_days": "Recompensas Bloqueadas"
 }

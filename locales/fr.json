@@ -346,5 +346,6 @@
   "faq_27_q": "Serai-je facturé si je clique sur « Gérer l'abonnement » vers la page Stripe ?",
   "faq_27_a": "Non. Il s'agit du portail en libre-service officiel de Stripe. Vous pouvez mettre à jour vos cartes, télécharger des factures ou passer à la formule Famille avec des prix au prorata calculés de manière transparente par Stripe.",
   "faq_28_q": "Que faire si la connexion inter-appareils indique « Jeton expiré » ou si l'extension ne se synchronise pas ?",
-  "faq_28_a": "Les sessions durent généralement 1 heure. Le site Web envoie silencieusement le dernier jeton à l'extension instantanément. En cas d'échec, assurez-vous d'être connecté sur le site Web et actualisez l'extension."
+  "faq_28_a": "Les sessions durent généralement 1 heure. Le site Web envoie silencieusement le dernier jeton à l'extension instantanément. En cas d'échec, assurez-vous d'être connecté sur le site Web et actualisez l'extension.",
+  "dash_pending_days": "Récompenses Bloquées"
 }

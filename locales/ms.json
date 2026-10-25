@@ -345,5 +345,6 @@
   "faq_27_q": "Adakah mengklik 'Urus Langganan' ke halaman Stripe akan mengenakan bayaran kepada saya?",
   "faq_27_a": "Tidak. Ini adalah portal layan diri rasmi Stripe. Anda boleh mengemas kini kad, memuat turun invois atau menaik taraf ke Keluarga dengan harga prorata yang dikira secara telus oleh Stripe.",
   "faq_28_q": "Apa yang perlu dilakukan jika log masuk merentas peranti menyatakan 'Token tamat tempoh' atau sambungan tidak disegerakkan?",
-  "faq_28_a": "Sesi log masuk biasanya bertahan 1 jam. Laman web menghantar Token terkini ke sambungan secara senyap serta-merta. Jika gagal, pastikan anda log masuk di laman web dan muat semula sambungan."
+  "faq_28_a": "Sesi log masuk biasanya bertahan 1 jam. Laman web menghantar Token terkini ke sambungan secara senyap serta-merta. Jika gagal, pastikan anda log masuk di laman web dan muat semula sambungan.",
+  "dash_pending_days": "Ganjaran Terkunci"
 }

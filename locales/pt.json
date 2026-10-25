@@ -346,5 +346,6 @@
   "faq_27_q": "Serei cobrado se clicar em 'Gerenciar Assinatura' para a página do Stripe?",
   "faq_27_a": "Não. Este é o portal de autoatendimento oficial do Stripe. Você pode atualizar cartões, baixar faturas ou fazer upgrade para Familiar com preços proporcionais calculados transparentemente pelo Stripe.",
   "faq_28_q": "O que fazer se o login entre dispositivos disser 'Token expirado' ou a extensão não sincronizar?",
-  "faq_28_a": "As sessões duram cerca de 1 hora. O site envia silenciosamente o Token mais recente para a extensão instantaneamente. Se falhar, verifique se está logado no site e atualize a extensão."
+  "faq_28_a": "As sessões duram cerca de 1 hora. O site envia silenciosamente o Token mais recente para a extensão instantaneamente. Se falhar, verifique se está logado no site e atualize a extensão.",
+  "dash_pending_days": "Recompensas Bloqueadas"
 }

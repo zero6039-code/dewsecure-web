@@ -322,6 +322,24 @@ function renderDashboardTexts() {
             const diffDays = Math.ceil(Math.abs(expireDate - now) / (1000 * 60 * 60 * 24)); 
             daysLeftEl.textContent = `${diffDays} ${t['dash_days'] || '天'}`; 
             expireDateEl.textContent = expireDate.toLocaleDateString();
+
+            // 🌟 渲染锁定中天数
+            let pendingEl = document.getElementById('pendingRewardsRow');
+            if (profile.pending_referral_days > 0) {
+                if (!pendingEl) {
+                    pendingEl = document.createElement('div');
+                    pendingEl.id = 'pendingRewardsRow';
+                    pendingEl.className = 'data-row';
+                    pendingEl.style.color = '#8b949e';
+                    pendingEl.style.fontSize = '13px';
+                    pendingEl.style.marginTop = '-5px';
+                    // 插入到 daysLeft 的父节点后面
+                    daysLeftEl.parentNode.parentNode.insertBefore(pendingEl, daysLeftEl.parentNode.nextSibling);
+                }
+                pendingEl.innerHTML = `<span class="data-label">${t['dash_pending_days'] || '待解锁返利'}</span><span class="data-value" style="color:#f1e05a;">+${profile.pending_referral_days} ${t['dash_days'] || '天'}</span>`;
+            } else if (pendingEl) {
+                pendingEl.remove();
+            }
         }
         
         if (isSubAccount) {

@@ -346,5 +346,6 @@
   "faq_27_q": "Wird mir etwas berechnet, wenn ich auf 'Abonnement verwalten' zur Stripe-Seite klicke?",
   "faq_27_a": "Nein. Dies ist das offizielle Self-Service-Portal von Stripe. Sie können Karten aktualisieren, Rechnungen herunterladen oder mit anteiligen Preisen, die von Stripe transparent berechnet werden, auf Family upgraden.",
   "faq_28_q": "Was zu tun ist, wenn die geräteübergreifende Anmeldung 'Token abgelaufen' anzeigt oder die Erweiterung nicht synchronisiert wird?",
-  "faq_28_a": "Anmeldesitzungen dauern normalerweise 1 Stunde. Die Website pusht das neueste Token sofort still an die Erweiterung. Wenn es fehlschlägt, stellen Sie sicher, dass Sie auf der Website angemeldet sind, und aktualisieren Sie die Erweiterung."
+  "faq_28_a": "Anmeldesitzungen dauern normalerweise 1 Stunde. Die Website pusht das neueste Token sofort still an die Erweiterung. Wenn es fehlschlägt, stellen Sie sicher, dass Sie auf der Website angemeldet sind, und aktualisieren Sie die Erweiterung.",
+  "dash_pending_days": "Gesperrte Belohnungen"
 }
