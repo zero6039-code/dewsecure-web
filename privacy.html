@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark" class="i18n-loading">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DewSecure - Privacy Policy</title>
+    <link rel="stylesheet" href="/style.css">
+    <link rel="stylesheet" href="https://unpkg.com/swup@4/dist/swup.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="icon" type="image/png" href="/DewSecure.png">
+</head>
+<body>
+    <header>
+        <a href="/index.html" class="logo"><img src="/DewSecure.png" alt="DewSecure"> DewSecure</a>
+        <nav>
+            <a href="/index.html" data-i18n="nav_home">Home</a>
+            <a href="/pricing.html" data-i18n="nav_pricing">Pricing</a>
+            <a href="/pentest/" target="_blank" data-i18n="nav_pentest">Security Audit</a>
+            <a href="/update/" data-i18n="nav_update">Changelog</a>
+            <a href="/guide/" data-i18n="nav_guide">Guide</a>
+            <a href="/about/" data-i18n="nav_about">About</a>
+            <a href="/login/" data-i18n="nav_login">Log in</a>
+        </nav>
+        <div class="lang-switch">
+            <button class="lang-toggle-btn" style="background:none;border:none;color:#cbd5e1;font-size:24px;cursor:pointer;padding:0;">&#127760;</button>
+            <ul class="lang-dropdown">
+                <li data-lang="zh" class="lang-option">中文 (简体)</li>
+                <li data-lang="en" class="lang-option">English</li>
+                <li data-lang="ms" class="lang-option">Bahasa Melayu</li>
+                <li data-lang="ja" class="lang-option">日本語</li>
+                <li data-lang="ko" class="lang-option">한국어</li>
+                <li data-lang="es" class="lang-option">Español</li>
+                <li data-lang="pt" class="lang-option">Português</li>
+                <li data-lang="de" class="lang-option">Deutsch</li>
+                <li data-lang="fr" class="lang-option">Français</li>
+            </ul>
+        </div>
+    </header>
+    <main id="swup" class="transition-fade">
+        <div class="about-container">
+            <div class="about-header">
+                <h1 data-i18n="privacy_page_title">Privacy Policy</h1>
+                <p data-i18n="privacy_updated">Last updated: October 25, 2026</p>
+            </div>
+            <div class="about-content">
+                <p data-i18n="privacy_intro_1">DewSecure is built on one architectural principle: data stays on your device, and anything that can be processed locally is never sent over the network. We do not sell your data, we do not use your browsing history for advertising profiles, and we do not share any personally identifiable information with third parties for their independent marketing.</p>
+                <p data-i18n="privacy_intro_2">This Privacy Policy applies to your use of the DewSecure browser extension (for Chrome, Edge, Opera, and Yandex Browser based on the Chromium engine, as well as Firefox and other mainstream browsers based on the Gecko engine), the official website (dewsecure.com), the cloud authentication and model distribution services (Cloudflare Worker), and the subscription management services (Supabase + Stripe).</p>
+
+                <h3 data-i18n="privacy_s1_h">1. Who We Are</h3>
+                <p data-i18n="privacy_s1_p1">DewSecure is operated by an independent developer. If you have any questions about this Policy, please contact us at dewsecure9@gmail.com.</p>
+
+                <h3 data-i18n="privacy_s2_h">2. What Data We Collect</h3>
+                <p><strong data-i18n="privacy_s2_21_h">2.1 Account and Subscription Data (only when logging in or paying)</strong></p>
+                <p data-i18n="privacy_s2_21_p1">Email address: used for OTP login, subscription status sync, renewal reminders, and refund notifications.</p>
+                <p data-i18n="privacy_s2_21_p2">Subscription status: plan tier (Free / Pro / Family), expiration date, auto-renewal cancellation status, and referral credit balance.</p>
+                <p data-i18n="privacy_s2_21_p3">Device slot information: the installation_id silently reported by the extension, along with browser and operating system type, used solely to display "slots in use" on your Dashboard and to allow one-click unbinding.</p>
+                <p><strong data-i18n="privacy_s2_22_h">2.2 Payment Data</strong></p>
+                <p data-i18n="privacy_s2_22_p1">Payments are processed by Stripe. We do not store or have access to your full card number; Stripe only returns subscription status, amount, currency, payment time, and Customer ID to us. Stripe's own privacy practices are governed by its privacy policy.</p>
+                <p><strong data-i18n="privacy_s2_23_h">2.3 Extension-Side Local Data (never leaves your device)</strong></p>
+                <p data-i18n="privacy_s2_23_p1">URL and page content analysis: performed entirely within your browser's local sandbox, never uploaded to any server.</p>
+                <p data-i18n="privacy_s2_23_p2">AI model inference: model files are securely delivered via Cloudflare Worker + R2 (with SHA-256 verification and token authentication), and inference runs entirely on-device.</p>
+                <p data-i18n="privacy_s2_23_p3">Rule matching: 110,405 DNR rules take effect locally, with no network callbacks.</p>
+                <p data-i18n="privacy_s2_23_p4">Block statistics: block counts are stored in the extension's local storage and are never uploaded.</p>
+                <p data-i18n="privacy_s2_23_p5">The extension does not collect your browsing history, page content, form data, input records, or any browsing behavior that could identify you personally.</p>
+                <p><strong data-i18n="privacy_s2_24_h">2.4 Server Logs for Website Visits</strong></p>
+                <p data-i18n="privacy_s2_24_p1">When you visit dewsecure.com, our servers (Cloudflare) process standard request metadata: anonymized IP, request timestamp, browser type and version, operating system name and version, requested URL, and referrer URL. This data is used only for security protection and basic operations, never for advertising or user profiling.</p>
+
+                <h3 data-i18n="privacy_s3_h">3. How We Use Data</h3>
+                <p data-i18n="privacy_s3_p1">We use data for account login and verification, subscription status sync and family group management, payment and refund processing, device slot limits and one-click unbinding, abuse and free-riding prevention (device fingerprint locks, disposable email blacklists), and referral credit settlement. All of these uses are necessary for operating the service.</p>
+
+                <h3 data-i18n="privacy_s4_h">4. Data Sharing and Third Parties</h3>
+                <p data-i18n="privacy_s4_p1">We do not sell your personal data. Necessary information is shared with third parties only in the following scenarios:</p>
+                <p data-i18n="privacy_s4_p2">Stripe: processes payments and subscription management; receives your email and subscription metadata.</p>
+                <p data-i18n="privacy_s4_p3">Supabase: stores account and subscription records; data resides in its hosting region.</p>
+                <p data-i18n="privacy_s4_p4">Cloudflare: provides Worker authentication, R2 model distribution, and website hosting.</p>
+                <p data-i18n="privacy_s4_p5">Legal requirements: disclosure only in response to valid legal process, and we will notify you in advance to the extent permitted by law.</p>
+
+                <h3 data-i18n="privacy_s5_h">5. Data Retention</h3>
+                <p data-i18n="privacy_s5_p1">Account data: deleted when you actively delete your account or after 24 consecutive months of inactivity.</p>
+                <p data-i18n="privacy_s5_p2">Subscription and payment records: retained as required by tax and accounting regulations (typically 7 years).</p>
+                <p data-i18n="privacy_s5_p3">Block statistics and device slots: primarily stored locally, no longer retained after unbinding or uninstalling the extension.</p>
+
+                <h3 data-i18n="privacy_s6_h">6. Your Rights</h3>
+                <p data-i18n="privacy_s6_p1">You may exercise the following rights at any time through your Dashboard or by contacting dewsecure9@gmail.com:</p>
+                <p data-i18n="privacy_s6_p2">Access and export your account and subscription data; correct your email or device information; delete your account and associated data (during an active subscription period, certain data must be retained until the subscription ends); withdraw consent for non-essential data processing.</p>
+
+                <h3 data-i18n="privacy_s7_h">7. Children</h3>
+                <p data-i18n="privacy_s7_p1">DewSecure is not intended for children under 13 (or such lower age as may be specified by your jurisdiction). We do not knowingly collect personal data from children. If we become aware of any inadvertent collection, we will delete it as soon as possible.</p>
+
+                <h3 data-i18n="privacy_s8_h">8. Cross-Border Transfers</h3>
+                <p data-i18n="privacy_s8_p1">Your data may be stored in Supabase and Cloudflare infrastructure located in Singapore, the United States, or the European Union. We ensure the lawfulness of cross-border transfers through Standard Contractual Clauses (SCCs) or equivalent mechanisms.</p>
+
+                <h3 data-i18n="privacy_s9_h">9. Policy Updates</h3>
+                <p data-i18n="privacy_s9_p1">We may update this Policy from time to time. Material changes will be announced on the official website or by email. Continued use of the service constitutes acceptance of the updated Policy.</p>
+                <p data-i18n="privacy_s9_p2">This Policy is provided in multiple languages. In the event of any ambiguity or conflict between language versions, the English version shall prevail.</p>
+
+                <h3 data-i18n="privacy_s10_h">10. Contact</h3>
+                <p data-i18n="privacy_s10_p1">Privacy and data rights: dewsecure9@gmail.com</p>
+                <p data-i18n="privacy_s10_p2">Subscriptions, refunds, and account: dewsecure9@gmail.com</p>
+            </div>
+        </div>
+
+        <footer class="site-footer">
+            <a href="https://github.com/zero6039-code/dewsecure-web" target="_blank" class="footer-github-link"><i class="fa-brands fa-github"></i> <span data-i18n="footer_link">View source code on GitHub</span></a>
+            <p class="footer-legal"><a href="/privacy.html" data-i18n="footer_privacy">Privacy Policy</a> <span class="footer-sep">·</span> <a href="/terms.html" data-i18n="footer_terms">Terms of Service</a></p>
+            <p class="footer-copy"><span data-i18n="footer_text">Open-source core, data stays local.</span><br>&copy; 2026 DewSecure. All rights reserved.</p>
+        </footer>
+    </main>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://unpkg.com/swup@4/dist/swup.min.js"></script>
+    <script src="/js/auth-nav.js"></script>
+    <script type="module" src="/js/app-init.js"></script>
+    <script src="/js/i18n.js"></script>
+</body>
+</html>

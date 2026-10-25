@@ -522,3 +522,9 @@ details > summary::-webkit-details-marker {
 details[open] .accordion-icon {
     transform: rotate(180deg);
 }
+
+/* Footer legal links (privacy / terms) */
+.footer-legal { color: #8b949e; font-size: 13px; display: flex; align-items: center; gap: 8px; }
+.footer-legal a { transition: color 0.2s; }
+.footer-legal a:hover { color: #fff; }
+.footer-sep { color: #30363d; }
