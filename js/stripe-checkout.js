@@ -3,7 +3,7 @@
 // ==========================================
 
 // 注意：请确保这里的 Stripe 密钥与你当前测试的环境一致
-const stripe = Stripe('pk_test_51UTurXPLgzklfWuMM5YjFvu6AUFSVWx0ZE4bYSNwpPD04RBhRCAijbEw2BfIUiE6jMmP2HAcDvp0uxZCHs02REoQ003Bpbm59P');
+const stripe = Stripe('pk_live_51UTurOAB28DjNkOqEb45exXZyoFCol1mlFRGASf8wEk3cc2VeKmvHwf5DOk4Ogiz9b3pBt0uo3sLJpn777MyYi2500ukPMDR7y');
 let checkoutInstance = null;
 
 const supabaseUrl = 'https://uvbaioqqjqseapcancvi.supabase.co';
@@ -98,11 +98,11 @@ document.addEventListener('click', (e) => {
         console.log("🖱️ [DOM] 监听到点击了『高级版』按钮");
         e.preventDefault();
         // ⚠️ 请确保这里是你的测试版 Price ID
-        startCheckout('price_1UTuxqPLgzklfWuMDuFjH5ec', 'pro');
+        startCheckout('price_1UUF86AB28DjNkOqNGl2YoBN', 'pro');
     } else if (famBtn) {
         console.log("🖱️ [DOM] 监听到点击了『家庭版』按钮");
         e.preventDefault();
-        startCheckout('price_1UTuyUPLgzklfWuMrMw8kW0b', 'fam');
+        startCheckout('price_1UUF9SAB28DjNkOqrt3BX9Dr', 'fam');
     }
 });
 
@@ -112,9 +112,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const autoPay = urlParams.get('autoPay');
     if (autoPay === 'pro') {
         console.log("🔄 [AutoPay] 检测到登录跳回，自动触发 Pro 支付");
-        startCheckout('price_1UTuxqPLgzklfWuMDuFjH5ec', 'pro');
+        startCheckout('price_1UUF86AB28DjNkOqNGl2YoBN', 'pro');
     } else if (autoPay === 'fam') {
         console.log("🔄 [AutoPay] 检测到登录跳回，自动触发 Family 支付");
-        startCheckout('price_1UTuyUPLgzklfWuMrMw8kW0b', 'fam');
+        startCheckout('price_1UUF9SAB28DjNkOqrt3BX9Dr', 'fam');
     }
 });
