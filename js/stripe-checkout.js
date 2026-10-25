@@ -1,9 +1,9 @@
-const stripe = Stripe('pk_test_51UTurXPLgzklfWuMM5YjFvu6AUFSVWx0ZE4bYSNwpPD04RBhRCAijbEw2BfIUiE6jMmP2HAcDvp0uxZCHs02REoQ003Bpbm59P');
+const stripe = Stripe('pk_live_51UTurOAB28DjNkOqEb45exXZyoFCol1mlFRGASf8wEk3cc2VeKmvHwf5DOk4Ogiz9b3pBt0uo3sLJpn777MyYi2500ukPMDR7y
 let checkoutInstance = null;
 
 const supabaseUrl = 'https://uvbaioqqjqseapcancvi.supabase.co';
 const supabaseAnonKey = 'sb_publishable_xiiA-yt_jRKkzRdkYkoWJA_CVZjNjq8';
-const API_BASE = (window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost') ? 'http://127.0.0.1:8787' : '';
+const API_BASE = (window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost') ? 'http://127.0.0.1:8787' : 'https://api.dewsecure.com';
 
 function getSupabase() {
     if (window.supabaseClient) return window.supabaseClient;
@@ -75,13 +75,13 @@ async function startCheckout(priceId, planType) {
 document.addEventListener('click', (e) => {
     const proBtn = e.target.closest('.btn-pro');
     const famBtn = e.target.closest('.btn-fam');
-    if (proBtn) { e.preventDefault(); startCheckout('price_1UTuxqPLgzklfWuMDuFjH5ec', 'pro'); }
-    else if (famBtn) { e.preventDefault(); startCheckout('price_1UTuyUPLgzklfWuMrMw8kW0b', 'fam'); }
+    if (proBtn) { e.preventDefault(); startCheckout('price_1UUF86AB28DjNkOqNGl2YoBN', 'pro'); }
+    else if (famBtn) { e.preventDefault(); startCheckout('price_1UUF9SAB28DjNkOqrt3BX9Dr', 'fam'); }
 });
 
 document.addEventListener('DOMContentLoaded', () => {
     const urlParams = new URLSearchParams(window.location.search);
     const autoPay = urlParams.get('autoPay');
-    if (autoPay === 'pro') startCheckout('price_1UTuxqPLgzklfWuMDuFjH5ec', 'pro');
-    else if (autoPay === 'fam') startCheckout('price_1UTuyUPLgzklfWuMrMw8kW0b', 'fam');
+    if (autoPay === 'pro') startCheckout('price_1UUF86AB28DjNkOqNGl2YoBN', 'pro');
+    else if (autoPay === 'fam') startCheckout('price_1UUF9SAB28DjNkOqrt3BX9Dr', 'fam');
 });

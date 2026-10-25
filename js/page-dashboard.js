@@ -11,7 +11,7 @@ let dashboardData = null;
 let currentDashboardClient = null;
 let dashboardNotifs = [];
 
-const API_BASE = (window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost') ? 'http://127.0.0.1:8787' : '';
+const API_BASE = (window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost') ? 'http://127.0.0.1:8787' : 'https://api.dewsecure.com';
 
 export async function initDashboardLogic() {
     const client = window.supabaseClient;
