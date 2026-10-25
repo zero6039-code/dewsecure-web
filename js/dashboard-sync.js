@@ -1,6 +1,6 @@
 // 🌟 动态适配 Chrome 与 Edge 扩展 ID
 const isEdge = navigator.userAgent.includes('Edg/');
-const EXTENSION_ID = isEdge ? 'a3cf7aef410249ee92300bc5c1a4e297' : 'fgnijfomipmimnfocgofmmniglibgnak';
+const EXTENSION_ID = isEdge ? 'cpkmeoejhbmcmnaodpnkfdjgggpmgcf' : 'fgnijfomipmimnfocgofmmniglibgnak';
 
 export function pushAuthStateToExtension(session, data) {
     if (!window.chrome?.runtime?.sendMessage) return;
