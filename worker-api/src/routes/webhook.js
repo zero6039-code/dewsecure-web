@@ -35,10 +35,8 @@ webhookRoute.post('/webhook', async (c) => {
 
   console.log(`\n================ 收到 Webhook: ${event.type} ================`);
 
-  // 去重机制
   const { error: dupErr } = await supabaseAdmin.from('stripe_webhook_events').insert({ event_id: event.id, event_type: event.type });
   if (dupErr?.code === '23505') {
-    console.log(`⚠️ 事件已处理过，跳过: ${event.id}`);
     return c.text('Already processed', 200);
   }
 
@@ -78,13 +76,11 @@ webhookRoute.post('/webhook', async (c) => {
           userId = sub.metadata?.user_id || (invoice.parent?.subscription_details?.metadata?.user_id);
         }
 
-        // 🌟 核心修复1：如果 Metadata 找不到，通过 Customer ID 查用户
         if (!userId && invoice.customer) {
           const { data: profile } = await supabaseAdmin.from('profiles').select('id').eq('stripe_customer_id', invoice.customer).maybeSingle();
           if (profile) userId = profile.id;
         }
 
-        // 🌟 核心修复2：终极兜底，如果还找不到，通过 Email 强行查找并绑定
         if (!userId && invoice.customer_email) {
           const { data: profile } = await supabaseAdmin.from('profiles').select('id').eq('email', invoice.customer_email).maybeSingle();
           if (profile) {
@@ -93,10 +89,7 @@ webhookRoute.post('/webhook', async (c) => {
           }
         }
 
-        if (!userId) {
-          console.log('❌ [invoice] 彻底找不到用户，跳过');
-          break;
-        }
+        if (!userId) break;
 
         if (sub) {
           const priceId = sub.items.data[0].price.id;
@@ -115,7 +108,6 @@ webhookRoute.post('/webhook', async (c) => {
           else if (userProfile?.trial_ends_at && new Date(userProfile.trial_ends_at) > base) base = new Date(userProfile.trial_ends_at);
           
           const newEnd = new Date(base.getTime() + 365 * 86400000).toISOString();
-          console.log(`[invoice] 正常续费/购买，准备写入顺延时间: ${newEnd}`);
           await supabaseAdmin.from('profiles').update({ subscription_ends_at: newEnd }).eq('id', userId);
         }
 
@@ -130,11 +122,9 @@ webhookRoute.post('/webhook', async (c) => {
              const { data: inviter } = await supabaseAdmin.from('profiles').select('invite_success_count').eq('id', inviteeProfile.referred_by).single();
              if (inviter) {
                  await supabaseAdmin.from('profiles').update({ invite_success_count: (inviter.invite_success_count || 0) + 1 }).eq('id', inviteeProfile.referred_by);
-                 console.log(`✅ [invoice] 邀请人 ${inviteeProfile.referred_by} 成功邀请人数 +1`);
              }
           }
         }
-        console.log(`✅ [invoice] 处理完成`);
         break;
       }
 
@@ -163,7 +153,6 @@ webhookRoute.post('/webhook', async (c) => {
                   const { data: inviter } = await supabaseAdmin.from('profiles').select('invite_success_count').eq('id', inviterId).single();
                   if (inviter && inviter.invite_success_count > 0) {
                       await supabaseAdmin.from('profiles').update({ invite_success_count: inviter.invite_success_count - 1 }).eq('id', inviterId);
-                      console.log(`✅ [refund] 邀请人 ${inviterId} 人数 -1 并作废返利`);
                   }
               }
           }
@@ -176,6 +165,9 @@ webhookRoute.post('/webhook', async (c) => {
         const sub = event.data.object;
         const userId = sub.metadata?.user_id;
         
+        // 🌟 核心修复：兼容 Stripe 新版 API 的取消逻辑
+        const isCanceling = sub.cancel_at_period_end || (sub.cancel_at !== null && sub.status === 'active') || (sub.canceled_at !== null && sub.status === 'active');
+
         if (event.type === 'customer.subscription.deleted') {
             if (userId) {
                 await supabaseAdmin.from('profiles').update({ tier: 'free', subscription_ends_at: null }).eq('id', userId);
@@ -188,16 +180,19 @@ webhookRoute.post('/webhook', async (c) => {
             if (userId) await supabaseAdmin.from('profiles').update({ tier: newTier }).eq('id', userId);
 
             await supabaseAdmin.from('subscriptions').update({
-              status: sub.status, price_id: priceId,
-              cancel_at_period_end: sub.cancel_at_period_end, current_period_end: getPeriodEnd(sub),
+              status: sub.status, 
+              price_id: priceId,
+              cancel_at_period_end: isCanceling, // 🌟 写入正确的取消状态
+              current_period_end: getPeriodEnd(sub),
             }).eq('stripe_subscription_id', sub.id);
+            
+            console.log(`[subscription.updated] 同步取消状态: ${isCanceling}`);
         }
         break;
       }
     }
   } catch (err) {
     console.error('❌ Webhook handler error:', err);
-    // 如果业务报错，把去重记录删掉，这样 Stripe 重试时还能重新进来
     await supabaseAdmin.from('stripe_webhook_events').delete().eq('event_id', event.id);
     return c.text('Handler error', 500);
   }

@@ -253,7 +253,11 @@ function renderDashboardTexts() {
         if (expireDate) {
             const diffDays = Math.ceil(Math.abs(expireDate - now) / (1000 * 60 * 60 * 24)); 
             daysLeftEl.textContent = `${diffDays} ${t['dash_days'] || '天'}`; 
-            expireDateEl.textContent = expireDate.toLocaleDateString();
+            let dateStr = expireDate.toLocaleDateString();
+            if (profile.cancel_at_period_end) {
+                dateStr += ` <span style="color:#f85149; font-size:12px; margin-left:5px;">(${t['dash_canceled_notice'] || '已取消自动续费'})</span>`;
+            }
+            expireDateEl.innerHTML = dateStr;
         }
 
         // 渲染锁定中天数
