@@ -12,7 +12,7 @@ const supabaseAnonKey = 'sb_publishable_xiiA-yt_jRKkzRdkYkoWJA_CVZjNjq8';
 // 本地测试环境自动指向 8787
 const API_BASE = (window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost') 
     ? 'http://127.0.0.1:8787' 
-    : 'https://api.dewsecure.com';
+    : 'https://dewsecure-api.zero6039.workers.dev';
 
 function getSupabase() {
     if (window.supabaseClient) return window.supabaseClient;

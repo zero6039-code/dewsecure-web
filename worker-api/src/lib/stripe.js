@@ -1,9 +1,16 @@
 import Stripe from 'stripe';
 
 export function getStripe(env) {
-  // 不传 httpClient，使用默认的 fetch，同时在 Worker 中指定最新的 API 版本以兼容 embedded_page
+  // 🌟 自定义 Fetch：拦截所有向 api.stripe.com 的请求，转交给内网代理
+  const customFetch = (url, options) => {
+    const parsedUrl = new URL(url);
+    // 构造一个假的域名通过 Service Binding 发送
+    const targetUrl = `https://stripe-proxy${parsedUrl.pathname}${parsedUrl.search}`;
+    return env.STRIPE_PROXY.fetch(targetUrl, options);
+  };
+
   return new Stripe(env.STRIPE_SECRET_KEY, {
-    apiVersion: '2024-11-20.acacia', 
-    maxNetworkRetries: 3,
+    httpClient: Stripe.createFetchHttpClient(customFetch),
+    maxNetworkRetries: 2,
   });
 }

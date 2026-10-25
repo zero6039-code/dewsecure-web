@@ -4,6 +4,31 @@ import { getSupabaseUser, getSupabaseAdmin } from '../lib/supabase.js';
 
 const checkoutRoute = new Hono();
 
+// ==========================================
+// 🌟 诊断端点：测试 Worker 原生 fetch 能否连通 Stripe
+// ==========================================
+checkoutRoute.get('/test-stripe-connection', async (c) => {
+  try {
+    const res = await fetch('https://api.stripe.com/v1/account', {
+      headers: {
+        'Authorization': `Bearer ${c.env.STRIPE_SECRET_KEY}`,
+        'Content-Type': 'application/x-www-form-urlencoded'
+      }
+    });
+    const text = await res.text();
+    return c.json({ 
+      status: res.status, 
+      ok: res.ok, 
+      body: text.slice(0, 200) 
+    });
+  } catch (err) {
+    return c.json({ error: err.message }, 500);
+  }
+});
+
+// ==========================================
+// 核心业务：创建 Checkout Session
+// ==========================================
 checkoutRoute.post('/checkout', async (c) => {
   const stripe = getStripe(c.env);
   const authHeader = c.req.header('Authorization');
@@ -36,7 +61,7 @@ checkoutRoute.post('/checkout', async (c) => {
 
   try {
     const session = await stripe.checkout.sessions.create({
-      ui_mode: 'embedded_page',
+      ui_mode: 'embedded',
       mode: 'subscription',
       line_items: [{ price: price_id, quantity: 1 }],
       client_reference_id: user.id,
@@ -48,10 +73,13 @@ checkoutRoute.post('/checkout', async (c) => {
 
     return c.json({ clientSecret: session.client_secret });
   } catch (err) {
-    // 🌟 打印出完整的错误信息，为了排查 Invalid JSON
-    console.error('❌ [checkout] Stripe session creation failed:', err.message);
-    console.error('❌ [checkout] 完整错误对象:', JSON.stringify(err, null, 2));
-    return c.json({ error: 'Failed to create checkout session' }, 500);
+    console.error('❌ [checkout] 捕获到 Stripe 报错！');
+    console.error('❌ Message:', err.message);
+    console.error('❌ StatusCode:', err.statusCode);
+    if (err.raw) {
+      console.error('❌ Raw Response:', typeof err.raw === 'string' ? err.raw : JSON.stringify(err.raw, null, 2));
+    }
+    return c.json({ error: 'Failed to create checkout session', detail: err.message }, 500);
   }
 });
 

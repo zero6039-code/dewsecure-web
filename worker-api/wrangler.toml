@@ -2,13 +2,20 @@ name = "dewsecure-api"
 main = "src/worker.js"
 compatibility_date = "2024-09-23"
 
-assets = { directory = "./src" }
-
 [[r2_buckets]]
 binding = "R2_BUCKET"
 bucket_name = "dewsecure-models"
 
 [vars]
-# 填入你的 Supabase 项目信息，以便 Worker 验证 JWT
 SUPABASE_URL = "https://uvbaioqqjqseapcancvi.supabase.co"
 SUPABASE_ANON_KEY = "sb_publishable_xiiA-yt_jRKkzRdkYkoWJA_CVZjNjq8"
+
+# 保留 Route，前端依然访问 api.dewsecure.com
+[[routes]]
+pattern = "api.dewsecure.com/*"
+zone_name = "dewsecure.com"
+
+# 🌟 核心：通过 Service Binding 绑定刚才创建的代理
+[[services]]
+binding = "STRIPE_PROXY"
+service = "stripe-proxy"
