@@ -1,5 +1,11 @@
 [
   {
+    "date": "October 25, 2026",
+    "version": "v1.2.3",
+    "title": "AI Evolution & Stability Update",
+    "content": "This massive update focuses on core stability and automated AI training. We completely fixed the data sync issues (X2 counting) and improved the whitelist bypass logic for a smoother browsing experience. More importantly, we've integrated a crowdsourced feedback loop (Missed Ad / False Block) that automatically fetches user data to retrain our AI model weekly. Your feedback now directly powers the next generation of DewSecure."
+  },
+  {
     "date": "October 18, 2026",
     "version": "v1.2.0",
     "title": "The Commercial Readiness Release",
