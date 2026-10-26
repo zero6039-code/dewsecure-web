@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+   <!-- 首页（最高优先级） -->
+   <url>
+      <loc>https://dewsecure.com/</loc>
+      <changefreq>weekly</changefreq>
+      <priority>1.0</priority>
+   </url>
+   <!-- 定价页 -->
+   <url>
+      <loc>https://dewsecure.com/pricing</loc>
+      <changefreq>monthly</changefreq>
+      <priority>0.9</priority>
+   </url>
+   <!-- 使用指南与 FAQ（长尾流量核心） -->
+   <url>
+      <loc>https://dewsecure.com/guide/</loc>
+      <changefreq>weekly</changefreq>
+      <priority>0.8</priority>
+   </url>
+   <!-- 更新日志（体现网站活跃度） -->
+   <url>
+      <loc>https://dewsecure.com/update/</loc>
+      <changefreq>weekly</changefreq>
+      <priority>0.7</priority>
+   </url>
+   <!-- 关于我们（建立信任） -->
+   <url>
+      <loc>https://dewsecure.com/about/</loc>
+      <changefreq>monthly</changefreq>
+      <priority>0.5</priority>
+   </url>
+</urlset>
