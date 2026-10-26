@@ -3,7 +3,7 @@
     "date": "October 26, 2026",
     "version": "v1.2.4",
     "title": "Cross-Browser Support & UI Polish",
-    "content": "This update introduces seamless cross-browser compatibility. While Chrome and Edge users continue to enjoy our premium Side Panel experience, DewSecure now automatically adapts to a Popup mode for browsers like Yandex. Additionally, we've added native Sidebar support for Opera users, and refined the UI spacing across all views for a cleaner visual experience."
+    "content": "This update introduces seamless cross-browser compatibility. While Chrome and Edge users continue to enjoy our premium Side Panel experience, DewSecure now automatically adapts to a Popup mode for browsers like Yandex. Additionally, we have added native Sidebar support for Opera users, and refined the UI spacing across all views for a cleaner visual experience."
   },
   {
     "date": "October 25, 2026",
