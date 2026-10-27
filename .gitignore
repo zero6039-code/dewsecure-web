@@ -11,3 +11,10 @@ node_modules/
 # Backup files
 *.bak.*
 *.bak
+
+# 忽略所有备份文件
+*.bak
+*.bak*
+*-v2.js
+*-v3.js
+.DS_Store

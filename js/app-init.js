@@ -2,7 +2,7 @@ import { trackReferral } from './referral-tracker.js';
 import './utils.js';
 import './auth-nav.js'; 
 import { initAuthPage } from './page-auth.js';
-import { initDashboardLogic } from './page-dashboard-v2.js';
+import { initDashboardLogic } from './page-dashboard.js';
 import { initComponentsPage, initAcceptInvitePage } from './page-components.js';
 
 // 🌟 动态适配 Chrome 与 Edge 扩展 ID
