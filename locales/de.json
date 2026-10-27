@@ -443,5 +443,8 @@
   "terms_s12_h": "12. Kontakt",
   "terms_s12_p1": "Abonnements, Rückerstattungen und Konten: dewsecure9@gmail.com",
   "terms_s12_p2": "Datenschutz und Datenrechte: dewsecure9@gmail.com",
-  "dash_canceled_notice": "(Automatische Verlängerung storniert)"
+  "dash_canceled_notice": "(Automatische Verlängerung storniert)",
+  "auth_rate_limit": "Zu viele Versuche. Bitte versuchen Sie es später noch einmal.",
+  "dash_device_confirm": "Dieses Gerät wirklich entkoppeln?",
+  "dash_device_unbound_toast": "Gerät entkoppelt"
 }

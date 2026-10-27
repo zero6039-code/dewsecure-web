@@ -443,5 +443,8 @@
   "terms_s12_h": "12. Contato",
   "terms_s12_p1": "Assinaturas, reembolsos e contas: dewsecure9@gmail.com",
   "terms_s12_p2": "Privacidade e direitos sobre dados: dewsecure9@gmail.com",
-  "dash_canceled_notice": "(Renovação automática cancelada)"
+  "dash_canceled_notice": "(Renovação automática cancelada)",
+  "auth_rate_limit": "Muitas tentativas. Por favor, tente novamente mais tarde.",
+  "dash_device_confirm": "Confirmar desvincular este dispositivo?",
+  "dash_device_unbound_toast": "Dispositivo desvinculado"
 }

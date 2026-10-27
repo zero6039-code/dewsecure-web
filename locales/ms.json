@@ -442,5 +442,8 @@
   "terms_s12_h": "12. Hubungi",
   "terms_s12_p1": "Langganan, bayaran balik dan akaun: dewsecure9@gmail.com",
   "terms_s12_p2": "Privasi dan hak data: dewsecure9@gmail.com",
-  "dash_canceled_notice": "(Pembaharuan automatik dibatalkan)"
+  "dash_canceled_notice": "(Pembaharuan automatik dibatalkan)",
+  "auth_rate_limit": "Terlalu banyak percubaan. Sila cuba lagi nanti.",
+  "dash_device_confirm": "Sahkan untuk nyahikat peranti ini?",
+  "dash_device_unbound_toast": "Peranti Dinyahikat"
 }

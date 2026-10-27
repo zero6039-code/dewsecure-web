@@ -18,10 +18,9 @@
     function syncStateToExtension(session) {
         if (!window.chrome || !chrome.runtime || !chrome.runtime.sendMessage) return;
         
-        // 插件 ID 已修正
         // 🌟 动态适配 Chrome 与 Edge 扩展 ID
-const isEdge = navigator.userAgent.includes('Edg/');
-const EXT_ID = isEdge ? 'cpkmeoejhbmcmnaodpnkfdjgggpmgcf' : 'fgnijfomipmimnfocgofmmniglibgnak';
+        const isEdge = navigator.userAgent.includes('Edg/');
+        const EXT_ID = isEdge ? 'cpkmeoejhbmcmnaodpnkfdjgggpmgcf' : 'fgnijfomipmimnfocgofmmniglibgnak';
         
         try {
             if (session) {
@@ -32,16 +31,15 @@ const EXT_ID = isEdge ? 'cpkmeoejhbmcmnaodpnkfdjgggpmgcf' : 'fgnijfomipmimnfocgo
                         token: session.access_token,
                         refreshToken: session.refresh_token,
                         email: session.user.email,
-                        tier: session.user.user_metadata?.tier || 'premium' // 加上 tier 以防万一
+                        tier: session.user.user_metadata?.tier || 'premium'
                     }
                 }, (response) => { 
                     if (response && response.ok) console.log("✅ [网页端] 插件登录状态同步成功");
                 });
             } else {
-                // 用户已登出
-                chrome.runtime.sendMessage(EXT_ID, { type: 'LOGOUT' }, () => { 
-                    console.log("✅ [网页端] 插件登出状态同步成功");
-                });
+                // 🌟 核心修复：网页端登出时，不再向插件发送 LOGOUT 指令
+                // 网页端的生命周期与插件端的生命周期相互独立！
+                console.log("ℹ️ [网页端] 已登出，插件端维持原状态不变。");
             }
         } catch (e) {
             // 插件未安装时，这里会抛异常，静默处理即可
@@ -107,11 +105,11 @@ const EXT_ID = isEdge ? 'cpkmeoejhbmcmnaodpnkfdjgggpmgcf' : 'fgnijfomipmimnfocgo
     // 监听登录状态变化
     supabaseClient.auth.onAuthStateChange((event, session) => {
         renderAuthState(session);
-        // 🌟 触发向插件推送
+        // 🌟 触发向插件推送（只推登录，不推登出）
         if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED' || event === 'INITIAL_SESSION') {
             syncStateToExtension(session);
         } else if (event === 'SIGNED_OUT') {
-            syncStateToExtension(null);
+            syncStateToExtension(null); // 内部逻辑已改为：不会发指令给插件
         }
     });
     

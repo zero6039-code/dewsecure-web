@@ -443,5 +443,8 @@
   "terms_s12_h": "12. お問い合わせ",
   "terms_s12_p1": "サブスクリプション、返金、アカウント：dewsecure9@gmail.com",
   "terms_s12_p2": "プライバシーとデータの権利：dewsecure9@gmail.com",
-  "dash_canceled_notice": "(自動更新はキャンセルされました)"
+  "dash_canceled_notice": "(自動更新はキャンセルされました)",
+  "auth_rate_limit": "試行回数が多すぎます。後でもう一度お試しください。",
+  "dash_device_confirm": "このデバイスのバインドを解除しますか？",
+  "dash_device_unbound_toast": "デバイスのバインドを解除しました"
 }

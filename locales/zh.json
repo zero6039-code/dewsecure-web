@@ -443,5 +443,8 @@
   "terms_s12_h": "12. 联系方式",
   "terms_s12_p1": "订阅、退款与账号相关：dewsecure9@gmail.com",
   "terms_s12_p2": "隐私与数据权利相关：dewsecure9@gmail.com",
-  "dash_canceled_notice": "(已取消自动续费)"
+  "dash_canceled_notice": "(已取消自动续费)",
+  "auth_rate_limit": "登录太频繁，请稍后重试。",
+  "dash_device_confirm": "确认解绑此设备吗？",
+  "dash_device_unbound_toast": "设备已解绑"
 }

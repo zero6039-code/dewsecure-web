@@ -21,7 +21,6 @@ export function initAuthPage() {
         const urlParams = new URLSearchParams(window.location.search);
         const redirectPath = urlParams.get('redirect');
         if (redirectPath) {
-            // 清理参数，避免重复携带，同时保证以 / 开头
             return redirectPath.startsWith('/') ? redirectPath : '/' + redirectPath;
         }
         // 默认：进入控制台
@@ -95,6 +94,17 @@ export function initAuthPage() {
 
     emailInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') { e.preventDefault(); btnSendOtp.click(); } });
     otpInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') { e.preventDefault(); btnVerifyOtp.click(); } });
+
+    // 🌟 新增：网页端的高端体验（复制粘贴满 8 位自动提交）
+    otpInput.addEventListener('input', (e) => {
+        // 1. 只保留数字，并强制截断到 8 位
+        e.target.value = e.target.value.replace(/\D/g, '').slice(0, 8);
+        
+        // 2. 自动提交（给 100ms 缓冲）
+        if (e.target.value.length === 8 && !btnVerifyOtp.disabled) {
+            setTimeout(() => btnVerifyOtp.click(), 100);
+        }
+    });
 
     if (btnResendOtp) {
         btnResendOtp.addEventListener('click', async () => {

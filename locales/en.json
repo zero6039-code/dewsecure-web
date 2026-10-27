@@ -443,5 +443,8 @@
   "terms_s12_h": "12. Contact",
   "terms_s12_p1": "Subscriptions, refunds, and accounts: dewsecure9@gmail.com",
   "terms_s12_p2": "Privacy and data rights: dewsecure9@gmail.com",
-  "dash_canceled_notice": "(Auto-renew cancelled)"
+  "dash_canceled_notice": "(Auto-renew cancelled)",
+  "auth_rate_limit": "Too many attempts. Please try again later.",
+  "dash_device_confirm": "Confirm to unbind this device?",
+  "dash_device_unbound_toast": "Device Unbound"
 }

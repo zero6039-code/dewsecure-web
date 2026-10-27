@@ -26,7 +26,6 @@ export async function initDevicesUI(client, profile) {
         errorMsg = err.message;
     }
 
-    // 🌟 修复：在这里正确使用 devices.length
     desc.textContent = (t['dash_device_desc'] || '您当前已绑定 {used} / {total} 台设备。')
         .replace('{used}', devices.length.toString())
         .replace('{total}', maxDevices.toString());
@@ -52,19 +51,31 @@ export async function initDevicesUI(client, profile) {
         unknown: `<svg viewBox="0 0 24 24" width="20" height="20" fill="#8b949e"><path d="M4 6h16v10H4zm0 12h16v2H4z"/></svg>`
     };
 
-    function getDeviceInfo(ua) {
-        if (!ua) return { os: 'Unknown', browser: 'Unknown', icon: icons.unknown };
-        ua = ua.toLowerCase();
-        let os = 'Unknown', browser = 'Unknown', icon = icons.unknown;
-        if (ua.includes('windows')) { os = 'Windows'; icon = icons.windows; }
-        else if (ua.includes('mac os') || ua.includes('macintosh')) { os = 'macOS'; icon = icons.apple; }
-        else if (ua.includes('android')) { os = 'Android'; icon = icons.android; }
-        else if (ua.includes('iphone') || ua.includes('ipad')) { os = 'iOS'; icon = icons.apple; }
-        else if (ua.includes('linux')) { os = 'Linux'; icon = icons.linux; }
-        if (ua.includes('edg/')) browser = 'Edge';
-        else if (ua.includes('chrome')) browser = 'Chrome';
-        else if (ua.includes('firefox')) browser = 'Firefox';
-        else if (ua.includes('safari')) browser = 'Safari';
+    function getDeviceInfo(device) {
+        const dName = device.device_name || '';
+        const dbBrowser = device.browser || '';
+        
+        let os = 'Unknown';
+        let icon = icons.unknown;
+        
+        const lowerDName = dName.toLowerCase();
+        if (lowerDName.includes('windows')) { os = 'Windows'; icon = icons.windows; }
+        else if (lowerDName.includes('macos') || lowerDName.includes('mac os')) { os = 'macOS'; icon = icons.apple; }
+        else if (lowerDName.includes('linux')) { os = 'Linux'; icon = icons.linux; }
+        else if (lowerDName.includes('android')) { os = 'Android'; icon = icons.android; }
+        else if (lowerDName.includes('ios')) { os = 'iOS'; icon = icons.apple; }
+
+        // 🌟 核心修复：优先信任插件上报的 browser 字段，不再瞎猜
+        let browser = dbBrowser;
+        if (!browser || browser === 'Unknown Browser' || browser === 'Unknown') {
+            if (lowerDName.includes('edge')) browser = 'Edge';
+            else if (lowerDName.includes('opera')) browser = 'Opera';
+            else if (lowerDName.includes('firefox')) browser = 'Firefox';
+            else if (lowerDName.includes('chrome')) browser = 'Chrome';
+            else if (lowerDName.includes('safari')) browser = 'Safari';
+            else browser = 'Unknown';
+        }
+
         return { os, browser, icon };
     }
     
@@ -74,8 +85,7 @@ export async function initDevicesUI(client, profile) {
         
         const d = devices[i];
         if (d) {
-            const ua = d.user_agent || d.device_name || navigator.userAgent; 
-            const info = getDeviceInfo(ua);
+            const info = getDeviceInfo(d); // 🌟 直接传整行数据进去
             const lastActive = d.created_at ? new Date(d.created_at).toLocaleDateString() : 'Unknown';
             
             row.innerHTML = `
@@ -102,14 +112,27 @@ export async function initDevicesUI(client, profile) {
 
 window.removeDevice = async function(deviceId) {
     const t = window.fallbackTranslations || {};
-    window.showGlassConfirm(t['dash_device_unbind'] || '解绑设备', 'Confirm?', async () => {
+    const confirmMsg = t['dash_device_confirm'] || 'Confirm?';
+    
+    window.showGlassConfirm(t['dash_device_unbind'] || '解绑设备', confirmMsg, async () => {
         const client = window.supabaseClient;
         const { error } = await client.from('devices').delete().eq('id', deviceId);
         if (!error) {
-            window.showToast('Device Unbound');
+            window.showToast(t['dash_device_unbound_toast'] || 'Device Unbound', 'success');
+            
+            const isEdge = navigator.userAgent.includes('Edg/');
+            const EXTENSION_ID = isEdge ? 'cpkmeoejhbmcmnaodpnkfdjgggpmgcf' : 'fgnijfomipmimnfocgofmmniglibgnak';
+            if (window.chrome?.runtime?.sendMessage) {
+                window.chrome.runtime.sendMessage(EXTENSION_ID, { type: 'REFRESH_DEVICES' }, () => {});
+            }
+
             const { data: { session } } = await client.auth.getSession();
             const { data: profile } = await client.from('profiles').select('*').eq('id', session.user.id).maybeSingle();
-            initDevicesUI(client, profile);
+            
+            if (profile) {
+                profile.tier = 'pro'; 
+                initDevicesUI(client, profile);
+            }
         } else {
             window.showToast('Error: ' + error.message, 'error');
         }

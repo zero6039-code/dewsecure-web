@@ -205,16 +205,29 @@ function renderDashboardTexts() {
     const now = new Date();
     const balance = profile.referral_days_balance || 0;
     
-    let baseTime = now.getTime();
-    if (profile.subscription_ends_at && new Date(profile.subscription_ends_at).getTime() > baseTime) {
-        baseTime = new Date(profile.subscription_ends_at).getTime();
-    } else if (profile.trial_ends_at && new Date(profile.trial_ends_at).getTime() > baseTime) {
-        baseTime = new Date(profile.trial_ends_at).getTime();
-    }
-
+    // ==========================================
+    // 🌟 核心修复：计算正确的到期时间 (BaseTime)
+    // ==========================================
     let expireDate = null;
-    if (profile.subscription_ends_at || profile.trial_ends_at || balance > 0) {
+    
+    if (profile.subscription_ends_at) {
+        // 1. 有真实订阅
+        let subEnd = new Date(profile.subscription_ends_at);
+        let baseTime = subEnd > now ? subEnd.getTime() : now.getTime(); 
         expireDate = new Date(baseTime + (balance * 86400000));
+    } else if (profile.trial_ends_at) {
+        // 2. 有试用期
+        let trialEnd = new Date(profile.trial_ends_at);
+        let baseTime = trialEnd > now ? trialEnd.getTime() : now.getTime();
+        expireDate = new Date(baseTime + (balance * 86400000));
+    } else if (balance > 0) {
+        // 3. 纯返利用户（无订阅、无试用）
+        // 修复点：不能从今天算，必须从注册时间(created_at)作为锚点起算
+        const regTime = new Date(profile.created_at || now).getTime();
+        let calculatedExpire = regTime + (balance * 86400000);
+        
+        // 如果算出来的时间已经过期（说明是很早以前注册的老用户，且刚拿了返利），则从今天开始算
+        expireDate = new Date(calculatedExpire > now.getTime() ? calculatedExpire : now.getTime() + (balance * 86400000));
     }
 
     const isPremium = (expireDate && expireDate > now);
@@ -227,7 +240,7 @@ function renderDashboardTexts() {
     if (btnLeaveFamily) btnLeaveFamily.classList.add('hidden');
 
     let displayTier = profile.tier;
-    if (displayTier === 'free' && balance > 0) displayTier = 'pro';
+    if (displayTier === 'free' && isPremium) displayTier = 'pro';
 
     if (!isPremium && profile.tier === 'free') {
         tierBadge.textContent = t['dash_tier_free'] || '免费版 (Free)'; 
@@ -260,7 +273,7 @@ function renderDashboardTexts() {
             expireDateEl.innerHTML = dateStr;
         }
 
-        // 渲染锁定中天数
+        // 渲染锁定中天数 (14天未解锁的返利)
         let pendingEl = document.getElementById('pendingRewardsRow');
         if (profile.pending_referral_days > 0) {
             if (!pendingEl) {
@@ -301,7 +314,7 @@ function renderDashboardTexts() {
     renderNotifications();
 
     if (displayTier !== 'free') {
-        try { initDevicesUI(currentDashboardClient, dashboardData); } 
+        try { initDevicesUI(currentDashboardClient, { ...dashboardData, tier: displayTier }); } 
         catch (e) { console.warn("Device UI render warning:", e); }
     }
     if (displayTier === 'family') {
