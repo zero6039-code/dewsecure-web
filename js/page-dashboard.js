@@ -327,7 +327,6 @@ async function renderDashboardTexts() {
         }
     }
 
-    renderNotifications();
 
     if (displayTier !== 'free') {
         try { initDevicesUI(currentDashboardClient, { ...dashboardData, tier: displayTier }); } 
@@ -339,25 +338,6 @@ async function renderDashboardTexts() {
     }
 }
 
-function renderNotifications() {
-    const t = window.fallbackTranslations || {};
-    const list = document.getElementById('notificationList');
-    if (!list) return;
-    if (dashboardNotifs && dashboardNotifs.length > 0) {
-        list.innerHTML = '';
-        dashboardNotifs.forEach(n => {
-            const li = document.createElement('li');
-            li.className = `notification-item ${n.is_read ? '' : 'unread'}`;
-            const title = document.createElement('div'); title.style.cssText = 'font-weight:600;color:#fff;margin-bottom:4px;'; title.textContent = n.title || '';
-            const msg = document.createElement('div'); msg.style.cssText = 'color:#c9d1d9;line-height:1.4;'; msg.textContent = n.message || '';
-            const time = document.createElement('div'); time.className = 'notification-time'; time.textContent = new Date(n.created_at).toLocaleString();
-            li.append(title, msg, time);
-            list.appendChild(li);
-        });
-    } else {
-        list.innerHTML = `<li class="notification-item" style="text-align:center; color:#8b949e;">${t['dash_notif_empty'] || '暂无新通知'}</li>`;
-    }
-}
 
 window.addEventListener('languageChanged', async () => {
     if (dashboardData && typeof renderDashboardTexts === 'function') {

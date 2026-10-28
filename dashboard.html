@@ -113,9 +113,17 @@
             </div>
 
             <div class="right-column">
-                <div class="card" style="height: 100%;">
-                    <h3><i class="fa-solid fa-bell"></i> <span data-i18n="dash_notif_title">通知中心</span></h3>
-                    <ul class="notification-list" id="notificationList">
+                <!-- 🌟 全新通知中心：注入 header、未读角标与全部已读按钮 -->
+                <div class="card" style="height: 100%; display: flex; flex-direction: column;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                        <h3 style="margin-bottom: 0; display: flex; align-items: center; gap: 8px;">
+                            <i class="fa-solid fa-bell"></i> 
+                            <span data-i18n="dash_notif_title">通知中心</span>
+                            <span id="unreadBadge" class="status-badge" style="background: #da3633; color: #fff; font-size: 12px; padding: 2px 8px; display: none;">未读 (0)</span>
+                        </h3>
+                        <button id="btnMarkAllRead" class="btn hidden" style="padding: 4px 10px; font-size: 12px; background: transparent; border: 1px solid #30363d; color: #8b949e; border-radius: 6px; transition: 0.2s;" data-i18n="dash_notif_mark_all_read">全部已读</button>
+                    </div>
+                    <ul class="notification-list" id="notificationList" style="flex: 1; overflow-y: auto; padding-right: 5px;">
                         <li class="notification-item skeleton-text" style="text-align:center;" data-i18n="dash_notif_loading">正在拉取通知...</li>
                     </ul>
                 </div>
@@ -143,5 +151,8 @@
     <script src="/js/auth-nav.js"></script>
     <script type="module" src="/js/app-init.js?v=3"></script>
     <script src="/js/i18n.js"></script>
+<script src="/js/notifications.js?v=1.0.999"></script>
+    <!-- 🌟 引入通知中心代码，带版本号防缓存 -->
+
 </body>
 </html>

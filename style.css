@@ -528,3 +528,278 @@ details[open] .accordion-icon {
 .footer-legal a { transition: color 0.2s; }
 .footer-legal a:hover { color: #fff; }
 .footer-sep { color: #30363d; }
+
+/* =========================================
+   通知中心 (Notification Center)
+   ========================================= */
+.notification-list::-webkit-scrollbar {
+    width: 6px;
+}
+.notification-list::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+}
+.notification-list::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.notification-item {
+    display: flex;
+    gap: 15px;
+    padding: 15px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    cursor: pointer;
+    transition: background 0.2s ease;
+    position: relative;
+}
+.notification-item:hover {
+    background: rgba(255, 255, 255, 0.03);
+}
+.notification-item.unread {
+    background: rgba(88, 166, 255, 0.05);
+}
+.notification-item.unread::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 15%;
+    height: 70%;
+    width: 3px;
+    background: #58a6ff;
+    border-radius: 0 4px 4px 0;
+}
+
+.notif-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    flex-shrink: 0;
+}
+.notif-icon.system { background: rgba(88, 166, 255, 0.15); color: #58a6ff; }
+.notif-icon.billing { background: rgba(35, 134, 54, 0.15); color: #3fb950; }
+.notif-icon.security { background: rgba(218, 54, 51, 0.15); color: #f85149; }
+.notif-icon.family { background: rgba(163, 113, 247, 0.15); color: #a371f7; }
+.notif-icon.referral { background: rgba(210, 153, 34, 0.15); color: #d29922; }
+
+.notif-content {
+    flex: 1;
+    min-width: 0;
+}
+.notif-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 5px;
+}
+.notif-title {
+    font-weight: 600;
+    color: #e6edf3;
+    font-size: 14px;
+}
+.notif-time {
+    font-size: 12px;
+    color: #8b949e;
+    white-space: nowrap;
+}
+.notif-desc {
+    font-size: 13px;
+    color: #8b949e;
+    line-height: 1.5;
+}
+.notif-highlight {
+    color: #58a6ff;
+    font-weight: 600;
+}
+.notif-link {
+    display: inline-block;
+    margin-top: 8px;
+    font-size: 13px;
+    color: #58a6ff;
+    text-decoration: none;
+    font-weight: 500;
+}
+.notif-link:hover {
+    text-decoration: underline;
+}
+
+.notif-delete-btn {
+    background: none;
+    border: none;
+    color: #8b949e;
+    cursor: pointer;
+    opacity: 0;
+    transition: 0.2s;
+    padding: 5px;
+    align-self: flex-start;
+}
+.notification-item:hover .notif-delete-btn {
+    opacity: 1;
+}
+.notif-delete-btn:hover {
+    color: #f85149;
+}
+
+/* 修复通知中心高度及滚动条 */
+.dashboard-container .right-column {
+    position: sticky;
+    top: 100px;
+    height: calc(100vh - 120px); /* 满屏高度减去导航栏，防止被切断 */
+    display: flex;
+    flex-direction: column;
+}
+
+.dashboard-container .right-column .card {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden; /* 防止卡片被内部元素撑破 */
+}
+
+#notificationList {
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding-right: 5px;
+    margin-bottom: 0;
+}
+
+/* 🌟 终极修复：防止右侧通知卡片被严重挤压，强制横向排布 */
+.dashboard-container {
+    grid-template-columns: minmax(0, 2fr) minmax(340px, 1fr) !important; 
+}
+.notif-title {
+    white-space: normal !important; 
+    word-break: break-word;
+    line-height: 1.4;
+}
+.notif-header {
+    align-items: flex-start !important;
+}
+.notif-time {
+    flex-shrink: 0;
+    margin-left: 10px;
+}
+
+/* 🌟 强制干掉任何导致竖排的 Word-Break */
+.notification-item, .notif-title, .notif-desc {
+    writing-mode: horizontal-tb !important;
+    word-break: normal !important;
+    overflow-wrap: break-word !important;
+}
+.notif-content {
+    min-width: 150px !important; /* 给内容区一个最小宽度 */
+}
+
+/* 🌟 终极 UI 微调：完美对齐与滚动条贴边 */
+
+/* 1. 取消右侧卡片的 sticky 悬浮偏移，让它和左侧顶部完全对齐 */
+.dashboard-container .right-column {
+    position: relative !important;
+    top: 0 !important;
+    height: auto !important; /* 让高度由网格自动控制 */
+    margin-top: 0 !important;
+}
+
+/* 2. 让右侧卡片内部的高度自适应，且去掉多余的 padding 防止滚动条悬空 */
+.dashboard-container .right-column .card {
+    height: calc(100vh - 160px) !important; /* 根据 header 和底部留白重新计算高度 */
+    padding-right: 0 !important; /* 去掉右侧自带 padding，让滚动条贴边 */
+}
+
+/* 3. 列表区域贴近卡片右侧边缘 */
+#notificationList {
+    padding-right: 0 !important;
+    padding-left: 0 !important; /* 保持左侧紧凑 */
+    margin-right: 0 !important;
+}
+
+/* 4. 确保每一条通知的右侧有足够的内边距，文字不会贴到滚动条上 */
+.notification-item {
+    padding-right: 20px !important; 
+    border-right: none !important;
+}
+
+/* 5. 微调顶部 Header（通知中心标题和未读角标）的右侧内边距，使其与滚动条对齐 */
+.dashboard-container .right-column .card > div:first-child {
+    padding-right: 20px !important; 
+}
+
+/* =========================================
+   🌟 彻底修复右侧通知卡片的高度延伸与对齐
+   ========================================= */
+
+/* 1. 强制左右两列等高 */
+.dashboard-container {
+    align-items: stretch !important;
+}
+
+.dashboard-container .right-column {
+    position: relative !important;
+    top: 0 !important;
+    height: 100% !important; /* 撑满整个网格高度 */
+    display: flex !important;
+    flex-direction: column !important;
+    margin-top: 0 !important;
+}
+
+/* 2. 让卡片本身占满高度，并去掉右下角的多余 padding，让列表能真正贴底 */
+.dashboard-container .right-column .card {
+    height: 100% !important; /* 彻底废除 calc() */
+    padding: 30px 0 0 30px !important; 
+    display: flex !important;
+    flex-direction: column !important;
+    overflow: hidden !important;
+}
+
+/* 3. 补齐头部标题栏的右边距，防止文字贴边 */
+.dashboard-container .right-column .card > div:first-child {
+    padding-right: 30px !important;
+}
+
+/* 4. 让列表完全撑满剩余空间，并将滚动条紧贴右侧边缘 */
+#notificationList {
+    flex: 1 !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    padding-right: 5px !important; 
+    padding-bottom: 20px !important; /* 底部留一点点呼吸空间，防止最后一条被切断 */
+    margin-bottom: 0 !important;
+}
+
+/* 5. 确保第一条信息不会被卡在卡片顶部 */
+#notificationList .notification-item:first-child {
+    margin-top: 5px !important;
+}
+
+/* =========================================
+   🌟 彻底释放通知列表的高度封印
+   ========================================= */
+
+/* 移除旧的固定高度限制 */
+.notification-list {
+    max-height: none !important; 
+}
+
+/* 确保父容器完全撑开 */
+.dashboard-container .right-column .card {
+    max-height: none !important;
+}
+
+/* 列表区域真正利用 flex: 1 填满卡片剩余的全部空间 */
+#notificationList {
+    flex: 1 1 auto !important;
+    height: 100% !important; 
+    max-height: none !important;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto !important;
+}
+
+/* 让日期分割线和列表项不要被 flex 垂直拉伸变形 */
+#notificationList > li {
+    flex-shrink: 0;
+}

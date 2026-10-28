@@ -9,7 +9,7 @@ window.loadLanguage = async function(lang) {
     }
 
     try {
-        const response = await fetch(`/locales/${lang}.json`);
+        const response = await fetch(`/locales/${lang}.json?v=${new Date().getTime()}`);
         if (!response.ok) throw new Error(`无法加载语言文件: ${lang}`);
         const translations = await response.json();
 
