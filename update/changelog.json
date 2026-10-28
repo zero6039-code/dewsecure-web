@@ -1,4 +1,11 @@
 [
+  
+  {
+    "date": "October 28, 2026",
+    "version": "v1.2.5",
+    "title": "Security Hardening & Performance Optimization",
+    "content": "This update focuses on cross-device security and massive performance improvements. We have completely revamped the Device Limit enforcement system: when your account reaches the maximum number of devices, a sleek glass-morphism modal now seamlessly redirects you to the dashboard for un-binding. Furthermore, we optimized our build pipeline and dependency management, reducing the extension package size by over 80% (from 26MB to 5MB), resulting in lightning-fast installations and updates. We also fixed the Family Plan sub-account expiration date calculations and ensured flawless 9-language localization across all UI components."
+  },
   {
     "date": "October 26, 2026",
     "version": "v1.2.4",
