@@ -78,7 +78,7 @@ export async function initDashboardLogic() {
     } catch (err) { 
         console.error("Dashboard 初始化失败:", err); 
         if (loader) loader.remove();
-        window.showToast("加载数据失败，请刷新重试。", 'error');
+        window.showToast((window.fallbackTranslations || {})["dash_load_failed"] || "加载数据失败，请刷新重试。", "error");
     }
 }
 
