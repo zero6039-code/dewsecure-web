@@ -1,4 +1,5 @@
 let currentDevices = [];
+let isFamilyOwner = false;
 
 export async function initDevicesUI(client, profile) {
     const deviceCard = document.getElementById('deviceCard');
@@ -7,6 +8,7 @@ export async function initDevicesUI(client, profile) {
     if (!deviceCard) return;
 
     if (profile.tier === 'free' || profile.family_owner_id) {
+        // 如果是纯 free 用户，或者是子号（子号不能管理团队设备），则隐藏卡片
         deviceCard.classList.add('hidden');
         return;
     }
@@ -16,19 +18,44 @@ export async function initDevicesUI(client, profile) {
 
     const t = window.fallbackTranslations || {};
     const maxDevices = profile.tier === 'pro' ? 3 : 9;
+    isFamilyOwner = profile.tier === 'family';
 
     try {
-        const { data, error } = await client.from('devices').select('*').eq('user_id', profile.id);
+        let query = client.from('devices').select(`
+            id, 
+            device_name, 
+            browser, 
+            fingerprint, 
+            created_at, 
+            last_seen_at,
+            user_id,
+            profiles(email)
+        `);
+
+        if (isFamilyOwner) {
+            // 如果是家庭版主号，查询自己以及所有子号的设备
+            const { data: subUsers, error: subErr } = await client.from('profiles').select('id').eq('family_owner_id', profile.id);
+            if (subErr) throw subErr;
+            
+            const userIds = [profile.id, ...(subUsers || []).map(u => u.id)];
+            query = query.in('user_id', userIds);
+        } else {
+            // 如果是 Pro 单干用户，只查自己
+            query = query.eq('user_id', profile.id);
+        }
+
+        const { data, error } = await query;
         if (error) throw error;
         currentDevices = data || [];
     } catch (err) {
         console.error("拉取设备失败:", err);
+        currentDevices = [];
     }
 
-    renderDeviceSlots(currentDevices, maxDevices);
+    renderDeviceSlots(currentDevices, maxDevices, profile);
 }
 
-function renderDeviceSlots(devices, maxDevices) {
+function renderDeviceSlots(devices, maxDevices, currentProfile) {
     const slotsDiv = document.getElementById('deviceSlots');
     const desc = document.getElementById('deviceDesc');
     const t = window.fallbackTranslations || {};
@@ -69,17 +96,29 @@ function renderDeviceSlots(devices, maxDevices) {
             else if (rawName.includes('android')) { displayOs = 'Android'; icon = icons.android; }
             else if (rawName.includes('linux')) { displayOs = 'Linux'; icon = icons.linux; }
 
-            const lastActive = d.created_at ? new Date(d.created_at).toLocaleDateString() : 'Unknown';
+            // 提取邮箱：如果是自己，显示 "You"，如果是子号，显示完整邮箱
+            const deviceEmail = d.profiles?.email || 'Unknown';
+            const displayEmail = deviceEmail === currentProfile.email ? `${deviceEmail} (You)` : deviceEmail;
+            // 截断指纹：只显示前 4 位和后 4 位
+            const shortFingerprint = d.fingerprint ? `${d.fingerprint.slice(0, 4)}...${d.fingerprint.slice(-4)}` : 'Unknown';
             
             row.innerHTML = `
-                <div style="display:flex; align-items:center; gap:15px;">
-                    <div style="width:32px; height:32px; display:flex; align-items:center; justify-content:center; background:rgba(255,255,255,0.05); border-radius:8px;">${icon}</div>
-                    <div>
-                        <div style="color:#fff; font-weight:600; font-size:14px;">${displayBrowser} on ${displayOs}</div>
-                        <div style="color:#8b949e; font-size:12px; margin-top:4px;">${t['dash_device_active'] || 'Active'}: ${lastActive}</div>
+                <div style="display:flex; align-items:center; gap:15px; width: 100%;">
+                    <div style="width:32px; height:32px; display:flex; align-items:center; justify-content:center; background:rgba(255,255,255,0.05); border-radius:8px; flex-shrink: 0;">${icon}</div>
+                    
+                    <!-- 左侧显示邮箱 -->
+                    <div style="flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                        <div style="color:#fff; font-weight:600; font-size:14px;" title="${deviceEmail}">${displayEmail}</div>
+                        <div style="color:#8b949e; font-size:12px; margin-top:4px;">${t['dash_device_active'] || 'Active'}: ${new Date(d.last_seen_at || d.created_at).toLocaleDateString()}</div>
+                    </div>
+
+                    <!-- 右侧显示设备和指纹 -->
+                    <div style="text-align: right; flex-shrink: 0; margin-right: 15px;">
+                        <div style="color:#c9d1d9; font-size:13px; font-weight:500;">${displayBrowser} on ${displayOs}</div>
+                        <div style="color:#58a6ff; font-family: monospace; font-size:11px; margin-top:4px;" title="Device Fingerprint">ID: ${shortFingerprint}</div>
                     </div>
                 </div>
-                <button class="btn btn-danger" style="padding: 6px 12px; font-size: 13px;" onclick="window.removeDevice('${d.id}')">${t['dash_device_unbind'] || 'Unbind'}</button>
+                <button class="btn btn-danger" style="padding: 6px 12px; font-size: 13px; flex-shrink: 0;" onclick="window.removeDevice('${d.id}')">${t['dash_device_unbind'] || 'Unbind'}</button>
             `;
         } else {
             row.innerHTML = `
@@ -104,15 +143,14 @@ window.removeDevice = async function(deviceId) {
         if (!error) {
             window.showToast(t['dash_device_unbound_toast'] || 'Device Unbound', 'success');
             
-            // 🌟 核心修复：立即在前端数组中剔除，并强制重绘（解决 Supabase 延迟问题）
+            // 立即剔除并重绘
             currentDevices = currentDevices.filter(d => d.id !== deviceId);
             const { data: { session } } = await client.auth.getSession();
             const { data: profile } = await client.from('profiles').select('*').eq('id', session.user.id).maybeSingle();
             
             if (profile) {
-                profile.tier = 'pro'; 
-                const maxDevices = profile.tier === 'pro' ? 3 : 9;
-                renderDeviceSlots(currentDevices, maxDevices); // 用剔除后的数组重新渲染
+                const maxDevices = profile.tier === 'family' ? 9 : 3;
+                renderDeviceSlots(currentDevices, maxDevices, profile); 
             }
 
             // 发送跨端消息通知插件

@@ -71,7 +71,7 @@ export async function initDashboardLogic() {
         dashboardData = dataResult.dashboardData;
         dashboardNotifs = dataResult.dashboardNotifs;
 
-        renderDashboardTexts();
+        await renderDashboardTexts();
         bindDashboardButtons(currentUser);
         pushAuthStateToExtension(session, dashboardData);
 
@@ -183,10 +183,26 @@ function bindDashboardButtons(currentUser) {
     }
 }
 
-function renderDashboardTexts() {
+async function renderDashboardTexts() {
     if (!dashboardData) return;
     const t = window.fallbackTranslations || {};
     const profile = dashboardData;
+
+    // 🌟 核心修复：如果是子号，前端主动去拉取主号的到期时间
+    if (profile.family_owner_id) {
+        try {
+            const { data: shared } = await currentDashboardClient.rpc('get_family_shared_status');
+            if (shared && shared.success) {
+                profile.tier = 'family';
+                profile.expiresAt = shared.owner_expire;
+                // 为了兼容下面的时间计算逻辑，我们把主号的到期时间伪装成子号的到期时间
+                profile.subscription_ends_at = shared.owner_expire;
+                profile.owner_email = shared.owner_email;
+            }
+        } catch (e) {
+            console.warn("获取主号订阅时间失败", e);
+        }
+    }
 
     const tierBadge = document.getElementById('tierBadge');
     const daysLeftEl = document.getElementById('daysLeft');
@@ -343,8 +359,8 @@ function renderNotifications() {
     }
 }
 
-window.addEventListener('languageChanged', () => {
+window.addEventListener('languageChanged', async () => {
     if (dashboardData && typeof renderDashboardTexts === 'function') {
-        renderDashboardTexts();
+        await renderDashboardTexts();
     }
 });
