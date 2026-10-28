@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark" class="i18n-loading">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DewSecure - Android Coming Soon</title>
+    <link rel="stylesheet" href="/style.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swup@4/dist/swup.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="icon" type="image/png" href="/DewSecure.png">
+    <style>
+        /* 🌟 高级 COMING SOON 专属样式 */
+        .coming-container {
+            min-height: calc(100vh - 250px); /* 减去头部和底部的空间 */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 60px 20px;
+        }
+        .coming-title {
+            font-size: 80px;
+            font-weight: 900;
+            letter-spacing: 5px;
+            margin-bottom: 20px;
+            /* 渐变流光效果 */
+            background: linear-gradient(90deg, #58a6ff, #a371f7, #58a6ff, #a371f7);
+            background-size: 300% 100%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: flow 3s linear infinite;
+            filter: drop-shadow(0 0 20px rgba(88, 166, 255, 0.3));
+        }
+        .coming-icon {
+            font-size: 60px;
+            color: #3fb950;
+            margin-bottom: 20px;
+            animation: pulse 2s infinite;
+        }
+        .coming-desc {
+            font-size: 24px;
+            color: #fff;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+        .coming-sub {
+            font-size: 16px;
+            color: #8b949e;
+            max-width: 500px;
+            line-height: 1.6;
+            margin-bottom: 40px;
+        }
+        /* 返回首页按钮 */
+        .coming-back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: #fff;
+            padding: 12px 28px;
+            border-radius: 100px;
+            font-size: 15px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        .coming-back-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+        }
+
+        /* 动画定义 */
+        @keyframes flow {
+            0% { background-position: 0% 50%; }
+            100% { background-position: 100% 50%; }
+        }
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 0.8; }
+            50% { transform: scale(1.1); opacity: 1; filter: drop-shadow(0 0 15px rgba(63, 185, 80, 0.6)); }
+            100% { transform: scale(1); opacity: 0.8; }
+        }
+        
+        @media (max-width: 768px) {
+            .coming-title { font-size: 48px; letter-spacing: 2px; }
+            .coming-desc { font-size: 20px; }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <a href="/index.html" class="logo"><img src="/DewSecure.png" alt="DewSecure"> DewSecure</a>
+        <nav>
+            <a href="/index.html" data-i18n="nav_home">首页</a>
+            <a href="/pricing.html" data-i18n="nav_pricing">定价</a>
+            <a href="/pentest/" target="_blank" data-i18n="nav_pentest">安全审计</a>
+            <a href="/update/" data-i18n="nav_update">更新日志</a>
+            <a href="/guide/" data-i18n="nav_guide">使用指南</a>
+            <a href="/about/" data-i18n="nav_about">关于我们</a>
+            <a href="/login/" data-i18n="nav_login">登录</a>
+        </nav>
+        <div class="lang-switch">
+            <button class="lang-toggle-btn" style="background:none;border:none;color:#cbd5e1;font-size:24px;cursor:pointer;padding:0;">🌐</button>
+            <ul class="lang-dropdown">
+                <li data-lang="zh" class="lang-option">中文 (简体)</li>
+                <li data-lang="en" class="lang-option">English</li>
+                <li data-lang="ms" class="lang-option">Bahasa Melayu</li>
+                <li data-lang="ja" class="lang-option">日本語</li>
+                <li data-lang="ko" class="lang-option">한국어</li>
+                <li data-lang="es" class="lang-option">Español</li>
+                <li data-lang="pt" class="lang-option">Português</li>
+                <li data-lang="de" class="lang-option">Deutsch</li>
+                <li data-lang="fr" class="lang-option">Français</li>
+            </ul>
+        </div>
+    </header>
+
+    <main id="swup" class="transition-fade">
+        <div class="coming-container">
+            <i class="fa-brands fa-android coming-icon"></i>
+            <h1 class="coming-title" data-i18n="android_coming_title">COMING SOON</h1>
+            <p class="coming-desc" data-i18n="android_coming_desc">系统级的终极防线即将就绪。</p>
+            <p class="coming-sub" data-i18n="android_coming_sub">我们在全力打磨 Android 端的 VpnService 级防护，敬请期待。</p>
+            
+            <a href="/index.html" class="coming-back-btn">
+                <i class="fa-solid fa-arrow-left"></i> <span data-i18n="android_back_btn">返回首页</span>
+            </a>
+        </div>
+    </main>
+
+    <footer class="site-footer">
+        <a href="https://github.com/zero6039-code/dewsecure-web" target="_blank" class="footer-github-link">
+            <i class="fa-brands fa-github"></i>
+            <span data-i18n="footer_link">在 GitHub 上查看开源代码</span>
+        </a>
+        <p class="footer-legal"><a href="/privacy.html" data-i18n="footer_privacy">Privacy Policy</a> <span class="footer-sep">·</span> <a href="/terms.html" data-i18n="footer_terms">Terms of Service</a></p>
+        <p class="footer-copy">
+            <span data-i18n="footer_text">核心引擎开源，数据绝不出户。</span><br>
+            &copy; 2026 DewSecure. All rights reserved.
+        </p>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/swup@4/dist/swup.min.js"></script>
+    <script src="/js/auth-nav.js"></script>
+    <script type="module" src="/js/app-init.js?v=2"></script>
+    <script src="/js/i18n.js"></script>
+</body>
+</html>

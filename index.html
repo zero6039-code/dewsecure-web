@@ -43,7 +43,10 @@
             <h1 data-i18n="hero_title">你的设备，你的规则。</h1>
             <p data-i18n="hero_desc">融合设备端 AI 与云端联邦学习的内容优化与安全防护引擎。深度阻断恶意追踪与钓鱼威胁，极速加载，为您重塑纯净、安全、高效的上网体验。</p>
             
-            <div class="ds-wrap">
+            <!-- 🌟 新增：从指南页搬来的副标题 -->
+            <p data-i18n="guide_subtitle" style="font-size: 18px; color: #58a6ff; font-weight: 600; margin-top: 15px; margin-bottom: 10px; letter-spacing: 1px;">从安装到极致体验，只需 1 分钟。</p>
+
+            <div class="ds-wrap" style="margin-top: 0;">
                 <div class="ds-icons">
                     <div class="ds-icon active" data-target="chrome" title="Chrome"><i class="fa-brands fa-chrome"></i></div>
                     <div class="ds-icon" data-target="edge" title="Edge"><i class="fa-brands fa-edge"></i></div>
@@ -57,7 +60,7 @@
                 <div class="ds-box">
                     <h2 id="ds-title" class="ds-t">重塑纯净、安全的上网体验</h2>
                     <p id="ds-desc" class="ds-d">融合原生拦截与设备端 AI 引擎，毫秒级阻断恶意追踪与钓鱼威胁。</p>
-                    <a href="#" id="ds-btn" class="ds-btn">
+                    <a href="javascript:void(0)" id="ds-btn" class="ds-btn" onclick="if(this.textContent.includes('Android') || this.textContent.includes('安卓')) { window.location.href='/android/'; return false; }">
                         <div class="ds-btn-ic" id="ds-btn-icon"><i class="fa-brands fa-chrome"></i></div>
                         <span id="ds-btn-text">下载 Chrome 扩展</span>
                     </a>
