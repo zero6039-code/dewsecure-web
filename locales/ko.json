@@ -446,5 +446,11 @@
   "dash_canceled_notice": "(자동 갱신 취소됨)",
   "auth_rate_limit": "시도 횟수가 너무 많습니다. 나중에 다시 시도해 주세요.",
   "dash_device_confirm": "이 기기의 연결을 해제하시겠습니까?",
-  "dash_device_unbound_toast": "기기 연결 해제됨"
+  "dash_device_unbound_toast": "기기 연결 해제됨",
+  "auth_device_limit": "기기 수 제한에 도달했습니다! 대시보드에서 기기 연결을 해제하세요.",
+  "dash_load_failed": "데이터를 불러오지 못했습니다. 새로고침하세요.",
+  "limit_title": "기기 수 제한 도달",
+  "limit_desc": "기기 제한(3/3)에 도달했습니다. 대시보드에서 다른 기기의 연결을 해제하세요.",
+  "limit_btn_go": "대시보드로 이동",
+  "limit_btn_close": "닫기"
 }

@@ -445,5 +445,11 @@
   "dash_canceled_notice": "(Pembaharuan automatik dibatalkan)",
   "auth_rate_limit": "Terlalu banyak percubaan. Sila cuba lagi nanti.",
   "dash_device_confirm": "Sahkan untuk nyahikat peranti ini?",
-  "dash_device_unbound_toast": "Peranti Dinyahikat"
+  "dash_device_unbound_toast": "Peranti Dinyahikat",
+  "auth_device_limit": "Had peranti telah dicapai! Sila nyahikat peranti di papan pemuka.",
+  "dash_load_failed": "Gagal memuatkan data. Sila muat semula.",
+  "limit_title": "Had Peranti Dicapai",
+  "limit_desc": "Anda telah mencapai had peranti (3/3). Sila nyahikat peranti lain di Papan Pemuka.",
+  "limit_btn_go": "Pergi ke Papan Pemuka",
+  "limit_btn_close": "Tutup"
 }

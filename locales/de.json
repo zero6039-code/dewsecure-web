@@ -446,5 +446,11 @@
   "dash_canceled_notice": "(Automatische Verlängerung storniert)",
   "auth_rate_limit": "Zu viele Versuche. Bitte versuchen Sie es später noch einmal.",
   "dash_device_confirm": "Dieses Gerät wirklich entkoppeln?",
-  "dash_device_unbound_toast": "Gerät entkoppelt"
+  "dash_device_unbound_toast": "Gerät entkoppelt",
+  "auth_device_limit": "Gerätelimit erreicht! Bitte entkoppeln Sie ein Gerät im Dashboard.",
+  "dash_load_failed": "Daten konnten nicht geladen werden. Bitte aktualisieren Sie.",
+  "limit_title": "Gerätelimit Erreicht",
+  "limit_desc": "Sie haben das Limit (3/3) erreicht. Bitte entkoppeln Sie andere Geräte im Dashboard.",
+  "limit_btn_go": "Zum Dashboard",
+  "limit_btn_close": "Schließen"
 }

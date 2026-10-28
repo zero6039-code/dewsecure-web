@@ -1,3 +1,5 @@
+let currentDevices = [];
+
 export async function initDevicesUI(client, profile) {
     const deviceCard = document.getElementById('deviceCard');
     const slotsDiv = document.getElementById('deviceSlots');
@@ -15,16 +17,22 @@ export async function initDevicesUI(client, profile) {
     const t = window.fallbackTranslations || {};
     const maxDevices = profile.tier === 'pro' ? 3 : 9;
 
-    let devices = [];
-    let errorMsg = '';
-
     try {
         const { data, error } = await client.from('devices').select('*').eq('user_id', profile.id);
         if (error) throw error;
-        devices = data || [];
+        currentDevices = data || [];
     } catch (err) {
-        errorMsg = err.message;
+        console.error("拉取设备失败:", err);
     }
+
+    renderDeviceSlots(currentDevices, maxDevices);
+}
+
+function renderDeviceSlots(devices, maxDevices) {
+    const slotsDiv = document.getElementById('deviceSlots');
+    const desc = document.getElementById('deviceDesc');
+    const t = window.fallbackTranslations || {};
+    const deviceCard = document.getElementById('deviceCard');
 
     desc.textContent = (t['dash_device_desc'] || '您当前已绑定 {used} / {total} 台设备。')
         .replace('{used}', devices.length.toString())
@@ -36,12 +44,6 @@ export async function initDevicesUI(client, profile) {
     }
 
     slotsDiv.innerHTML = '';
-    if (errorMsg) {
-        const errDiv = document.createElement('div');
-        errDiv.style = 'color:#f85149; font-size:12px; margin-bottom:10px;';
-        errDiv.textContent = `Error: ${errorMsg}`;
-        slotsDiv.appendChild(errDiv);
-    }
     
     const icons = {
         windows: `<svg viewBox="0 0 24 24" width="20" height="20" fill="#00a4ef"><path d="M3 5.5l7.5-1v7H3v-6zm8.5-1.1L21 3v8.5h-9.5v-7.1zM3 12.5h7.5v7l-7.5-1v-6zm8.5 0H21V21l-9.5-1.3v-7.2z"/></svg>`,
@@ -51,48 +53,29 @@ export async function initDevicesUI(client, profile) {
         unknown: `<svg viewBox="0 0 24 24" width="20" height="20" fill="#8b949e"><path d="M4 6h16v10H4zm0 12h16v2H4z"/></svg>`
     };
 
-    function getDeviceInfo(device) {
-        const dName = device.device_name || '';
-        const dbBrowser = device.browser || '';
-        
-        let os = 'Unknown';
-        let icon = icons.unknown;
-        
-        const lowerDName = dName.toLowerCase();
-        if (lowerDName.includes('windows')) { os = 'Windows'; icon = icons.windows; }
-        else if (lowerDName.includes('macos') || lowerDName.includes('mac os')) { os = 'macOS'; icon = icons.apple; }
-        else if (lowerDName.includes('linux')) { os = 'Linux'; icon = icons.linux; }
-        else if (lowerDName.includes('android')) { os = 'Android'; icon = icons.android; }
-        else if (lowerDName.includes('ios')) { os = 'iOS'; icon = icons.apple; }
-
-        // 🌟 核心修复：优先信任插件上报的 browser 字段，不再瞎猜
-        let browser = dbBrowser;
-        if (!browser || browser === 'Unknown Browser' || browser === 'Unknown') {
-            if (lowerDName.includes('edge')) browser = 'Edge';
-            else if (lowerDName.includes('opera')) browser = 'Opera';
-            else if (lowerDName.includes('firefox')) browser = 'Firefox';
-            else if (lowerDName.includes('chrome')) browser = 'Chrome';
-            else if (lowerDName.includes('safari')) browser = 'Safari';
-            else browser = 'Unknown';
-        }
-
-        return { os, browser, icon };
-    }
-    
     for (let i = 0; i < maxDevices; i++) {
         const row = document.createElement('div');
         row.style = 'display:flex; justify-content:space-between; align-items:center; background:rgba(0,0,0,0.3); padding:12px 15px; border-radius:10px; border:1px solid rgba(255,255,255,0.05); margin-bottom: 8px;';
         
         const d = devices[i];
         if (d) {
-            const info = getDeviceInfo(d); // 🌟 直接传整行数据进去
+            const rawName = (d.device_name || '').toLowerCase();
+            let displayBrowser = d.browser || 'Unknown';
+            let displayOs = 'Linux';
+            let icon = icons.unknown;
+            
+            if (rawName.includes('windows')) { displayOs = 'Windows'; icon = icons.windows; }
+            else if (rawName.includes('macos')) { displayOs = 'macOS'; icon = icons.apple; }
+            else if (rawName.includes('android')) { displayOs = 'Android'; icon = icons.android; }
+            else if (rawName.includes('linux')) { displayOs = 'Linux'; icon = icons.linux; }
+
             const lastActive = d.created_at ? new Date(d.created_at).toLocaleDateString() : 'Unknown';
             
             row.innerHTML = `
                 <div style="display:flex; align-items:center; gap:15px;">
-                    <div style="width:32px; height:32px; display:flex; align-items:center; justify-content:center; background:rgba(255,255,255,0.05); border-radius:8px;">${info.icon}</div>
+                    <div style="width:32px; height:32px; display:flex; align-items:center; justify-content:center; background:rgba(255,255,255,0.05); border-radius:8px;">${icon}</div>
                     <div>
-                        <div style="color:#fff; font-weight:600; font-size:14px;">${info.browser} on ${info.os}</div>
+                        <div style="color:#fff; font-weight:600; font-size:14px;">${displayBrowser} on ${displayOs}</div>
                         <div style="color:#8b949e; font-size:12px; margin-top:4px;">${t['dash_device_active'] || 'Active'}: ${lastActive}</div>
                     </div>
                 </div>
@@ -117,21 +100,26 @@ window.removeDevice = async function(deviceId) {
     window.showGlassConfirm(t['dash_device_unbind'] || '解绑设备', confirmMsg, async () => {
         const client = window.supabaseClient;
         const { error } = await client.from('devices').delete().eq('id', deviceId);
+        
         if (!error) {
             window.showToast(t['dash_device_unbound_toast'] || 'Device Unbound', 'success');
             
-            const isEdge = navigator.userAgent.includes('Edg/');
-            const EXTENSION_ID = isEdge ? 'cpkmeoejhbmcmnaodpnkfdjgggpmgcf' : 'fgnijfomipmimnfocgofmmniglibgnak';
-            if (window.chrome?.runtime?.sendMessage) {
-                window.chrome.runtime.sendMessage(EXTENSION_ID, { type: 'REFRESH_DEVICES' }, () => {});
-            }
-
+            // 🌟 核心修复：立即在前端数组中剔除，并强制重绘（解决 Supabase 延迟问题）
+            currentDevices = currentDevices.filter(d => d.id !== deviceId);
             const { data: { session } } = await client.auth.getSession();
             const { data: profile } = await client.from('profiles').select('*').eq('id', session.user.id).maybeSingle();
             
             if (profile) {
                 profile.tier = 'pro'; 
-                initDevicesUI(client, profile);
+                const maxDevices = profile.tier === 'pro' ? 3 : 9;
+                renderDeviceSlots(currentDevices, maxDevices); // 用剔除后的数组重新渲染
+            }
+
+            // 发送跨端消息通知插件
+            const isEdge = navigator.userAgent.includes('Edg/');
+            const EXTENSION_ID = isEdge ? 'cpkmeoejhbmcmnaodpnkfdjgggpmgcf' : 'fgnijfomipmimnfocgofmmniglibgnak';
+            if (window.chrome?.runtime?.sendMessage) {
+                window.chrome.runtime.sendMessage(EXTENSION_ID, { type: 'REFRESH_DEVICES' }, () => {});
             }
         } else {
             window.showToast('Error: ' + error.message, 'error');

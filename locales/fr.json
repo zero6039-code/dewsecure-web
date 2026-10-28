@@ -446,5 +446,11 @@
   "dash_canceled_notice": "(Renouvellement automatique annulé)",
   "auth_rate_limit": "Trop de tentatives. Veuillez réessayer plus tard.",
   "dash_device_confirm": "Confirmer la dissociation de cet appareil ?",
-  "dash_device_unbound_toast": "Appareil dissocié"
+  "dash_device_unbound_toast": "Appareil dissocié",
+  "auth_device_limit": "Limite d'appareils atteinte ! Veuillez dissocier un appareil sur le tableau de bord.",
+  "dash_load_failed": "Échec du chargement des données. Veuillez actualiser.",
+  "limit_title": "Limite d'Appareils Atteinte",
+  "limit_desc": "Vous avez atteint la limite (3/3). Veuillez dissocier d'autres appareils sur le Tableau de bord.",
+  "limit_btn_go": "Aller au Tableau de bord",
+  "limit_btn_close": "Fermer"
 }

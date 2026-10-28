@@ -446,5 +446,11 @@
   "dash_canceled_notice": "(Renovação automática cancelada)",
   "auth_rate_limit": "Muitas tentativas. Por favor, tente novamente mais tarde.",
   "dash_device_confirm": "Confirmar desvincular este dispositivo?",
-  "dash_device_unbound_toast": "Dispositivo desvinculado"
+  "dash_device_unbound_toast": "Dispositivo desvinculado",
+  "auth_device_limit": "Limite de dispositivos atingido! Desvincule um dispositivo no painel.",
+  "dash_load_failed": "Falha ao carregar dados. Atualize a página.",
+  "limit_title": "Limite de Dispositivos",
+  "limit_desc": "Você atingiu o limite (3/3). Desvincule outros dispositivos no Painel.",
+  "limit_btn_go": "Ir para o Painel",
+  "limit_btn_close": "Fechar"
 }

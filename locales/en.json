@@ -446,5 +446,11 @@
   "dash_canceled_notice": "(Auto-renew cancelled)",
   "auth_rate_limit": "Too many attempts. Please try again later.",
   "dash_device_confirm": "Confirm to unbind this device?",
-  "dash_device_unbound_toast": "Device Unbound"
+  "dash_device_unbound_toast": "Device Unbound",
+  "auth_device_limit": "Device limit reached! Please unbind a device on the dashboard.",
+  "dash_load_failed": "Failed to load data. Please refresh and try again.",
+  "limit_title": "Device Limit Reached",
+  "limit_desc": "You have reached the device limit (3/3). Please unbind other devices on the Dashboard.",
+  "limit_btn_go": "Go to Dashboard",
+  "limit_btn_close": "Close"
 }

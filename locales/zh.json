@@ -446,5 +446,11 @@
   "dash_canceled_notice": "(已取消自动续费)",
   "auth_rate_limit": "登录太频繁，请稍后重试。",
   "dash_device_confirm": "确认解绑此设备吗？",
-  "dash_device_unbound_toast": "设备已解绑"
+  "dash_device_unbound_toast": "设备已解绑",
+  "auth_device_limit": "设备数已达上限！请前往网页端解绑其他设备。",
+  "dash_load_failed": "加载数据失败，请刷新重试。",
+  "limit_title": "设备数已达上限",
+  "limit_desc": "您的设备数已达上限 (3/3)。请前往 Dashboard 解绑其他设备后重试。",
+  "limit_btn_go": "去 Dashboard 解绑",
+  "limit_btn_close": "关闭"
 }

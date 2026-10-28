@@ -446,5 +446,11 @@
   "dash_canceled_notice": "(自動更新はキャンセルされました)",
   "auth_rate_limit": "試行回数が多すぎます。後でもう一度お試しください。",
   "dash_device_confirm": "このデバイスのバインドを解除しますか？",
-  "dash_device_unbound_toast": "デバイスのバインドを解除しました"
+  "dash_device_unbound_toast": "デバイスのバインドを解除しました",
+  "auth_device_limit": "デバイス数の上限に達しました！ダッシュボードでデバイスを解除してください。",
+  "dash_load_failed": "データの読み込みに失敗しました。再読み込みしてください。",
+  "limit_title": "デバイス数の上限に達しました",
+  "limit_desc": "デバイスの上限（3/3）に達しました。ダッシュボードで他のデバイスを解除してください。",
+  "limit_btn_go": "ダッシュボードへ",
+  "limit_btn_close": "閉じる"
 }
