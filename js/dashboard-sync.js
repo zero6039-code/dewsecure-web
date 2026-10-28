@@ -14,14 +14,19 @@ export function pushAuthStateToExtension(session, data) {
         ownerEmail: data.owner_email || null
     };
 
-    window.chrome.runtime.sendMessage(EXTENSION_ID, {
-        type: 'SYNC_AUTH',
-        payload: payload
-    }, (res) => {
-        if (window.chrome.runtime.lastError) {
-            console.warn('⚠️ 推送插件失败:', window.chrome.runtime.lastError.message);
-        } else {
-            console.log('✅ Dashboard 已推送最新状态到插件:', payload.tier);
-        }
-    });
+    // 🌟 核心修复：用 try-catch 捕获同步异常，防止整个页面崩溃
+    try {
+        window.chrome.runtime.sendMessage(EXTENSION_ID, {
+            type: 'SYNC_AUTH',
+            payload: payload
+        }, (res) => {
+            if (window.chrome.runtime.lastError) {
+                console.warn('⚠️ 推送插件失败:', window.chrome.runtime.lastError.message);
+            } else {
+                console.log('✅ Dashboard 已推送最新状态到插件:', payload.tier);
+            }
+        });
+    } catch (err) {
+        console.warn('⚠️ [Dashboard] 插件通信异常拦截:', err.message);
+    }
 }
