@@ -510,5 +510,13 @@
   "android_coming_title": "COMING SOON",
   "android_coming_desc": "The ultimate system-level defense is coming.",
   "android_coming_sub": "We are polishing the VpnService-level protection for Android. Stay tuned.",
-  "android_back_btn": "Back to Home"
+  "android_back_btn": "Back to Home",
+  "faq_chrome_q": "How to install, pin, or uninstall DewSecure on Chrome?",
+  "faq_chrome_a": "<b>Installation</b>: Go to the Chrome Web Store, search for DewSecure, click 'Add to Chrome', and confirm 'Add extension' in the popup.<br><b>Pin icon</b>: Click the 'Puzzle' icon in the top right corner, find DewSecure in the list, and click the 'Pin' icon next to it. Once pinned, you can view real-time blocking stats with one click.<br><b>Uninstall</b>: Right-click the DewSecure icon in the toolbar and select 'Remove from Chrome'; or go to the extension management page and click 'Remove'.",
+  "faq_edge_q": "How to install, pin, or uninstall DewSecure on Edge?",
+  "faq_edge_a": "<b>Installation</b>: Visit the Microsoft Edge Add-ons store, search for DewSecure, click 'Get', and confirm 'Add extension' in the prompt.<br><b>Pin icon</b>: Click the 'Puzzle' icon to the right of the address bar, find DewSecure, and click the 'Eye' icon (Show in toolbar) next to it; or right-click the icon and select 'Pin to toolbar'.<br><b>Uninstall</b>: Right-click the DewSecure icon in the toolbar and select 'Remove from Microsoft Edge'; or go to the extension management page and click 'Remove'.",
+  "faq_firefox_q": "How to install, pin, or uninstall DewSecure on Firefox?",
+  "faq_firefox_a": "<b>Installation</b>: Open the Firefox Add-ons store (AMO), search for DewSecure, click 'Add to Firefox', and click 'Add' in the permission prompt.<br><b>Pin icon</b>: Click the 'Extensions' button (puzzle/gear icon) in the toolbar, find DewSecure, click the gear icon or right-click and select 'Pin to Toolbar'. To unpin, right-click the pinned icon and uncheck 'Pin to Toolbar'.<br><b>Uninstall</b>: Go to the 'Add-ons and Themes' manager, click the '...' icon next to DewSecure, and select 'Remove'.",
+  "faq_yandex_q": "How to install, pin, or uninstall DewSecure on Yandex, Opera, Brave, Vivaldi, Arc, etc.?",
+  "faq_yandex_a": "<b>Installation</b>: Since these browsers are compatible with Chrome extensions, you can directly visit the Chrome Web Store to search for and install DewSecure; or search in their respective extension stores.<br><b>Pin icon</b>: Click the 'Extensions' icon (or puzzle icon) in the top right corner, find DewSecure, and click the 'Pin' icon to fix it to the toolbar.<br><b>Uninstall</b>: Go to the extension management page, find DewSecure, and click 'Remove' or 'Delete'."
 }

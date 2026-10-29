@@ -511,5 +511,13 @@
   "android_coming_title": "COMING SOON",
   "android_coming_desc": "系统级的终极防线即将就绪。",
   "android_coming_sub": "我们在全力打磨 Android 端的 VpnService 级防护，敬请期待。",
-  "android_back_btn": "返回首页"
+  "android_back_btn": "返回首页",
+  "faq_chrome_q": "如何在 Chrome 浏览器中安装、固定或卸载 DewSecure？",
+  "faq_chrome_a": "<b>安装</b>：前往 Chrome 应用商店搜索 DewSecure，点击“添加至 Chrome”，在弹出窗口中确认“添加扩展程序”即可。<br><b>固定图标</b>：点击浏览器右上角的“拼图”图标，在列表中找到 DewSecure，点击旁边的“图钉”图标。固定后，可一键查看实时拦截数据。<br><b>卸载</b>：在工具栏右键点击 DewSecure 图标，选择“从 Chrome 中移除”；或进入扩展管理页面点击“移除”即可。",
+  "faq_edge_q": "如何在 Edge 浏览器中安装、固定或卸载 DewSecure？",
+  "faq_edge_a": "<b>安装</b>：访问 Microsoft Edge 加载项商店，搜索 DewSecure，点击“获取”并在提示框中确认“添加扩展”。<br><b>固定图标</b>：点击地址栏右侧的“拼图”图标，找到 DewSecure 后点击旁边的“眼睛”图标（在工具栏中显示）；或右键点击图标选择“固定到工具栏”。<br><b>卸载</b>：右键点击工具栏的 DewSecure 图标，选择“从 Microsoft Edge 中移除”；或进入扩展管理页面点击“移除”即可完成卸载。",
+  "faq_firefox_q": "如何在 Firefox 浏览器中安装、固定或卸载 DewSecure？",
+  "faq_firefox_a": "<b>安装</b>：打开 Firefox 附加组件商店（AMO）搜索 DewSecure，点击“添加到 Firefox”，在权限确认提示中点击“添加”。<br><b>固定图标</b>：点击工具栏的“扩展”按钮（拼图/齿轮图标），找到 DewSecure，点击旁边的齿轮图标或右键选择“固定到工具栏”。如需取消固定，右键点击已固定的图标，取消勾选“固定到工具栏”即可。<br><b>卸载</b>：进入“扩展和主题”管理器，在 DewSecure 右侧点击“···”图标，选择“删除”即可。",
+  "faq_yandex_q": "如何在 Yandex、Opera、Brave、Vivaldi、Arc 等 Chromium 浏览器中安装、固定或卸载 DewSecure？",
+  "faq_yandex_a": "<b>安装</b>：由于这些浏览器均兼容 Chrome 扩展，您可以直接访问 Chrome 网上应用店搜索 DewSecure 进行安装；或在各浏览器的扩展商店中搜索安装。<br><b>固定图标</b>：点击浏览器右上角的“扩展程序”图标（或拼图图标），找到 DewSecure，点击旁边的“图钉”图标即可将其固定到工具栏。<br><b>卸载</b>：在扩展程序管理页面找到 DewSecure，点击“删除/移除”链接即可卸载。"
 }

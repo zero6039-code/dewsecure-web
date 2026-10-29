@@ -510,5 +510,13 @@
   "android_coming_title": "COMING SOON",
   "android_coming_desc": "Pertahanan sistem peringkat tertinggi akan tiba.",
   "android_coming_sub": "Kami sedang menggilap perlindungan peringkat VpnService untuk Android. Nantikan.",
-  "android_back_btn": "Kembali ke Laman Utama"
+  "android_back_btn": "Kembali ke Laman Utama",
+  "faq_chrome_q": "Bagaimana untuk memasang, menyemat atau menyahpasang DewSecure pada Chrome?",
+  "faq_chrome_a": "<b>Pemasangan</b>: Pergi ke Chrome Web Store, cari DewSecure, klik 'Tambah ke Chrome', dan sahkan 'Tambah sambungan' dalam tetingkap timbul.<br><b>Semat ikon</b>: Klik ikon 'Teka-teki' di penjuru kanan atas, cari DewSecure dalam senarai, dan klik ikon 'Semat' di sebelahnya. Selepas disemat, anda boleh melihat statistik sekatan masa nyata dengan satu klik.<br><b>Nyahpasang</b>: Klik kanan ikon DewSecure di bar alat dan pilih 'Alih keluar dari Chrome'; atau pergi ke halaman pengurusan sambungan dan klik 'Alih keluar'.",
+  "faq_edge_q": "Bagaimana untuk memasang, menyemat atau menyahpasang DewSecure pada Edge?",
+  "faq_edge_a": "<b>Pemasangan</b>: Lawati kedai Microsoft Edge Add-ons, cari DewSecure, klik 'Dapatkan', dan sahkan 'Tambah sambungan' dalam gesaan.<br><b>Semat ikon</b>: Klik ikon 'Teka-teki' di sebelah kanan bar alamat, cari DewSecure, dan klik ikon 'Mata' (Tunjuk dalam bar alat) di sebelahnya; atau klik kanan ikon dan pilih 'Semat ke bar alat'.<br><b>Nyahpasang</b>: Klik kanan ikon DewSecure di bar alat dan pilih 'Alih keluar dari Microsoft Edge'; atau pergi ke halaman pengurusan sambungan dan klik 'Alih keluar'.",
+  "faq_firefox_q": "Bagaimana untuk memasang, menyemat atau menyahpasang DewSecure pada Firefox?",
+  "faq_firefox_a": "<b>Pemasangan</b>: Buka kedai Firefox Add-ons (AMO), cari DewSecure, klik 'Tambah ke Firefox', dan klik 'Tambah' dalam gesaan kebenaran.<br><b>Semat ikon</b>: Klik butang 'Sambungan' (ikon teka-teki/gear) di bar alat, cari DewSecure, klik ikon gear atau klik kanan dan pilih 'Semat ke Bar Alat'. Untuk menyahsemak, klik kanan ikon yang disemat dan nyahsemak 'Semat ke Bar Alat'.<br><b>Nyahpasang</b>: Pergi ke pengurus 'Add-ons dan Tema', klik ikon '...' di sebelah DewSecure, dan pilih 'Alih keluar'.",
+  "faq_yandex_q": "Bagaimana untuk memasang, menyemat atau menyahpasang DewSecure pada Yandex, Opera, Brave, Vivaldi, Arc, dll.?",
+  "faq_yandex_a": "<b>Pemasangan</b>: Memandangkan pelayar ini serasi dengan sambungan Chrome, anda boleh terus melawati Chrome Web Store untuk mencari dan memasang DewSecure; atau cari di kedai sambungan masing-masing.<br><b>Semat ikon</b>: Klik ikon 'Sambungan' (atau ikon teka-teki) di penjuru kanan atas, cari DewSecure, dan klik ikon 'Semat' untuk menetapkannya pada bar alat.<br><b>Nyahpasang</b>: Pergi ke halaman pengurusan sambungan, cari DewSecure, dan klik 'Alih keluar' atau 'Padam'."
 }
