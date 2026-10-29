@@ -5,12 +5,18 @@ const EXTENSION_ID = isEdge ? 'cpkmeoejhbmcmnaodpnkfdjgggpmgcf' : 'fgnijfomipmim
 export function pushAuthStateToExtension(session, data) {
     if (!window.chrome?.runtime?.sendMessage) return;
     
+    // 判断是否为试用期 (没有 Stripe 客户 ID 且有试用结束时间)
+    const isTrial = data.trial_ends_at && !data.stripe_customer_id;
+    
     const payload = {
         token: session?.access_token,
         refreshToken: session?.refresh_token,
         email: data.email,
+        // 依然传 pro 作为主分类，但额外传 is_trial 给插件识别
         tier: data.tier,
-        expiresAt: data.trial_ends_at,
+        is_trial: isTrial, 
+        // 🌟 修复：优先传正式订阅到期日，没有则传试用到期日
+        expiresAt: data.subscription_ends_at || data.trial_ends_at,
         ownerEmail: data.owner_email || null
     };
 

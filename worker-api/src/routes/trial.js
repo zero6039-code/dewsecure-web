@@ -31,12 +31,21 @@ trialRoute.post('/claim-trial', async (c) => {
     const trialEnd = new Date(Date.now() + 30 * 86400000).toISOString();
     const { error: updateErr } = await supabaseAdmin
       .from('profiles')
-      .update({ tier: 'pro', trial_ends_at: trialEnd })
+      .update({ tier: 'trial', trial_ends_at: trialEnd })
       .eq('id', user.id);
 
     if (updateErr) throw updateErr;
 
-    // 4. 记录到 trial_claims 表（如果你的表结构有的话）
+    // 🌟 4. 新增：插入试用激活通知
+    await supabaseAdmin.from('notifications').insert({
+      user_id: user.id,
+      type: 'billing',
+      title_key: 'notif_trial_activated',
+      message_key: 'notif_trial_activated',
+      params: {}
+    });
+
+    // 5. 记录到 trial_claims 表
     await supabaseAdmin.from('trial_claims').insert({
       user_id: user.id,
       email: user.email,

@@ -273,11 +273,34 @@ async function renderDashboardTexts() {
         }
     } else {
         if (displayTier === 'pro') {
-            tierBadge.textContent = (profile.trial_ends_at && !profile.stripe_customer_id) ? (t['dash_tier_trial'] || 'Pro 试用版') : (t['dash_tier_pro'] || '高级版 (Pro)');
-        } else {
+            // 正式版：金色
+            tierBadge.textContent = t['dash_tier_pro'] || '高级版 (Pro)';
+            tierBadge.className = 'status-badge status-pro';
+            tierBadge.style.background = '';
+            tierBadge.style.color = '';
+            tierBadge.style.borderColor = '';
+        } else if (displayTier === 'trial') {
+            // 试用版：绿色发光
+            tierBadge.textContent = t['dash_tier_trial'] || 'Pro 试用版';
+            tierBadge.className = 'status-badge';
+            tierBadge.style.background = 'rgba(35, 134, 54, 0.15)';
+            tierBadge.style.color = '#3fb950';
+            tierBadge.style.borderColor = 'rgba(35, 134, 54, 0.4)';
+        } else if (displayTier === 'family') {
+            // 家庭版
             tierBadge.textContent = t['dash_tier_family'] || '家庭版 (Family)';
+            tierBadge.className = 'status-badge status-pro';
+            tierBadge.style.background = '';
+            tierBadge.style.color = '';
+            tierBadge.style.borderColor = '';
+        } else {
+            // 🌟 终极兜底：如果遇到未知状态，按免费版处理，绝不冒充 Family
+            tierBadge.textContent = t['dash_tier_free'] || '免费版 (Free)';
+            tierBadge.className = 'status-badge';
+            tierBadge.style.background = '';
+            tierBadge.style.color = '';
+            tierBadge.style.borderColor = '';
         }
-        tierBadge.className = 'status-badge status-pro';
         
         if (expireDate) {
             const diffDays = Math.ceil(Math.abs(expireDate - now) / (1000 * 60 * 60 * 24)); 
@@ -329,7 +352,9 @@ async function renderDashboardTexts() {
 
 
     if (displayTier !== 'free') {
-        try { initDevicesUI(currentDashboardClient, { ...dashboardData, tier: displayTier }); } 
+        // 设备管理 UI 遇到 trial 时，当作 pro 处理以便解锁3个槽位
+        const deviceTier = displayTier === 'trial' ? 'pro' : displayTier;
+        try { initDevicesUI(currentDashboardClient, { ...dashboardData, tier: deviceTier }); } 
         catch (e) { console.warn("Device UI render warning:", e); }
     }
     if (displayTier === 'family') {
