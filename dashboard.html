@@ -115,13 +115,17 @@
             <div class="right-column">
                 <!-- 🌟 全新通知中心：注入 header、未读角标与全部已读按钮 -->
                 <div class="card" style="height: 100%; display: flex; flex-direction: column;">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                    <div style="display: flex; flex-direction: column; gap: 12px; margin-bottom: 15px;">
+                        <!-- 第一行：通知中心标题 -->
                         <h3 style="margin-bottom: 0; display: flex; align-items: center; gap: 8px;">
                             <i class="fa-solid fa-bell"></i> 
                             <span data-i18n="dash_notif_title">通知中心</span>
-                            <span id="unreadBadge" class="status-badge" style="background: #da3633; color: #fff; font-size: 12px; padding: 2px 8px; display: none;">未读 (0)</span>
                         </h3>
-                        <button id="btnMarkAllRead" class="btn hidden" style="padding: 4px 10px; font-size: 12px; background: transparent; border: 1px solid #30363d; color: #8b949e; border-radius: 6px; transition: 0.2s;" data-i18n="dash_notif_mark_all_read">全部已读</button>
+                        <!-- 第二行：未读角标（左）与全部已读（右） -->
+                        <div style="display: flex; justify-content: space-between; align-items: center; min-height: 24px;">
+                            <span id="unreadBadge" class="status-badge" style="background: #da3633; color: #fff; font-size: 12px; padding: 2px 8px; display: none;">未读 (0)</span>
+                            <button id="btnMarkAllRead" class="btn hidden" style="padding: 4px 10px; font-size: 12px; background: transparent; border: 1px solid #30363d; color: #8b949e; border-radius: 6px; transition: 0.2s; white-space: nowrap; margin-left: auto;" data-i18n="dash_notif_mark_all_read">全部已读</button>
+                        </div>
                     </div>
                     <ul class="notification-list" id="notificationList" style="flex: 1; overflow-y: auto; padding-right: 5px;">
                         <li class="notification-item skeleton-text" style="text-align:center;" data-i18n="dash_notif_loading">正在拉取通知...</li>
