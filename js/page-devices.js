@@ -143,6 +143,19 @@ window.removeDevice = async function(deviceId) {
         if (!error) {
             window.showToast(t['dash_device_unbound_toast'] || 'Device Unbound', 'success');
             
+            // 🌟 1. 获取被解绑的设备信息（在剔除前获取）
+            const deviceToRemove = currentDevices.find(d => d.id === deviceId);
+            let deviceName = 'Unknown Device';
+            if (deviceToRemove) {
+                const rawName = (deviceToRemove.device_name || '').toLowerCase();
+                let displayOs = 'Linux';
+                if (rawName.includes('windows')) displayOs = 'Windows';
+                else if (rawName.includes('macos')) displayOs = 'macOS';
+                else if (rawName.includes('android')) displayOs = 'Android';
+                deviceName = `${deviceToRemove.browser || 'Unknown Browser'} on ${displayOs}`;
+            }
+            const deviceOwnerEmail = deviceToRemove?.profiles?.email || '';
+
             // 立即剔除并重绘
             currentDevices = currentDevices.filter(d => d.id !== deviceId);
             const { data: { session } } = await client.auth.getSession();
@@ -151,6 +164,7 @@ window.removeDevice = async function(deviceId) {
             if (profile) {
                 const maxDevices = profile.tier === 'family' ? 9 : 3;
                 renderDeviceSlots(currentDevices, maxDevices, profile); 
+
             }
 
             // 发送跨端消息通知插件
@@ -158,6 +172,11 @@ window.removeDevice = async function(deviceId) {
             const EXTENSION_ID = isEdge ? 'cpkmeoejhbmcmnaodpnkfdjgggpmgcf' : 'fgnijfomipmimnfocgofmmniglibgnak';
             if (window.chrome?.runtime?.sendMessage) {
                 window.chrome.runtime.sendMessage(EXTENSION_ID, { type: 'REFRESH_DEVICES' }, () => {});
+            }
+
+            // 🌟 核心修复：解绑后，主动触发通知中心刷新，拉取数据库触发器生成的新通知
+            if (typeof window.initNotifications === 'function') {
+                window.initNotifications();
             }
         } else {
             window.showToast('Error: ' + error.message, 'error');

@@ -121,10 +121,10 @@
                             <i class="fa-solid fa-bell"></i> 
                             <span data-i18n="dash_notif_title">通知中心</span>
                         </h3>
-                        <!-- 第二行：未读角标（左）与全部已读（右） -->
+                        <!-- 第二行：未读角标（左）与全部删除按钮（右），同一行 -->
                         <div style="display: flex; justify-content: space-between; align-items: center; min-height: 24px;">
-                            <span id="unreadBadge" class="status-badge" style="background: #da3633; color: #fff; font-size: 12px; padding: 2px 8px; display: none;">未读 (0)</span>
-                            <button id="btnMarkAllRead" class="btn hidden" style="padding: 4px 10px; font-size: 12px; background: transparent; border: 1px solid #30363d; color: #8b949e; border-radius: 6px; transition: 0.2s; white-space: nowrap; margin-left: auto;" data-i18n="dash_notif_mark_all_read">全部已读</button>
+                            <span id="unreadBadge" class="status-badge" style="background: #da3633; color: #fff; font-size: 12px; padding: 2px 8px; display: inline-block;">未读 (0)</span>
+                            <button id="btnDeleteAll" class="btn" style="padding: 4px 10px; font-size: 12px; background: transparent; border: 1px solid #30363d; color: #f85149; border-radius: 6px; transition: 0.2s; white-space: nowrap; min-width: 85px; text-align: center;" data-i18n="dash_notif_delete_all">全部删除</button>
                         </div>
                     </div>
                     <ul class="notification-list" id="notificationList" style="flex: 1; overflow-y: auto; padding-right: 5px;">

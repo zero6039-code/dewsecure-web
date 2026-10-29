@@ -444,7 +444,6 @@
   "limit_desc": "기기 제한(3/3)에 도달했습니다. 대시보드에서 다른 기기의 연결을 해제하세요.",
   "limit_btn_go": "대시보드로 이동",
   "limit_btn_close": "닫기",
-  "dash_notif_mark_all_read": "모두 읽음으로 표시",
   "dash_notif_unread": "읽지 않음",
   "notif_welcome_title": "DewSecure에 오신 것을 환영합니다!",
   "notif_welcome_desc": "귀하는 무료 사용자입니다. DewSecure는 완전히 무료이며 강제 구독 없이 대부분의 웹 방해 요소를 차단합니다. 로그인하여 30일 PRO 평가판을 활성화하세요. 일상적인 요구를 충족한다면 영원히 무료로 사용할 수 있습니다.",
@@ -465,7 +464,7 @@
   "notif_downgraded_free": "{email}님이 무료 버전으로 다운그레이드되었습니다.",
   "notif_device_added": "기기를 성공적으로 추가했습니다: {device}.",
   "notif_device_removed": "기기를 성공적으로 제거했습니다: {device}.",
-  "notif_device_limit_3": "기기 한도(3/3)에 도달했습니다. 이전 기기의 바인딩을 해제하거나 Family 플랜으로 업그레이드하여 최대 9대의 기기를 바인딩하세요.",
+  "notif_device_limit_3": "기기 한도(3/3)에 도달했습니다. 대시보드에서 이전 기기를 바인딩 해제하세요.",
   "notif_family_invited": "{email}님을 패밀리 그룹에 초대했습니다.",
   "notif_family_joined": "{email}님이 패밀리 그룹에 가입했습니다.",
   "notif_family_removed": "{email}님을 패밀리 그룹에서 제거했습니다.",
@@ -519,5 +518,11 @@
   "faq_firefox_q": "Firefox에서 DewSecure를 설치, 고정 또는 제거하는 방법은 무엇입니까?",
   "faq_firefox_a": "<b>설치</b>: Firefox 부가 기능 스토어(AMO)를 열고 DewSecure를 검색한 후 'Firefox에 추가'를 클릭하고 권한 프롬프트에서 '추가'를 클릭합니다.<br><b>아이콘 고정</b>: 도구 모음의 '확장 프로그램' 버튼(퍼즐/톱니바퀴 아이콘)을 클릭하고 DewSecure를 찾은 다음 톱니바퀴 아이콘을 클릭하거나 마우스 오른쪽 버튼으로 클릭하고 '도구 모음에 고정'을 선택합니다. 고정을 해제하려면 고정된 아이콘을 마우스 오른쪽 버튼으로 클릭하고 '도구 모음에 고정'을 선택 취소합니다.<br><b>제거</b>: '부가 기능 및 테마' 관리자로 이동하여 DewSecure 옆의 '...' 아이콘을 클릭하고 '제거'를 선택합니다.",
   "faq_yandex_q": "Yandex, Opera, Brave, Vivaldi, Arc 등에서 DewSecure를 설치, 고정 또는 제거하는 방법은 무엇입니까?",
-  "faq_yandex_a": "<b>설치</b>: 이러한 브라우저는 Chrome 확장 프로그램과 호환되므로 Chrome 웹 스토어를 직접 방문하여 DewSecure를 검색하고 설치할 수 있습니다. 또는 각 브라우저의 확장 프로그램 스토어에서 검색하십시오.<br><b>아이콘 고정</b>: 오른쪽 상단의 '확장 프로그램' 아이콘(또는 퍼즐 아이콘)을 클릭하고 DewSecure를 찾은 다음 '고정' 아이콘을 클릭하여 도구 모음에 고정합니다.<br><b>제거</b>: 확장 프로그램 관리 페이지로 이동하여 DewSecure를 찾고 '제거' 또는 '삭제'를 클릭합니다."
+  "faq_yandex_a": "<b>설치</b>: 이러한 브라우저는 Chrome 확장 프로그램과 호환되므로 Chrome 웹 스토어를 직접 방문하여 DewSecure를 검색하고 설치할 수 있습니다. 또는 각 브라우저의 확장 프로그램 스토어에서 검색하십시오.<br><b>아이콘 고정</b>: 오른쪽 상단의 '확장 프로그램' 아이콘(또는 퍼즐 아이콘)을 클릭하고 DewSecure를 찾은 다음 '고정' 아이콘을 클릭하여 도구 모음에 고정합니다.<br><b>제거</b>: 확장 프로그램 관리 페이지로 이동하여 DewSecure를 찾고 '제거' 또는 '삭제'를 클릭합니다.",
+  "dash_notif_delete_all": "모두 삭제",
+  "dash_notif_delete_all_confirm": "모든 알림을 삭제하시겠습니까? 이 작업은 취소할 수 없습니다.",
+  "dash_notif_empty_click": "더 이상 삭제할 알림이 없습니다.",
+  "notif_family_joined_self": "{email}님의 패밀리 그룹에 가입했습니다.",
+  "dash_family_remove_confirm": "이 구성원을 제거하시겠습니까?",
+  "notif_family_removed_self": "{email}님의 패밀리 그룹에서 제거되었습니다."
 }

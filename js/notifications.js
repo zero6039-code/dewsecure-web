@@ -1,5 +1,5 @@
 // js/notifications.js
-// DewSecure 通知中心模块 (v1.0.6 - 多语言强制优先版)
+// DewSecure 通知中心模块 (v1.0.9 - 实时推送版)
 
 const NOTIF_ICONS = {
     'system': 'fa-solid fa-bullhorn text-blue',
@@ -14,7 +14,7 @@ let cachedNotifications = [];
 window.initNotifications = async function() {
     const listEl = document.getElementById('notificationList');
     const badgeEl = document.getElementById('unreadBadge');
-    const markAllBtn = document.getElementById('btnMarkAllRead');
+    const btnDeleteAll = document.getElementById('btnDeleteAll');
     if (!listEl) return;
 
     if (!window.supabaseClient) {
@@ -38,47 +38,99 @@ window.initNotifications = async function() {
     }
 
     cachedNotifications = notifications || [];
-    tryRender(listEl, badgeEl, markAllBtn);
+    tryRender(listEl, badgeEl, btnDeleteAll);
 
-    if (markAllBtn) {
-        markAllBtn.onclick = async () => {
-            const unreadIds = cachedNotifications.filter(n => !n.is_read).map(n => n.id);
-            if (unreadIds.length === 0) return;
-            await window.supabaseClient.from('notifications').update({ is_read: true }).in('id', unreadIds);
-            cachedNotifications.forEach(n => n.is_read = true);
-            tryRender(listEl, badgeEl, markAllBtn);
+    if (btnDeleteAll) {
+        btnDeleteAll.onclick = () => {
+            const t = window.fallbackTranslations || {};
+            const title = t['dash_notif_delete_all'] || 'Delete All';
+            
+            if (cachedNotifications.length === 0) {
+                if (typeof window.showGlassConfirm === 'function') {
+                    window.showGlassConfirm(title, t['dash_notif_empty_click'] || 'There is no information left to delete.', () => {});
+                } else {
+                    window.alert(t['dash_notif_empty_click'] || 'There is no information left to delete.');
+                }
+                return;
+            }
+
+            const confirmMsg = t['dash_notif_delete_all_confirm'] || 'Are you sure you want to delete all notifications?';
+            
+            const executeDeleteAll = async () => {
+                const allIds = cachedNotifications.map(n => n.id);
+                const { error } = await window.supabaseClient.from('notifications').delete().in('id', allIds);
+                if (!error) {
+                    cachedNotifications = [];
+                    renderEmptyState(listEl, badgeEl, btnDeleteAll);
+                } else {
+                    window.showToast(error.message, 'error');
+                }
+            };
+
+            if (typeof window.showGlassConfirm === 'function') {
+                window.showGlassConfirm(title, confirmMsg, executeDeleteAll);
+            } else {
+                if (window.confirm(confirmMsg)) executeDeleteAll();
+            }
         };
+    }
+
+    // 🌟 核心新增：开启 Supabase Realtime 实时监听
+    if (!window._notifChannelSubscribed && session) {
+        window._notifChannelSubscribed = true; // 防重复订阅锁
+        
+        window.supabaseClient.channel('notifications_realtime')
+            .on('postgres_changes', { 
+                event: '*', // 监听增删改
+                schema: 'public', 
+                table: 'notifications', 
+                filter: `user_id=eq.${session.user.id}` 
+            }, (payload) => {
+                console.log('⚡ [Realtime] 收到实时通知变动:', payload);
+                // 收到变动后，直接重新跑一遍拉取逻辑，保证数据顺序绝对正确
+                window.initNotifications();
+            })
+            .subscribe((status, err) => {
+                if (status === 'SUBSCRIBED') {
+                    console.log('📡 [Realtime] WebSocket 连接成功！正在等待新通知...');
+                } else if (status === 'CHANNEL_ERROR') {
+                    console.error('❌ [Realtime] 连接失败，请检查 Supabase Realtime 是否开启或 RLS 策略', err);
+                }
+            });
     }
 };
 
-function tryRender(listEl, badgeEl, markAllBtn) {
+function tryRender(listEl, badgeEl, btnDeleteAll) {
     if (document.documentElement.getAttribute('data-i18n-ready') === 'true' && window.fallbackTranslations) {
         if (cachedNotifications.length === 0) {
-            renderEmptyState(listEl, badgeEl, markAllBtn);
+            renderEmptyState(listEl, badgeEl, btnDeleteAll);
         } else {
-            renderNotifications(cachedNotifications, listEl, badgeEl, markAllBtn);
+            renderNotifications(cachedNotifications, listEl, badgeEl, btnDeleteAll);
         }
     } else {
-        setTimeout(() => tryRender(listEl, badgeEl, markAllBtn), 100);
+        setTimeout(() => tryRender(listEl, badgeEl, btnDeleteAll), 100);
     }
 }
 
-// 确保切换语言时立刻重绘
+// 🌟 切换语言时立刻重绘
 window.addEventListener('languageChanged', () => {
     const listEl = document.getElementById('notificationList');
     const badgeEl = document.getElementById('unreadBadge');
-    const markAllBtn = document.getElementById('btnMarkAllRead');
-    if (listEl && cachedNotifications.length > 0) {
-        // 加个微小延迟，确保 fallbackTranslations 完全替换完毕
+    const btnDeleteAll = document.getElementById('btnDeleteAll');
+    if (listEl) {
         setTimeout(() => {
-            renderNotifications(cachedNotifications, listEl, badgeEl, markAllBtn);
-        }, 10);
+            tryRender(listEl, badgeEl, btnDeleteAll);
+        }, 50);
     }
 });
 
-function renderEmptyState(listEl, badgeEl, markAllBtn) {
-    badgeEl.style.display = 'none';
-    markAllBtn.classList.add('hidden');
+function renderEmptyState(listEl, badgeEl, btnDeleteAll) {
+    badgeEl.textContent = `${window.fallbackTranslations?.['dash_notif_unread'] || 'Unread'} (0)`;
+    badgeEl.style.display = 'inline-block';
+    badgeEl.style.background = '#30363d';
+    badgeEl.style.color = '#8b949e';
+    badgeEl.style.border = '1px solid rgba(255,255,255,0.1)';
+    
     const emptyMsg = window.fallbackTranslations?.['dash_notif_empty'] || 'All clear! No new notifications.';
     listEl.innerHTML = `<li class="notification-item empty-state" style="text-align:center; color:#8b949e; padding: 30px 0; justify-content: center; display: block;">
         <div>
@@ -88,19 +140,23 @@ function renderEmptyState(listEl, badgeEl, markAllBtn) {
     </li>`;
 }
 
-function renderNotifications(data, listEl, badgeEl, markAllBtn) {
+function renderNotifications(data, listEl, badgeEl, btnDeleteAll) {
     listEl.innerHTML = '';
     const unreadCount = data.filter(n => !n.is_read).length;
     const t = window.fallbackTranslations || {};
     const currentLang = window.currentLang || 'en';
 
+    badgeEl.textContent = `${t['dash_notif_unread'] || 'Unread'} (${unreadCount})`;
+    badgeEl.style.display = 'inline-block';
+    
     if (unreadCount > 0) {
-        badgeEl.textContent = `${t['dash_notif_unread'] || 'Unread'} (${unreadCount})`;
-        badgeEl.style.display = 'inline-block';
-        markAllBtn.classList.remove('hidden');
+        badgeEl.style.background = '#da3633';
+        badgeEl.style.color = '#fff';
+        badgeEl.style.border = '1px solid #da3633';
     } else {
-        badgeEl.style.display = 'none';
-        markAllBtn.classList.add('hidden');
+        badgeEl.style.background = '#30363d';
+        badgeEl.style.color = '#8b949e';
+        badgeEl.style.border = '1px solid rgba(255,255,255,0.1)';
     }
 
     let lastDateStr = '';
@@ -147,7 +203,6 @@ function renderNotifications(data, listEl, badgeEl, markAllBtn) {
         const titleKey = notif.title_key || 'notif_welcome_title';
         const msgKey = notif.message_key || 'notif_welcome_desc';
         
-        // 强制优先取翻译包里的 Key
         let titleText = t[titleKey] || notif.title || 'Untitled';
         let msgText = t[msgKey] || notif.message || 'No details.';
         
@@ -183,24 +238,55 @@ function renderNotifications(data, listEl, badgeEl, markAllBtn) {
             <button class="notif-delete-btn" title="${t['confirm_ok'] || 'Delete'}" style="flex-shrink: 0;"><i class="fa-solid fa-trash-can"></i></button>
         `;
 
+        // 点击条目标为已读
         li.addEventListener('click', async (e) => {
             if (e.target.closest('.notif-delete-btn') || e.target.closest('.notif-link')) return;
             if (!notif.is_read) {
                 await window.supabaseClient.from('notifications').update({ is_read: true }).eq('id', notif.id);
                 notif.is_read = true;
-                renderNotifications(cachedNotifications, listEl, badgeEl, markAllBtn);
+                renderNotifications(cachedNotifications, listEl, badgeEl, btnDeleteAll);
             }
         });
 
+        // 点击垃圾桶删除单条
         li.querySelector('.notif-delete-btn').addEventListener('click', async (e) => {
             e.stopPropagation();
-            if (!confirm(t['notif_delete_confirm'] || 'Are you sure you want to delete this notification?')) return;
-            const { error } = await window.supabaseClient.from('notifications').delete().eq('id', notif.id);
-            if (!error) {
-                const index = cachedNotifications.findIndex(n => n.id === notif.id);
-                if (index > -1) cachedNotifications.splice(index, 1);
-                if (cachedNotifications.length === 0) renderEmptyState(listEl, badgeEl, markAllBtn);
-                else renderNotifications(cachedNotifications, listEl, badgeEl, markAllBtn);
+            const confirmMsg = t['notif_delete_confirm'] || 'Are you sure you want to delete this notification?';
+            
+            const executeDelete = async () => {
+                const { data: deletedRows, error } = await window.supabaseClient.from('notifications').delete().eq('id', notif.id).select();
+                
+                if (error) {
+                    console.error('删除通知失败:', error);
+                    window.showToast(error.message || '删除失败，请检查网络', 'error');
+                    return;
+                }
+                
+                if (deletedRows !== null) {
+                    const index = cachedNotifications.findIndex(n => n.id === notif.id);
+                    if (index > -1) cachedNotifications.splice(index, 1);
+                    
+                    if (cachedNotifications.length === 0) {
+                        renderEmptyState(listEl, badgeEl, btnDeleteAll);
+                    } else {
+                        renderNotifications(cachedNotifications, listEl, badgeEl, btnDeleteAll);
+                    }
+                }
+            };
+
+            if (typeof window.showGlassConfirm === 'function') {
+                try {
+                    window.showGlassConfirm(
+                        t['confirm_cancel'] || '删除通知', 
+                        confirmMsg, 
+                        executeDelete
+                    );
+                } catch (err) {
+                    console.error('毛玻璃弹窗异常，降级原生弹窗:', err);
+                    if (window.confirm(confirmMsg)) await executeDelete();
+                }
+            } else {
+                if (window.confirm(confirmMsg)) await executeDelete();
             }
         });
 

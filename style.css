@@ -803,3 +803,205 @@ details[open] .accordion-icon {
 #notificationList > li {
     flex-shrink: 0;
 }
+
+/* 🌟 限制通知卡片最大高度，防止过长撑破页面 */
+#notificationList {
+    max-height: calc(100vh - 380px) !important;
+    overflow-y: auto !important;
+}
+
+/* =========================================
+   🌟 终极修复：右侧通知卡片完美自适应高度
+   ========================================= */
+.dashboard-container {
+    align-items: stretch !important; 
+}
+
+.dashboard-container .right-column {
+    position: relative !important;
+    top: 0 !important;
+    height: 100% !important; 
+    display: flex !important;
+    flex-direction: column !important;
+}
+
+.dashboard-container .right-column .card {
+    height: 100% !important; 
+    display: flex !important;
+    flex-direction: column !important;
+    padding-bottom: 0 !important; 
+    overflow: hidden !important;
+}
+
+#notificationList {
+    flex: 1 !important;
+    max-height: none !important; /* 彻底废除死板限制 */
+    overflow-y: auto !important;
+    padding-bottom: 20px !important;
+}
+
+/* =========================================
+   🌟 终极布局：右侧通知卡片与左侧等高 + 内部丝滑滚动
+   ========================================= */
+.dashboard-container {
+    display: grid;
+    grid-template-columns: minmax(0, 2fr) minmax(340px, 1fr);
+    align-items: stretch; /* 强制左右等高 */
+}
+
+.dashboard-container .right-column {
+    display: flex;
+    flex-direction: column;
+    height: 100%; /* 撑满网格分配的高度 */
+}
+
+.dashboard-container .right-column .card {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden; /* 必须：防止内部撑破卡片 */
+    min-height: 0;    /* 必须：打破 flexbox 无法收缩的限制 */
+    padding: 30px 0 0 30px; 
+}
+
+.dashboard-container .right-column .card > div:first-child {
+    padding-right: 30px;
+}
+
+#notificationList {
+    flex: 1;
+    overflow-y: auto;
+    min-height: 0;    /* 必须：允许滚动条在内部生效 */
+    padding-right: 5px;
+    padding-bottom: 20px;
+}
+
+#notificationList > li {
+    flex-shrink: 0;
+}
+
+/* 防止文字竖排和过度挤压 */
+.notif-title {
+    white-space: normal !important; 
+    word-break: break-word;
+    line-height: 1.4;
+}
+.notif-header {
+    align-items: flex-start !important;
+}
+.notif-time {
+    flex-shrink: 0;
+    margin-left: 10px;
+}
+.notification-item {
+    padding-right: 20px !important; 
+}
+
+/* =========================================
+   🌟 终极方案：右侧通知栏独立滚动，不拖累整页高度
+   ========================================= */
+
+/* 1. 让 Grid 格子不要被内部内容强行撑大 */
+.dashboard-container {
+    align-items: start !important; 
+}
+
+/* 2. 右侧栏采用吸顶模式，永远固定在一屏高度 */
+.dashboard-container .right-column {
+    position: sticky !important;
+    top: 100px !important; /* 距离顶部的间距 */
+    height: calc(100vh - 120px) !important; /* 强制一屏高 */
+    max-height: calc(100vh - 120px) !important;
+    display: flex !important;
+    flex-direction: column !important;
+    overflow: hidden !important; /* 外层绝对不溢出 */
+}
+
+/* 3. 卡片填满右侧栏 */
+.dashboard-container .right-column .card {
+    flex: 1 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    overflow: hidden !important;
+    padding: 30px 0 0 30px !important;
+}
+
+/* 4. 列表内部使用剩余空间，独立滚动 */
+#notificationList {
+    flex: 1 !important;
+    overflow-y: auto !important;
+    min-height: 0 !important; /* 唤醒滚动条的必需属性 */
+    padding-right: 5px !important;
+    padding-bottom: 20px !important;
+}
+
+/* =========================================
+   🌟 终极修正：完美顶部对齐 + 内部独立滚动
+   ========================================= */
+
+/* 1. 让左侧和右侧的网格子项顶部绝对对齐 */
+.dashboard-container {
+    display: grid !important;
+    grid-template-columns: minmax(0, 2fr) minmax(340px, 1fr) !important;
+    align-items: start !important; /* 核心：让顶部对齐 */
+    gap: 24px !important;
+}
+
+/* 2. 右侧列放弃吸顶悬浮，回归文档流 */
+.dashboard-container .right-column {
+    position: relative !important; 
+    top: 0 !important;
+    height: auto !important; 
+    display: flex !important;
+    flex-direction: column !important;
+}
+
+/* 3. 右侧卡片：限制最大高度为屏幕高度，从而实现内部滚动 */
+.dashboard-container .right-column .card {
+    height: auto !important;
+    max-height: calc(100vh - 160px) !important; /* 防止无限拉长，最高一屏 */
+    display: flex !important;
+    flex-direction: column !important;
+    overflow: hidden !important; 
+    padding: 30px 0 0 30px !important;
+}
+
+/* 4. 列表内部利用 flex 撑满，超出时生成平滑滚动条 */
+#notificationList {
+    flex: 1 !important;
+    overflow-y: auto !important;
+    min-height: 0 !important; 
+    padding-right: 5px !important;
+    padding-bottom: 20px !important;
+}
+
+/* =========================================
+   🌟 终极响应式优化：家庭组/输入框防挤压
+   ========================================= */
+@media (max-width: 950px) {
+    .dashboard-container {
+        grid-template-columns: 1fr !important; /* 屏幕变窄时变成单列，完美解决挤压 */
+    }
+}
+
+/* 让输入框容器允许自然换行 */
+.family-input-row {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 15px;
+    flex-wrap: wrap; 
+}
+.family-input-row input {
+    flex: 1;
+    min-width: 150px; /* 给输入框留个底线 */
+    background: rgba(0,0,0,0.3);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 10px;
+    padding: 10px;
+    color: #fff;
+    outline: none;
+}
+.family-input-row button {
+    white-space: nowrap;
+    flex-shrink: 0;
+}

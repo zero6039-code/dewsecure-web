@@ -1,7 +1,3 @@
-// ==========================================
-// 📁 page-dashboard.js (极简托管版)
-// ==========================================
-
 import { initDevicesUI } from './page-devices.js';
 import { initFamilyUI } from './page-family.js';
 import { fetchDashboardData } from './dashboard-fetcher.js';
@@ -54,7 +50,6 @@ export async function initDashboardLogic() {
             window.history.replaceState({}, document.title, window.location.pathname);
         }
         
-        // 🌟 防闪烁：先隐藏所有按钮
         ['btnUpgrade', 'btnManageSub', 'btnCancelSub', 'btnClaimTrial', 'btnLeaveFamily'].forEach(id => {
             const el = document.getElementById(id);
             if (el) el.classList.add('hidden');
@@ -86,7 +81,6 @@ function bindDashboardButtons(currentUser) {
     const client = currentDashboardClient;
     const getT = () => window.fallbackTranslations || {};
     
-    // 1. 邀请好友
     if (!dashboardData.family_owner_id) {
         const btnGen = document.getElementById('btnGenInvite');
         if (btnGen) {
@@ -95,7 +89,6 @@ function bindDashboardButtons(currentUser) {
                 btnGen.disabled = true; btnGen.textContent = t['dash_gen_ing'] || '生成中...';
                 const { data, error } = await client.rpc('generate_invitation_code');
                 if (error) { window.showToast((t['dash_gen_fail'] || '生成失败: ') + error.message, 'error'); btnGen.disabled = false; btnGen.textContent = t['dash_invite_gen'] || '获取我的专属推广链接'; return; }
-                
                 const refLink = window.location.origin + '/pricing.html?ref=' + data;
                 document.getElementById('myInviteCode').textContent = refLink;
                 btnGen.classList.add('hidden');
@@ -110,7 +103,6 @@ function bindDashboardButtons(currentUser) {
         }
     }
 
-    // 2. 领取 30 天试用
     const btnClaimTrial = document.getElementById('btnClaimTrial');
     if (btnClaimTrial) {
         btnClaimTrial.onclick = async () => {
@@ -134,18 +126,14 @@ function bindDashboardButtons(currentUser) {
         };
     }
 
-    // 3. 唯一按钮：管理订阅 (Stripe Portal)
     const btnManageSub = document.getElementById('btnManageSub');
     if (btnManageSub) {
         btnManageSub.onclick = async () => {
             const t = getT();
-            
-            // 如果没有付费记录，直接去定价页
             if (!dashboardData.stripe_customer_id) {
                 window.location.href = '/pricing.html';
                 return;
             }
-
             btnManageSub.disabled = true;
             btnManageSub.textContent = t['dash_cancel_processing'] || '处理中...';
             try {
@@ -165,7 +153,6 @@ function bindDashboardButtons(currentUser) {
         };
     }
 
-    // 4. 退出家庭组 (子号保留)
     const btnLeave = document.getElementById('btnLeaveFamily');
     if (btnLeave) {
         btnLeave.onclick = () => {
@@ -188,16 +175,19 @@ async function renderDashboardTexts() {
     const t = window.fallbackTranslations || {};
     const profile = dashboardData;
 
-    // 🌟 核心修复：如果是子号，前端主动去拉取主号的到期时间
+    // 🌟 核心修复：子号直接查主号的数据库记录（前置条件：RLS 策略必须开放）
     if (profile.family_owner_id) {
+        profile.tier = 'family'; // 强制标志
         try {
-            const { data: shared } = await currentDashboardClient.rpc('get_family_shared_status');
-            if (shared && shared.success) {
-                profile.tier = 'family';
-                profile.expiresAt = shared.owner_expire;
-                // 为了兼容下面的时间计算逻辑，我们把主号的到期时间伪装成子号的到期时间
-                profile.subscription_ends_at = shared.owner_expire;
-                profile.owner_email = shared.owner_email;
+            const { data: ownerProfile } = await currentDashboardClient
+                .from('profiles')
+                .select('email, subscription_ends_at')
+                .eq('id', profile.family_owner_id)
+                .maybeSingle();
+            
+            if (ownerProfile && ownerProfile.subscription_ends_at) {
+                profile.subscription_ends_at = ownerProfile.subscription_ends_at; 
+                profile.owner_email = ownerProfile.email;
             }
         } catch (e) {
             console.warn("获取主号订阅时间失败", e);
@@ -212,43 +202,31 @@ async function renderDashboardTexts() {
     const btnClaimTrial = document.getElementById('btnClaimTrial');
     const btnCancel = document.getElementById('btnCancelSub');
 
-    // 🌟 彻底隐藏取消按钮
     if (btnCancel) btnCancel.classList.add('hidden');
-
     document.getElementById('inviteCount').textContent = profile.invite_success_count || 0;
     tierBadge.classList.remove('skeleton-text');
     
     const now = new Date();
     const balance = profile.referral_days_balance || 0;
     
-    // ==========================================
-    // 🌟 核心修复：计算正确的到期时间 (BaseTime)
-    // ==========================================
     let expireDate = null;
     
     if (profile.subscription_ends_at) {
-        // 1. 有真实订阅
         let subEnd = new Date(profile.subscription_ends_at);
         let baseTime = subEnd > now ? subEnd.getTime() : now.getTime(); 
         expireDate = new Date(baseTime + (balance * 86400000));
     } else if (profile.trial_ends_at) {
-        // 2. 有试用期
         let trialEnd = new Date(profile.trial_ends_at);
         let baseTime = trialEnd > now ? trialEnd.getTime() : now.getTime();
         expireDate = new Date(baseTime + (balance * 86400000));
     } else if (balance > 0) {
-        // 3. 纯返利用户（无订阅、无试用）
-        // 修复点：不能从今天算，必须从注册时间(created_at)作为锚点起算
         const regTime = new Date(profile.created_at || now).getTime();
         let calculatedExpire = regTime + (balance * 86400000);
-        
-        // 如果算出来的时间已经过期（说明是很早以前注册的老用户，且刚拿了返利），则从今天开始算
         expireDate = new Date(calculatedExpire > now.getTime() ? calculatedExpire : now.getTime() + (balance * 86400000));
     }
 
     const isPremium = (expireDate && expireDate > now);
 
-    // 默认隐藏所有按钮
     if (btnUpgrade) btnUpgrade.classList.add('hidden');
     if (btnManageSub) btnManageSub.classList.add('hidden');
     if (btnClaimTrial) btnClaimTrial.classList.add('hidden');
@@ -256,9 +234,10 @@ async function renderDashboardTexts() {
     if (btnLeaveFamily) btnLeaveFamily.classList.add('hidden');
 
     let displayTier = profile.tier;
+    if (displayTier === 'sub-family') displayTier = 'family';
     if (displayTier === 'free' && isPremium) displayTier = 'pro';
 
-    if (!isPremium && profile.tier === 'free') {
+    if (!isPremium && displayTier === 'free') {
         tierBadge.textContent = t['dash_tier_free'] || '免费版 (Free)'; 
         tierBadge.className = 'status-badge'; 
         daysLeftEl.textContent = t['dash_forever'] || '永久有效'; 
@@ -273,28 +252,24 @@ async function renderDashboardTexts() {
         }
     } else {
         if (displayTier === 'pro') {
-            // 正式版：金色
             tierBadge.textContent = t['dash_tier_pro'] || '高级版 (Pro)';
             tierBadge.className = 'status-badge status-pro';
             tierBadge.style.background = '';
             tierBadge.style.color = '';
             tierBadge.style.borderColor = '';
         } else if (displayTier === 'trial') {
-            // 试用版：绿色发光
             tierBadge.textContent = t['dash_tier_trial'] || 'Pro 试用版';
             tierBadge.className = 'status-badge';
             tierBadge.style.background = 'rgba(35, 134, 54, 0.15)';
             tierBadge.style.color = '#3fb950';
             tierBadge.style.borderColor = 'rgba(35, 134, 54, 0.4)';
         } else if (displayTier === 'family') {
-            // 家庭版
             tierBadge.textContent = t['dash_tier_family'] || '家庭版 (Family)';
             tierBadge.className = 'status-badge status-pro';
             tierBadge.style.background = '';
             tierBadge.style.color = '';
             tierBadge.style.borderColor = '';
         } else {
-            // 🌟 终极兜底：如果遇到未知状态，按免费版处理，绝不冒充 Family
             tierBadge.textContent = t['dash_tier_free'] || '免费版 (Free)';
             tierBadge.className = 'status-badge';
             tierBadge.style.background = '';
@@ -303,16 +278,23 @@ async function renderDashboardTexts() {
         }
         
         if (expireDate) {
-            const diffDays = Math.ceil(Math.abs(expireDate - now) / (1000 * 60 * 60 * 24)); 
+            // 强制按绝对毫秒数算，彻底解决差1-2天的 Bug
+            const diffMs = Math.abs(expireDate.getTime() - now.getTime());
+            const diffDays = Math.round(diffMs / (1000 * 60 * 60 * 24));
             daysLeftEl.textContent = `${diffDays} ${t['dash_days'] || '天'}`; 
-            let dateStr = expireDate.toLocaleDateString();
+            
+            // 强制使用 UTC 提取年月日
+            const year = expireDate.getUTCFullYear();
+            const month = String(expireDate.getUTCMonth() + 1).padStart(2, '0');
+            const day = String(expireDate.getUTCDate()).padStart(2, '0');
+            let dateStr = `${year}-${month}-${day}`;
+            
             if (profile.cancel_at_period_end) {
                 dateStr += ` <span style="color:#f85149; font-size:12px; margin-left:5px;">(${t['dash_canceled_notice'] || '已取消自动续费'})</span>`;
             }
             expireDateEl.innerHTML = dateStr;
         }
 
-        // 渲染锁定中天数 (14天未解锁的返利)
         let pendingEl = document.getElementById('pendingRewardsRow');
         if (profile.pending_referral_days > 0) {
             if (!pendingEl) {
@@ -330,18 +312,14 @@ async function renderDashboardTexts() {
         }
         
         if (profile.family_owner_id) {
-            // 子号只能退出家庭组
             if (btnLeaveFamily) btnLeaveFamily.classList.remove('hidden');
         } else {
-            // 🌟 全局唯一操作按钮
             if (profile.stripe_customer_id) {
-                // 有真实付费记录，只显示“管理订阅”（不管是否已经点了取消）
                 if(btnManageSub) { 
                     btnManageSub.classList.remove('hidden'); 
                     btnManageSub.textContent = t['dash_btn_manage'] || '管理订阅'; 
                 }
             } else {
-                // 纯试用 / 纯返利用户，显示“升级到正式版”
                 if(btnManageSub) { 
                     btnManageSub.classList.remove('hidden'); 
                     btnManageSub.textContent = t['dash_btn_upgrade_full'] || '升级到正式版'; 
@@ -350,9 +328,7 @@ async function renderDashboardTexts() {
         }
     }
 
-
     if (displayTier !== 'free') {
-        // 设备管理 UI 遇到 trial 时，当作 pro 处理以便解锁3个槽位
         const deviceTier = displayTier === 'trial' ? 'pro' : displayTier;
         try { initDevicesUI(currentDashboardClient, { ...dashboardData, tier: deviceTier }); } 
         catch (e) { console.warn("Device UI render warning:", e); }
@@ -362,7 +338,6 @@ async function renderDashboardTexts() {
         catch (e) { console.warn("Family UI render warning:", e); }
     }
 }
-
 
 window.addEventListener('languageChanged', async () => {
     if (dashboardData && typeof renderDashboardTexts === 'function') {

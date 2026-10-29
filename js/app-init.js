@@ -11,7 +11,7 @@ const EXTENSION_ID = isEdge ? 'cpkmeoejhbmcmnaodpnkfdjgggpmgcf' : 'fgnijfomipmim
 let lastPushedToken = null;
 
 // ==========================================
-// 🌟 暴力同步引擎：每 2 秒检查一次 Session，确保插件必定同步
+// 🌟 终极同步引擎：双向一致性保证
 // ==========================================
 setInterval(async () => {
     if (!window.supabaseClient) return;
@@ -19,31 +19,39 @@ setInterval(async () => {
     try {
         const { data: { session } } = await window.supabaseClient.auth.getSession();
         
-        if (session && session.access_token !== lastPushedToken) {
-            console.log("🚀 [暴力同步] 发现新 Token，准备推送给插件:", session.user.email);
-            
-            if (window.chrome && chrome.runtime && chrome.runtime.sendMessage) {
-                chrome.runtime.sendMessage(EXTENSION_ID, {
-                    type: 'SYNC_AUTH',
-                    payload: {
-                        token: session.access_token,
-                        refreshToken: session.refresh_token,
-                        email: session.user.email
-                    }
-                }, (res) => {
-                    if (chrome.runtime.lastError) {
-                        console.error('❌ [同步失败]:', chrome.runtime.lastError.message);
-                    } else if (res && res.ok) {
-                        console.log("✅ [同步成功] 插件已接收 Token！");
-                        lastPushedToken = session.access_token;
-                    }
-                });
+        if (session) {
+            // 如果发现网页端有登录态，且 Token 与上次推送不同，立刻强制覆盖插件
+            if (session.access_token !== lastPushedToken) {
+                console.log("🚀 [强制同步] 检测到网页端已登录，正在覆盖插件状态:", session.user.email);
+                
+                if (window.chrome && chrome.runtime && chrome.runtime.sendMessage) {
+                    chrome.runtime.sendMessage(EXTENSION_ID, {
+                        type: 'SYNC_AUTH',
+                        payload: {
+                            token: session.access_token,
+                            refreshToken: session.refresh_token,
+                            email: session.user.email
+                        }
+                    }, (res) => {
+                        if (chrome.runtime.lastError) {
+                            // 忽略未安装插件的报错
+                        } else if (res && res.ok) {
+                            lastPushedToken = session.access_token;
+                        }
+                    });
+                }
+            }
+        } else {
+            // 如果网页端退出了，也要通知插件退出（可选，但为了安全建议这样做）
+            if (lastPushedToken !== null) {
+                if (window.chrome && chrome.runtime && chrome.runtime.sendMessage) {
+                    chrome.runtime.sendMessage(EXTENSION_ID, { type: 'LOGOUT' }, () => {});
+                }
+                lastPushedToken = null;
             }
         }
-    } catch (e) {
-        // 忽略网络或 CSP 报错
-    }
-}, 2000);
+    } catch (e) {}
+}, 1500); // 从 2 秒缩短到 1.5 秒，提高响应速度
 
 // ==========================================
 // 原有的路由拦截与初始化逻辑

@@ -1,13 +1,9 @@
-// ==========================================
-// 📁 page-components.js (精简版，仅替换末尾)
-// ==========================================
-
+// page-components.js
 window.showInviteModal = function(link) {
     try {
         const t = window.fallbackTranslations || {};
         let modal = document.getElementById('invite-link-modal');
         if (modal) modal.remove();
-        
         modal = document.createElement('div');
         modal.id = 'invite-link-modal';
         modal.style.cssText = `position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(10px); display: flex; align-items: center; justify-content: center; z-index: 2147483647;`;
@@ -22,7 +18,6 @@ window.showInviteModal = function(link) {
                 </div>
             </div>`;
         document.body.appendChild(modal);
-
         document.getElementById('modal-copy-btn').onclick = async function() {
             await navigator.clipboard.writeText(link);
             this.textContent = t['modal_copied'] || '已复制！'; this.style.background = '#3fb950'; this.style.color = '#fff';
@@ -43,7 +38,6 @@ export function initComponentsPage() {
         const btnTextEl = document.getElementById('ds-btn-text');
         const btnEl = document.getElementById('ds-btn');
         let currentTarget = 'chrome';
-
         function renderBrowserData(target) {
             currentTarget = target;
             const t = window.fallbackTranslations || {};
@@ -55,7 +49,6 @@ export function initComponentsPage() {
             btnTextEl.textContent = t['dl_btn_' + target] || ('Download for ' + target);
             btnEl.href = browserUrls[target];
         }
-
         icons.forEach(icon => {
             icon.addEventListener('click', () => {
                 icons.forEach(l => l.classList.remove('active'));
@@ -66,7 +59,6 @@ export function initComponentsPage() {
         setTimeout(() => { if (icons.length > 0) icons[0].click(); }, 50);
         window.addEventListener('languageChanged', () => renderBrowserData(currentTarget));
     }
-
     document.querySelectorAll('.accordion-header').forEach(header => {
         if (header.dataset.bound) return;
         header.dataset.bound = "true"; 
@@ -74,7 +66,6 @@ export function initComponentsPage() {
     });
 }
 
-// 🚀 终极修复：读取 ?invite=，处理拒绝跳转
 export async function initAcceptInvitePage() {
     const t = window.fallbackTranslations || {};
     const client = window.supabaseClient;
@@ -90,12 +81,7 @@ export async function initAcceptInvitePage() {
     const btnAcceptInvite = document.getElementById('btnAcceptInvite');
     const btnRejectInvite = document.getElementById('btnRejectInvite');
 
-    // 🌟 提前绑定 Decline 按钮，防止因报错 return 导致按键失效
-    if (btnRejectInvite) {
-        btnRejectInvite.onclick = () => window.location.href = '/dashboard.html';
-    }
-
-    // 更新加载中文案
+    if (btnRejectInvite) btnRejectInvite.onclick = () => window.location.href = '/dashboard.html';
     if (inviteDesc) inviteDesc.textContent = t['invite_loading'] || '加载中...';
 
     try {
@@ -106,19 +92,13 @@ export async function initAcceptInvitePage() {
             return;
         }
 
-        // 查询邀请详情
-        const { data: invite, error } = await client
-            .from('family_invitations')
-            .select('*')
-            .eq('token', inviteToken)
-            .maybeSingle();
+        const { data: invite, error } = await client.from('family_invitations').select('*').eq('token', inviteToken).maybeSingle();
 
         if (error || !invite) {
             if (inviteDesc) inviteDesc.textContent = t['invite_invalid'] || '邀请已失效或不存在';
             return;
         }
 
-        // 检查是否是自己邀请自己，或已加入
         if (invite.invitee_email.toLowerCase() !== session.user.email.toLowerCase()) {
             let mismatchMsg = t['invite_email_mismatch'] || '该邀请仅限 {invitee} 领取，您当前登录的是 {current}。';
             mismatchMsg = mismatchMsg.replace('{invitee}', invite.invitee_email).replace('{current}', session.user.email);
@@ -127,45 +107,33 @@ export async function initAcceptInvitePage() {
             return;
         }
 
-        // 成功查找到，渲染描述
-        // 🌟 终极兜底：优先读邀请表里的字段，为空则直接调用 RPC 查
         let ownerEmail = invite.owner_email;
-        
         if (!ownerEmail && invite.owner_id) {
             const { data: rpcEmail } = await client.rpc('get_profile_email', { target_user_id: invite.owner_id });
             if (rpcEmail) ownerEmail = rpcEmail;
         }
-        
-        if (!ownerEmail) ownerEmail = '对方';
+        if (!ownerEmail) ownerEmail = 'Owner';
 
-        inviteDesc.textContent = (t['invite_accept_desc'] || '{owner} 邀请您加入家庭组，共享高级版权益。是否接受？')
-            .replace('{owner}', ownerEmail);
+        inviteDesc.textContent = (t['invite_accept_desc'] || '{owner} 邀请您加入家庭组，共享高级版权益。是否接受？').replace('{owner}', ownerEmail);
 
         if (btnAcceptInvite) {
             btnAcceptInvite.style.display = 'inline-block';
             btnAcceptInvite.onclick = async () => {
                 btnAcceptInvite.disabled = true;
                 btnAcceptInvite.textContent = t['invite_joining'] || '正在加入...';
-                
-                // 调用之前你写好的 RPC 或者直接更新
                 const { error: updateError } = await client.rpc('accept_family_invite', { invite_token: inviteToken });
-                
                 if (updateError) {
                     window.showToast(updateError.message, 'error');
                     btnAcceptInvite.disabled = false;
                     btnAcceptInvite.textContent = t['invite_accept_btn'] || 'Accept & Join';
                     return;
                 }
-
-                window.showToast(t['invite_accept_success'] || '成功加入家庭组！');
+                // 🌟 强制写死正确文案，绝不用变量兜底
+                window.showToast('Successfully joined the family group!');
                 setTimeout(() => window.location.href = '/dashboard.html', 1000);
             };
         }
-
-        if (btnRejectInvite) {
-            btnRejectInvite.onclick = () => window.location.href = '/dashboard.html';
-        }
-
+        if (btnRejectInvite) btnRejectInvite.onclick = () => window.location.href = '/dashboard.html';
     } catch (err) {
         console.error("Accept Invite Error:", err);
         if (inviteDesc) inviteDesc.textContent = "Error: " + err.message;
