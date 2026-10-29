@@ -292,7 +292,7 @@
   "faq_13_q": "¿Cómo se cuentan los dispositivos?",
   "faq_13_a": "Chrome y Edge en la misma PC cuentan como 2 dispositivos. Android + PC cuentan como 2 dispositivos. Puedes desvincular dispositivos antiguos en el Panel para liberar espacios.",
   "faq_14_q": "¿Por qué no se puede bloquear al 100%?",
-  "faq_14_a": "Algunos sitios integran anuncios profundamente con el contenido (mismo origen). Bloquearlos rompe el diseño. Priorizamos la usabilidad. Además, nuestros modelos de IA se actualizan semanalmente para eliminar nuevos anuncios.",
+  "faq_14_a": "Algunos sitios integran anuncios profundamente con el contenido (mismo origen). Bloquearlos rompe el diseño. Priorizamos la usabilidad. Además, nuestros modelos de IA se actualizan diariamente para eliminar nuevos anuncios.",
   "faq_15_q": "¿Puede DewSecure eliminar los molestos anuncios emergentes?",
   "faq_15_a": "Sí, el bloqueo fuerte está activado por defecto. Consejo: Si se bloquea una ventana emergente legítima (como una ventana de inicio de sesión), agrega el dominio a tu Lista Blanca en el panel de la extensión.",
   "faq_16_q": "¿Los anuncios web propagan virus?",

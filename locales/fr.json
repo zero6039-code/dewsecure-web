@@ -292,7 +292,7 @@
   "faq_13_q": "Comment les appareils sont-ils comptés ?",
   "faq_13_a": "Chrome et Edge sur le même PC comptent pour 2 appareils. Android + PC comptent pour 2 appareils. Vous pouvez délier les anciens appareils dans le Tableau de bord pour libérer des emplacements.",
   "faq_14_q": "Pourquoi ne peut-il pas être bloqué à 100 % ?",
-  "faq_14_a": "Certains sites intègrent profondément les publicités au contenu (même origine). Les bloquer casse la mise en page. Nous privilégions la convivialité. De plus, nos modèles IA sont mis à jour chaque semaine pour éliminer les nouvelles publicités.",
+  "faq_14_a": "Certains sites intègrent profondément les publicités au contenu (même origine). Les bloquer casse la mise en page. Nous privilégions la convivialité. De plus, nos modèles IA sont mis à jour chaque jour pour éliminer les nouvelles publicités.",
   "faq_15_q": "DewSecure peut-il éliminer les publicités pop-up gênantes ?",
   "faq_15_a": "Oui, le blocage fort est activé par défaut. Conseil : Si une fenêtre contextuelle légitime (comme une fenêtre de connexion) est bloquée, ajoutez le domaine à votre liste blanche dans le panneau de l'extension.",
   "faq_16_q": "Les publicités Web propagent-elles vraiment des virus ?",

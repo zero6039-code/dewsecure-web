@@ -292,7 +292,7 @@
   "faq_13_q": "Como os dispositivos são contados?",
   "faq_13_a": "Chrome e Edge no mesmo PC contam como 2 dispositivos. Android + PC contam como 2 dispositivos. Você pode desvincular dispositivos antigos no Painel para liberar espaços.",
   "faq_14_q": "Por que não pode ser bloqueado 100%?",
-  "faq_14_a": "Alguns sites integram anúncios profundamente com conteúdo (mesma origem). Bloqueá-los quebra o layout. Priorizamos a usabilidade. Além disso, nossos modelos de IA são atualizados semanalmente para eliminar novos anúncios.",
+  "faq_14_a": "Alguns sites integram anúncios profundamente com conteúdo (mesma origem). Bloqueá-los quebra o layout. Priorizamos a usabilidade. Além disso, nossos modelos de IA são atualizados diariamente para eliminar novos anúncios.",
   "faq_15_q": "O DewSecure pode eliminar anúncios pop-up irritantes?",
   "faq_15_a": "Sim, o bloqueio forte está ativado por padrão. Dica: Se um pop-up legítimo (como uma janela de login) for bloqueado, adicione o domínio à sua Lista de Permissões no painel da extensão.",
   "faq_16_q": "Os anúncios da web realmente espalham vírus?",
