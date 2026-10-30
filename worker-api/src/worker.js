@@ -11,10 +11,12 @@ import intelRoute from './routes/intel.js'; // 🛡️ 威胁情报下发
 
 const app = new Hono();
 
+// 🌟 Service Worker 特权请求不需要严格的 Origin 限制
 app.use('*', cors({
-  origin: ['https://dewsecure.com', 'http://localhost:8888', 'http://127.0.0.1:8888'],
-  allowHeaders: ['Authorization', 'Content-Type', 'stripe-signature'],
+  origin: '*',
+  allowHeaders: ['Authorization', 'Content-Type', 'stripe-signature', 'If-None-Match'],
   allowMethods: ['GET', 'POST', 'OPTIONS'],
+  exposeHeaders: ['ETag'],
 }));
 
 app.route('/api', modelRoute);
