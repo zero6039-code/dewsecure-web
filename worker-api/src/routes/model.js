@@ -20,12 +20,13 @@ modelRoute.get('/download-model', async (c) => {
   ]);
   if (!modelObj) return c.json({ error: 'Model not found' }, 404);
 
-  let modelVersion = '', modelSha256 = '';
+  let modelVersion = '', modelSha256 = '', modelSignature = '';
   if (metaObj) {
     try {
       const meta = JSON.parse(await metaObj.text());
       modelVersion = meta.trainedAt || '';
       modelSha256 = meta.sha256 || '';
+        modelSignature = meta.signature || '';
     } catch (_) {}
   }
 
@@ -37,6 +38,7 @@ modelRoute.get('/download-model', async (c) => {
       'ETag': modelObj.etag,
       'X-Model-Version': modelVersion,
       'X-Model-Sha256': modelSha256,
+        'X-Model-Signature': modelSignature,
     },
   });
 });

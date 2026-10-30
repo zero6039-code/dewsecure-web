@@ -36,7 +36,7 @@ trialRoute.post('/claim-trial', async (c) => {
 
     if (updateErr) throw updateErr;
 
-    // 🌟 4. 新增：插入试用激活通知
+    // 4. 插入试用激活通知
     await supabaseAdmin.from('notifications').insert({
       user_id: user.id,
       type: 'billing',
@@ -45,12 +45,18 @@ trialRoute.post('/claim-trial', async (c) => {
       params: {}
     });
 
-    // 5. 记录到 trial_claims 表
-    await supabaseAdmin.from('trial_claims').insert({
+    // 5. 记录到 trial_claims 表 (修复：使用 fingerprint 且增加错误日志)
+    const fingerprint = c.req.header('X-Device-Fingerprint') || `user_${user.id}`;
+    const { error: claimErr } = await supabaseAdmin.from('trial_claims').insert({
+      fingerprint: fingerprint,
       user_id: user.id,
-      email: user.email,
       claimed_at: new Date().toISOString()
-    }).select().maybeSingle();
+    });
+
+    if (claimErr) {
+      console.warn('⚠️ [claim-trial] 写入 trial_claims 失败:', claimErr.message);
+      // 这里不 throw，防止因为统计日志写入失败导致用户拿不到试用
+    }
 
     return c.json({ success: true, trial_ends_at: trialEnd });
   } catch (err) {
