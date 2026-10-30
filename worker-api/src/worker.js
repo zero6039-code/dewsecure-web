@@ -6,7 +6,8 @@ import webhookRoute from './routes/webhook.js';
 import cancelRoute from './routes/cancel.js';
 import resumeRoute from './routes/resume.js';
 import portalRoute from './routes/portal.js';
-import trialRoute from './routes/trial.js'; // 🌟 新增的试用路由
+import trialRoute from './routes/trial.js';
+import intelRoute from './routes/intel.js'; // 🛡️ 威胁情报下发
 
 const app = new Hono();
 
@@ -23,5 +24,6 @@ app.route('/api', cancelRoute);
 app.route('/api', resumeRoute);
 app.route('/api', portalRoute);
 app.route('/api', trialRoute); // 🌟 新增
+app.route('/api', intelRoute); // 🛡️ 威胁情报下发
 
 export default app;
