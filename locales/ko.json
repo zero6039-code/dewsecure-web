@@ -457,7 +457,7 @@
   "notif_added_120d": "120일 PRO 이용 권한이 추가되었습니다.",
   "notif_used_30d": "30일 PRO 이용 권한이 모두 사용되었습니다.",
   "notif_used_120d": "120일 PRO 이용 권한이 모두 사용되었습니다.",
-  "notif_invite_pending": "축하합니다! 초대한 사용자({email})가 성공적으로 구독하고 결제했습니다. 14일 이내에 환불이 발생하지 않으면 120일 PRO 이용 권한이 잠금 해제됩니다. 잠시만 기다려 주세요.",
+  "notif_invite_pending": "축하합니다! 초대한 사용자 {email}님이 구독했습니다. 14일 이내에 환불이 발생하지 않으면 120일 PRO 보상이 잠금 해제됩니다. 잠시만 기다려 주세요.",
   "notif_upgraded_pro": "🎉 축하합니다, {email}님이 Pro로 업그레이드되었습니다.",
   "notif_upgraded_family": "🎉 축하합니다, {email}님이 Family로 업그레이드되었습니다.",
   "notif_downgraded_pro": "{email}님이 Pro로 다운그레이드되었습니다.",
@@ -524,5 +524,6 @@
   "dash_notif_empty_click": "더 이상 삭제할 알림이 없습니다.",
   "notif_family_joined_self": "{email}님의 패밀리 그룹에 가입했습니다.",
   "dash_family_remove_confirm": "이 구성원을 제거하시겠습니까?",
-  "notif_family_removed_self": "{email}님의 패밀리 그룹에서 제거되었습니다."
+  "notif_family_removed_self": "{email}님의 패밀리 그룹에서 제거되었습니다.",
+  "notif_refund_success": "💸 환불이 성공적으로 처리되었습니다. 권한이 회수되었습니다."
 }

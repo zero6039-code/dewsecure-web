@@ -456,7 +456,7 @@
   "notif_added_120d": "120 days of PRO access have been successfully added.",
   "notif_used_30d": "The 30-day PRO access has been fully used.",
   "notif_used_120d": "The 120-day PRO access has been fully used.",
-  "notif_invite_pending": "Congratulations! The user you invited ({email}) has successfully subscribed and paid. If no refund is triggered within 14 days, you will unlock and receive 120 days of PRO access. Please wait patiently.",
+  "notif_invite_pending": "Congratulations! The user {email} you invited has subscribed. If no refund is issued within 14 days, you will unlock a 120-day PRO reward. Please wait patiently.",
   "notif_upgraded_pro": "🎉 Congratulations, {email} has successfully upgraded to Pro.",
   "notif_upgraded_family": "🎉 Congratulations, {email} has successfully upgraded to Family.",
   "notif_downgraded_pro": "{email} has been downgraded to Pro.",
@@ -470,7 +470,7 @@
   "notif_family_device_added": "{email} has successfully bound device: {device}.",
   "notif_family_device_removed": "{email} has successfully unbound device: {device}.",
   "notif_device_limit_9": "You have reached the device limit (9/9). Please manage your devices in the Dashboard.",
-  "notif_billing_success": "💳 Payment successful. The receipt has been sent to your email.",
+  "notif_billing_success": "💳 Payment successful. A receipt has been sent to your email.",
   "notif_new_version_title": "🚀 New Version Released",
   "notif_new_version_desc": "Version {version} is now available. Check the changelog for details.",
   "notif_time_just_now": "Just now",
@@ -523,5 +523,6 @@
   "dash_notif_empty_click": "There are no notifications left to delete.",
   "notif_family_joined_self": "You have successfully joined {email}'s family group.",
   "dash_family_remove_confirm": "Are you sure you want to remove this member?",
-  "notif_family_removed_self": "You have been removed from {email}'s family group."
+  "notif_family_removed_self": "You have been removed from {email}'s family group.",
+  "notif_refund_success": "💸 Refund processed successfully. Entitlements have been revoked."
 }
