@@ -5,7 +5,7 @@ import { initAuthPage } from './page-auth.js';
 import { initDashboardLogic } from './page-dashboard.js';
 import { initComponentsPage, initAcceptInvitePage } from './page-components.js';
 
-// 🌟 修复 L-5：保留 Edge 后台分配的真实 31 位 ID，不强行补齐
+// 🌟 修复 L-5：保留 Edge 后台分配的真实 31 位 ID
 const isEdge = navigator.userAgent.includes('Edg/');
 const EXTENSION_ID = isEdge ? 'cpkmeoejhbmcmnaodpnkfdjgggpmgcf' : 'fgnijfomipmimnfocgofmmniglibgnak';
 let lastPushedToken = null;
@@ -106,18 +106,9 @@ document.addEventListener('DOMContentLoaded', async () => {
         window.swup = new Swup({ containers: ['#swup'] });
         window.swup.hooks.on('page:view', () => {
             routeAndInit();
-<<<<<<< HEAD
             if (window.fallbackTranslations && window.translatePage) {
                 window.translatePage();
                 window.dispatchEvent(new Event('languageChanged'));
-=======
-            
-            // 🌟 核心修复：绝不再调用 loadLanguage (因为它包含 await fetch)
-            // 直接调用同步的 translatePage，瞬间替换文本
-            if (window.fallbackTranslations && window.translatePage) {
-                window.translatePage();
-                window.dispatchEvent(new Event('languageChanged')); // 触发依赖此事件的重绘
->>>>>>> origin/main
             }
         });
     }
