@@ -525,5 +525,6 @@
   "notif_family_joined_self": "Você entrou no grupo familiar de {email}.",
   "dash_family_remove_confirm": "Tem certeza de que deseja remover este membro?",
   "notif_family_removed_self": "Você foi removido do grupo familiar de {email}.",
-  "notif_refund_success": "💸 Reembolso processado com sucesso. Os direitos foram revogados."
+  "notif_refund_success": "💸 Reembolso processado com sucesso. Os direitos foram revogados.",
+  "login_error_disposable_email": "Endereços de e-mail descartáveis não são permitidos."
 }

@@ -71,6 +71,23 @@ export function initAuthPage() {
         btnSendOtp.textContent = t['login_sending'] || '正在发送...';
         
         try {
+            // 🌟 修复 M-7：前端拦截一次性临时邮箱
+            const emailDomain = email.split('@')[1];
+            if (emailDomain) {
+                const { data: blocked } = await supabaseClient
+                    .from('disposable_email_domains')
+                    .select('domain')
+                    .eq('domain', emailDomain)
+                    .maybeSingle();
+                
+                if (blocked) {
+                    window.showError('emailError', t['login_error_disposable_email'] || '请勿使用临时邮箱 (Disposable email is not allowed)');
+                    btnSendOtp.disabled = false; 
+                    btnSendOtp.textContent = t['login_btn'] || '使用邮箱登录 (OTP)';
+                    return;
+                }
+            }
+
             const { error } = await supabaseClient.auth.signInWithOtp({ 
                 email, 
                 options: { shouldCreateUser: true } 

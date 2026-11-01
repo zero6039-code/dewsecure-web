@@ -524,5 +524,6 @@
   "notif_family_joined_self": "You have successfully joined {email}'s family group.",
   "dash_family_remove_confirm": "Are you sure you want to remove this member?",
   "notif_family_removed_self": "You have been removed from {email}'s family group.",
-  "notif_refund_success": "💸 Refund processed successfully. Entitlements have been revoked."
+  "notif_refund_success": "💸 Refund processed successfully. Entitlements have been revoked.",
+  "login_error_disposable_email": "Disposable email addresses are not allowed."
 }

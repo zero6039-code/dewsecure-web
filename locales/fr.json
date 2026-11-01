@@ -525,5 +525,6 @@
   "notif_family_joined_self": "Vous avez rejoint le groupe familial de {email}.",
   "dash_family_remove_confirm": "Êtes-vous sûr de vouloir supprimer ce membre ?",
   "notif_family_removed_self": "Vous avez été retiré du groupe familial de {email}.",
-  "notif_refund_success": "💸 Remboursement traité avec succès. Les droits ont été révoqués."
+  "notif_refund_success": "💸 Remboursement traité avec succès. Les droits ont été révoqués.",
+  "login_error_disposable_email": "Les adresses e-mail jetables ne sont pas autorisées."
 }

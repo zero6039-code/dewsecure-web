@@ -524,5 +524,6 @@
   "notif_family_joined_self": "Anda telah berjaya menyertai kumpulan keluarga {email}.",
   "dash_family_remove_confirm": "Adakah anda pasti mahu mengalih keluar ahli ini?",
   "notif_family_removed_self": "Anda telah dialih keluar daripada kumpulan keluarga {email}.",
-  "notif_refund_success": "💸 Bayaran balik berjaya diproses. Hak telah ditarik balik."
+  "notif_refund_success": "💸 Bayaran balik berjaya diproses. Hak telah ditarik balik.",
+  "login_error_disposable_email": "Alamat e-mel sekali guna tidak dibenarkan."
 }

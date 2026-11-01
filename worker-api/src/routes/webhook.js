@@ -86,7 +86,6 @@ webhookRoute.post('/webhook', async (c) => {
           current_period_end: getPeriodEnd(sub),
         }, { onConflict: 'stripe_subscription_id' }));
         
-        // 升级通知
         const upgradeKey = newTier === 'family' ? 'notif_upgraded_family' : 'notif_upgraded_pro';
         await sendNotification(supabaseAdmin, userId, 'billing', upgradeKey, upgradeKey, { email: session.customer_details?.email || 'User' });
         
@@ -132,14 +131,12 @@ webhookRoute.post('/webhook', async (c) => {
           await must(supabaseAdmin.from('profiles').update({ subscription_ends_at: newEnd }).eq('id', userId));
         }
 
-        // 账单扣费成功 / 续费通知
         if (invoice.billing_reason === 'subscription_create') {
           await sendNotification(supabaseAdmin, userId, 'billing', 'notif_billing_success', 'notif_billing_success');
         } else if (invoice.billing_reason === 'subscription_cycle') {
           await sendNotification(supabaseAdmin, userId, 'billing', 'notif_renewed', 'notif_renewed');
         }
 
-        // 推荐奖励发放与通知
         if (invoice.billing_reason === 'subscription_create') {
           const { data: inviteeProfile } = await supabaseAdmin.from('profiles').select('referred_by').eq('id', userId).single();
           if (inviteeProfile?.referred_by) {
@@ -152,7 +149,6 @@ webhookRoute.post('/webhook', async (c) => {
                const { data: inviter } = await supabaseAdmin.from('profiles').select('invite_success_count').eq('id', inviteeProfile.referred_by).single();
                if (inviter) {
                    await must(supabaseAdmin.rpc('increment_invite_count', { user_id: inviteeProfile.referred_by }));
-                   // 给邀请人发送待解锁通知
                    await sendNotification(supabaseAdmin, inviteeProfile.referred_by, 'referral', 'notif_invite_pending', 'notif_invite_pending', { email: invoice.customer_email });
                }
             }
@@ -191,7 +187,6 @@ webhookRoute.post('/webhook', async (c) => {
 
           await must(supabaseAdmin.from('profiles').update({ tier: 'free', subscription_ends_at: null, family_owner_id: null }).eq('id', userId));
 
-          // 退款成功通知
           await sendNotification(supabaseAdmin, userId, 'billing', 'notif_refund_success', 'notif_refund_success');
 
           const voidedRecords = await must(supabaseAdmin.from('referral_rewards').update({ status: 'voided' }).eq('invitee_id', userId).eq('status', 'pending').select());
@@ -199,7 +194,6 @@ webhookRoute.post('/webhook', async (c) => {
           if (voidedRecords && voidedRecords.length > 0) {
               for (const record of voidedRecords) {
                 await must(supabaseAdmin.rpc('decrement_invite_count', { user_id: record.inviter_id }));
-                // 给邀请人发送退款导致奖励作废的通知
                 await sendNotification(supabaseAdmin, record.inviter_id, 'referral', 'notif_referral_refunded', 'notif_referral_refunded', { email: charge.billing_details?.email || 'User' });
               }
           }
@@ -219,8 +213,11 @@ webhookRoute.post('/webhook', async (c) => {
                 await must(supabaseAdmin.from('profiles').update({ tier: 'free', subscription_ends_at: null }).eq('id', userId));
                 await must(supabaseAdmin.from('profiles').update({ family_owner_id: null, tier: 'free' }).eq('family_owner_id', userId));
                 
-                // 降级通知
-                await sendNotification(supabaseAdmin, userId, 'billing', 'notif_downgraded_free', 'notif_downgraded_free', { email: sub.metadata?.email || 'User' });
+                // 🌟 修复：从数据库获取真实的邮箱
+                const { data: dbUser } = await supabaseAdmin.from('profiles').select('email').eq('id', userId).single();
+                const realEmail = dbUser?.email || 'User';
+                
+                await sendNotification(supabaseAdmin, userId, 'billing', 'notif_downgraded_free', 'notif_downgraded_free', { email: realEmail });
             }
             await must(supabaseAdmin.from('subscriptions').update({ status: 'canceled' }).eq('stripe_subscription_id', sub.id));
         } else {
@@ -232,7 +229,11 @@ webhookRoute.post('/webhook', async (c) => {
                 newTier = 'free';
                 console.log(`[subscription.updated] 订阅状态为 ${sub.status}，执行降级`);
                 
-                if (userId) await sendNotification(supabaseAdmin, userId, 'billing', 'notif_downgraded_free', 'notif_downgraded_free', { email: sub.metadata?.email || 'User' });
+                if (userId) {
+                    // 🌟 修复：从数据库获取真实的邮箱
+                    const { data: dbUser } = await supabaseAdmin.from('profiles').select('email').eq('id', userId).single();
+                    await sendNotification(supabaseAdmin, userId, 'billing', 'notif_downgraded_free', 'notif_downgraded_free', { email: dbUser?.email || 'User' });
+                }
             }
 
             if (userId) await must(supabaseAdmin.from('profiles').update({ tier: newTier }).eq('id', userId));
