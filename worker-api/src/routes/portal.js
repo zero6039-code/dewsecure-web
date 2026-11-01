@@ -1,11 +1,9 @@
 import { Hono } from 'hono';
-import { getStripe } from '../lib/stripe.js';
 import { getSupabaseUser, getSupabaseAdmin } from '../lib/supabase.js';
 
 const portalRoute = new Hono();
 
 portalRoute.post('/portal', async (c) => {
-  const stripe = getStripe(c.env);
   const authHeader = c.req.header('Authorization');
   if (!authHeader?.startsWith('Bearer ')) return c.json({ error: 'Unauthorized' }, 401);
 
@@ -22,13 +20,29 @@ portalRoute.post('/portal', async (c) => {
   }
 
   try {
-    const session = await stripe.billingPortal.sessions.create({
-      customer: profile.stripe_customer_id,
-      return_url: `${c.env.FRONTEND_URL}/dashboard.html`,
+    const params = new URLSearchParams();
+    params.append('customer', profile.stripe_customer_id);
+    params.append('return_url', `${c.env.FRONTEND_URL}/dashboard.html`);
+
+    const stripeRes = await fetch('https://api.stripe.com/v1/billing_portal/sessions', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${c.env.STRIPE_SECRET_KEY.trim()}`,
+        'Content-Type': 'application/x-www-form-urlencoded'
+      },
+      body: params.toString()
     });
+
+    if (!stripeRes.ok) {
+      const errText = await stripeRes.text();
+      console.error('❌ [portal] Stripe 原生报错:', errText);
+      throw new Error(`Stripe API returned ${stripeRes.status}`);
+    }
+
+    const session = await stripeRes.json();
     return c.json({ url: session.url });
   } catch (err) {
-    console.error('❌ [portal] Stripe API failed:', err.message);
+    console.error('❌ [portal] 捕获异常:', err.message);
     return c.json({ error: 'Failed to create portal session' }, 500);
   }
 });
