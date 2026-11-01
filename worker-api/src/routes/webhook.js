@@ -4,6 +4,13 @@ import { getSupabaseAdmin } from '../lib/supabase.js';
 
 const webhookRoute = new Hono();
 
+// 🌟 核心修复：封装 must 函数，强制检查数据库返回的 error
+const must = async (query) => {
+  const { data, error } = await query;
+  if (error) throw error;
+  return data;
+};
+
 function getPeriodEnd(sub) {
   const timestamp = sub.current_period_end || (sub.items && sub.items.data && sub.items.data[0] && sub.items.data[0].current_period_end);
   return timestamp ? new Date(timestamp * 1000).toISOString() : new Date().toISOString();
@@ -16,7 +23,6 @@ function getSubIdFromInvoice(invoice) {
 function getTierFromPriceId(priceId) {
   if (priceId === 'price_1UUF9SAB28DjNkOqrt3BX9Dr') return 'family';
   if (priceId === 'price_1UUF86AB28DjNkOqNGl2YoBN') return 'pro';
-  // 🌟 修复：遇到未知价格直接抛错，触发 Stripe 重试并报警，绝不默认发 Pro
   throw new Error(`Unknown or forbidden price ID: ${priceId}`);
 }
 
@@ -37,8 +43,13 @@ webhookRoute.post('/webhook', async (c) => {
   console.log(`\n================ 收到 Webhook: ${event.type} ================`);
 
   const { error: dupErr } = await supabaseAdmin.from('stripe_webhook_events').insert({ event_id: event.id, event_type: event.type });
-  if (dupErr?.code === '23505') {
-    return c.text('Already processed', 200);
+  
+  // 🌟 修复：如果是 23505 说明是重复事件，直接返回；如果是其他错误，抛出以触发重试
+  if (dupErr) {
+    if (dupErr.code === '23505') {
+      return c.text('Already processed', 200);
+    }
+    throw dupErr;
   }
 
   try {
@@ -55,12 +66,13 @@ webhookRoute.post('/webhook', async (c) => {
         const priceId = sub.items.data[0].price.id;
         const newTier = getTierFromPriceId(priceId);
         
-        await supabaseAdmin.from('profiles').update({ tier: newTier, stripe_customer_id: customerId, family_owner_id: null }).eq('id', userId);
-        await supabaseAdmin.from('subscriptions').upsert({
+        // 🌟 包上 must()
+        await must(supabaseAdmin.from('profiles').update({ tier: newTier, stripe_customer_id: customerId, family_owner_id: null }).eq('id', userId));
+        await must(supabaseAdmin.from('subscriptions').upsert({
           user_id: userId, stripe_subscription_id: subId, stripe_customer_id: customerId,
           price_id: priceId, status: sub.status, cancel_at_period_end: sub.cancel_at_period_end,
           current_period_end: getPeriodEnd(sub),
-        }, { onConflict: 'stripe_subscription_id' });
+        }, { onConflict: 'stripe_subscription_id' }));
         
         console.log(`✅ [checkout] 用户 ${userId} 成功升级为 ${newTier}`);
         break;
@@ -86,7 +98,8 @@ webhookRoute.post('/webhook', async (c) => {
           const { data: profile } = await supabaseAdmin.from('profiles').select('id').eq('email', invoice.customer_email).maybeSingle();
           if (profile) {
             userId = profile.id;
-            await supabaseAdmin.from('profiles').update({ stripe_customer_id: invoice.customer }).eq('id', userId);
+            // 🌟 包上 must()
+            await must(supabaseAdmin.from('profiles').update({ stripe_customer_id: invoice.customer }).eq('id', userId));
           }
         }
 
@@ -95,10 +108,11 @@ webhookRoute.post('/webhook', async (c) => {
         if (sub) {
           const priceId = sub.items.data[0].price.id;
           const newTier = getTierFromPriceId(priceId);
-          await supabaseAdmin.from('profiles').update({ tier: newTier }).eq('id', userId);
-          await supabaseAdmin.from('subscriptions').update({ 
+          // 🌟 包上 must()
+          await must(supabaseAdmin.from('profiles').update({ tier: newTier }).eq('id', userId));
+          await must(supabaseAdmin.from('subscriptions').update({ 
             status: sub.status, price_id: priceId, current_period_end: getPeriodEnd(sub) 
-          }).eq('stripe_subscription_id', subId);
+          }).eq('stripe_subscription_id', subId));
         }
 
         if (invoice.billing_reason === 'subscription_cycle' || invoice.billing_reason === 'manual' || invoice.billing_reason === 'subscription_create') {
@@ -109,11 +123,13 @@ webhookRoute.post('/webhook', async (c) => {
           else if (userProfile?.trial_ends_at && new Date(userProfile.trial_ends_at) > base) base = new Date(userProfile.trial_ends_at);
           
           const newEnd = new Date(base.getTime() + 365 * 86400000).toISOString();
-          await supabaseAdmin.from('profiles').update({ subscription_ends_at: newEnd }).eq('id', userId);
+          // 🌟 包上 must()
+          await must(supabaseAdmin.from('profiles').update({ subscription_ends_at: newEnd }).eq('id', userId));
         }
 
         const { data: inviteeProfile } = await supabaseAdmin.from('profiles').select('referred_by').eq('id', userId).single();
         if (inviteeProfile?.referred_by) {
+          // 这里保留不抛异常，防止唯一约束冲突导致主流程失败
           const { error: insertErr } = await supabaseAdmin.from('referral_rewards').insert({
             inviter_id: inviteeProfile.referred_by, invitee_id: userId, reward_days: 120,
             status: 'pending', unlock_at: new Date(Date.now() + 14 * 86400000).toISOString(),
@@ -122,7 +138,8 @@ webhookRoute.post('/webhook', async (c) => {
           if (!insertErr) {
              const { data: inviter } = await supabaseAdmin.from('profiles').select('invite_success_count').eq('id', inviteeProfile.referred_by).single();
              if (inviter) {
-                 await supabaseAdmin.from('profiles').update({ invite_success_count: (inviter.invite_success_count || 0) + 1 }).eq('id', inviteeProfile.referred_by);
+                 // 🌟 包上 must()
+                 await must(supabaseAdmin.from('profiles').update({ invite_success_count: (inviter.invite_success_count || 0) + 1 }).eq('id', inviteeProfile.referred_by));
              }
           }
         }
@@ -144,16 +161,18 @@ webhookRoute.post('/webhook', async (c) => {
 
         if (userId) {
           console.log(`[refund] 发现退款用户: ${userId}，立即降级并收回权益`);
-          await supabaseAdmin.from('profiles').update({ tier: 'free', subscription_ends_at: null, family_owner_id: null }).eq('id', userId);
+          // 🌟 包上 must()
+          await must(supabaseAdmin.from('profiles').update({ tier: 'free', subscription_ends_at: null, family_owner_id: null }).eq('id', userId));
 
-          const { data: voidedRecords } = await supabaseAdmin.from('referral_rewards').update({ status: 'voided' }).eq('invitee_id', userId).eq('status', 'pending').select();
+          const voidedRecords = await must(supabaseAdmin.from('referral_rewards').update({ status: 'voided' }).eq('invitee_id', userId).eq('status', 'pending').select());
 
           if (voidedRecords && voidedRecords.length > 0) {
               for (const record of voidedRecords) {
                   const inviterId = record.inviter_id;
                   const { data: inviter } = await supabaseAdmin.from('profiles').select('invite_success_count').eq('id', inviterId).single();
                   if (inviter && inviter.invite_success_count > 0) {
-                      await supabaseAdmin.from('profiles').update({ invite_success_count: inviter.invite_success_count - 1 }).eq('id', inviterId);
+                      // 🌟 包上 must()
+                      await must(supabaseAdmin.from('profiles').update({ invite_success_count: inviter.invite_success_count - 1 }).eq('id', inviterId));
                   }
               }
           }
@@ -166,26 +185,28 @@ webhookRoute.post('/webhook', async (c) => {
         const sub = event.data.object;
         const userId = sub.metadata?.user_id;
         
-        // 🌟 核心修复：兼容 Stripe 新版 API 的取消逻辑
         const isCanceling = sub.cancel_at_period_end || (sub.cancel_at !== null && sub.status === 'active') || (sub.canceled_at !== null && sub.status === 'active');
 
         if (event.type === 'customer.subscription.deleted') {
             if (userId) {
-                await supabaseAdmin.from('profiles').update({ tier: 'free', subscription_ends_at: null }).eq('id', userId);
-                await supabaseAdmin.from('profiles').update({ family_owner_id: null, tier: 'free' }).eq('family_owner_id', userId);
+                // 🌟 包上 must()
+                await must(supabaseAdmin.from('profiles').update({ tier: 'free', subscription_ends_at: null }).eq('id', userId));
+                await must(supabaseAdmin.from('profiles').update({ family_owner_id: null, tier: 'free' }).eq('family_owner_id', userId));
             }
-            await supabaseAdmin.from('subscriptions').update({ status: 'canceled' }).eq('stripe_subscription_id', sub.id);
+            await must(supabaseAdmin.from('subscriptions').update({ status: 'canceled' }).eq('stripe_subscription_id', sub.id));
         } else {
             const priceId = sub.items.data[0].price.id;
             const newTier = getTierFromPriceId(priceId);
-            if (userId) await supabaseAdmin.from('profiles').update({ tier: newTier }).eq('id', userId);
+            
+            // 🌟 包上 must()
+            if (userId) await must(supabaseAdmin.from('profiles').update({ tier: newTier }).eq('id', userId));
 
-            await supabaseAdmin.from('subscriptions').update({
+            await must(supabaseAdmin.from('subscriptions').update({
               status: sub.status, 
               price_id: priceId,
-              cancel_at_period_end: isCanceling, // 🌟 写入正确的取消状态
+              cancel_at_period_end: isCanceling,
               current_period_end: getPeriodEnd(sub),
-            }).eq('stripe_subscription_id', sub.id);
+            }).eq('stripe_subscription_id', sub.id));
             
             console.log(`[subscription.updated] 同步取消状态: ${isCanceling}`);
         }
@@ -194,6 +215,7 @@ webhookRoute.post('/webhook', async (c) => {
     }
   } catch (err) {
     console.error('❌ Webhook handler error:', err);
+    // 发生错误时，回滚幂等记录，让 Stripe 可以重试
     await supabaseAdmin.from('stripe_webhook_events').delete().eq('event_id', event.id);
     return c.text('Handler error', 500);
   }
