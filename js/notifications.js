@@ -209,7 +209,7 @@ function renderNotifications(data, listEl, badgeEl, btnDeleteAll) {
         if (notif.params && typeof notif.params === 'object') {
             Object.keys(notif.params).forEach(k => {
                 const regex = new RegExp(`\\{${k}\\}`, 'g');
-                const highlight = `<span class="notif-highlight">${notif.params[k]}</span>`;
+                const highlight = `<span class="notif-highlight">${window.escapeHTML(notif.params[k])}</span>`;
                 titleText = titleText.replace(regex, highlight);
                 msgText = msgText.replace(regex, highlight);
             });
@@ -221,7 +221,9 @@ function renderNotifications(data, listEl, badgeEl, btnDeleteAll) {
         const timeStr = formatTime(notif.created_at, t);
         const iconClass = NOTIF_ICONS[notif.type] || NOTIF_ICONS['system'];
         const viewDetailsText = t['notif_view_details'] || 'View Details';
-        const actionHtml = notif.action_url ? `<a href="${notif.action_url}" class="notif-link" style="display:inline-block; margin-top:8px; font-size:13px; color:#58a6ff;">${viewDetailsText} <i class="fa-solid fa-arrow-right"></i></a>` : '';
+        let safeActionUrl = notif.action_url;
+          if (safeActionUrl && safeActionUrl.indexOf('/') !== 0 && safeActionUrl.indexOf('https://') !== 0) { safeActionUrl = '#'; }
+          const actionHtml = safeActionUrl ? `<a href="${window.escapeHTML(safeActionUrl)}" class="notif-link" style="display:inline-block; margin-top:8px; font-size:13px; color:#58a6ff;">${viewDetailsText} <i class="fa-solid fa-arrow-right"></i></a>` : '';
 
         li.innerHTML = `
             <div class="notif-icon ${notif.type || 'system'}" style="flex-shrink: 0;">

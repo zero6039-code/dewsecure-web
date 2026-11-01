@@ -78,12 +78,14 @@
         if (session) {
             const rawEmail = session.user.email;
             const displayEmail = rawEmail.length > 15 ? rawEmail.substring(0, 12) + '...' : rawEmail;
+              const safeRawEmail = window.escapeHTML(rawEmail);
+              const safeDisplayEmail = window.escapeHTML(displayEmail);
             
             const dashLink = header.querySelector('nav a[href="/dashboard.html"]');
             if (dashLink) dashLink.style.display = 'block';
 
             authArea.innerHTML = `
-                <span title="${rawEmail}" style="color: #8b949e; font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 120px;">${displayEmail}</span>
+                <span title="${safeRawEmail}" style="color: #8b949e; font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 120px;">${safeDisplayEmail}</span>
                 <a href="/dashboard.html" data-i18n="nav_dashboard" style="color: #58a6ff; font-size: 14px; font-weight: 600; white-space: nowrap;">控制台</a>
                 <button id="global-logout-btn" data-i18n="nav_logout" style="background: rgba(248, 81, 73, 0.1); color: #f85149; border: 1px solid rgba(248, 81, 73, 0.3); padding: 6px 12px; border-radius: 8px; cursor: pointer; font-size: 13px; white-space: nowrap;">退出</button>
             `;
