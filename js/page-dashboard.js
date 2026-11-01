@@ -10,7 +10,7 @@ let dashboardNotifs = [];
 // 🌟 如果你确认不再需要本地测试，可以直接写死 API_BASE
 const API_BASE = (window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost') 
     ? 'http://127.0.0.1:8787' 
-    : 'https://dev.dewsecure.com';
+    : 'https://dewsecure-api.zero6039.workers.dev';
 
 export async function initDashboardLogic() {
     const client = window.supabaseClient;

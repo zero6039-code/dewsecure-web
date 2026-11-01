@@ -1,8 +1,7 @@
 name = "dewsecure-api"
 main = "src/worker.js"
 compatibility_date = "2024-09-23"
-compatibility_flags = ["global_fetch_strictly_public"]
-workers_dev = false
+workers_dev = true
 
 [[r2_buckets]]
 binding = "R2_BUCKET"
@@ -11,9 +10,8 @@ bucket_name = "dewsecure-models"
 [vars]
 SUPABASE_URL = "https://uvbaioqqjqseapcancvi.supabase.co"
 SUPABASE_ANON_KEY = "sb_publishable_xiiA-yt_jRKkzRdkYkoWJA_CVZjNjq8"
-# 🌟 核心修复：补上前端域名
 FRONTEND_URL = "https://dewsecure.com"
 
 [[routes]]
-pattern = "dev.dewsecure.com/*"
+pattern = "api.dewsecure.com/*"
 zone_name = "dewsecure.com"
