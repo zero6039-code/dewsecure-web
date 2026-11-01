@@ -75,7 +75,7 @@ export async function initFamilyUI(client, profile) {
                 owner_id: profile.id,
                 owner_email: profile.email,
                 invitee_email: email, 
-                token: Math.random().toString(36).substring(2, 15),
+                token: crypto.randomUUID(),
                 status: 'pending'
             }).select().single();
 
