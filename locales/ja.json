@@ -525,5 +525,6 @@
   "notif_family_joined_self": "{email} のファミリーグループに参加しました。",
   "dash_family_remove_confirm": "このメンバーを削除してもよろしいですか？",
   "notif_family_removed_self": "{email} のファミリーグループから削除されました。",
-  "notif_refund_success": "💸 返金処理が完了しました。特典は取り消されました。"
+  "notif_refund_success": "💸 返金処理が完了しました。特典は取り消されました。",
+  "login_error_disposable_email": "使い捨てメールアドレスの使用は許可されていません。"
 }

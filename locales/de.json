@@ -525,5 +525,6 @@
   "notif_family_joined_self": "Sie sind der Familiengruppe von {email} beigetreten.",
   "dash_family_remove_confirm": "Sind Sie sicher, dass Sie dieses Mitglied entfernen möchten?",
   "notif_family_removed_self": "Sie wurden aus der Familiengruppe von {email} entfernt.",
-  "notif_refund_success": "💸 Rückerstattung erfolgreich bearbeitet. Berechtigungen wurden entzogen."
+  "notif_refund_success": "💸 Rückerstattung erfolgreich bearbeitet. Berechtigungen wurden entzogen.",
+  "login_error_disposable_email": "Wegwerf-E-Mail-Adressen sind nicht zulässig."
 }

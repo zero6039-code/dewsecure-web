@@ -15,6 +15,44 @@ trialRoute.post('/claim-trial', async (c) => {
   const supabaseAdmin = getSupabaseAdmin(c.env);
 
   try {
+    // 🌟 修复 M-7 第一步：提取指纹（提前到最开始，用于后续查重）
+    const fingerprint = c.req.header('X-Device-Fingerprint') || `user_${user.id}`;
+
+    // 🌟 修复 M-7 第二步：检查临时邮箱黑名单（直接查表）
+    const emailDomain = (user.email || '').split('@')[1]?.toLowerCase();
+    if (emailDomain) {
+      const { data: blockedDomain } = await supabaseAdmin
+        .from('disposable_email_domains')
+        .select('domain')
+        .eq('domain', emailDomain)
+        .maybeSingle();
+
+      if (blockedDomain) {
+        return c.json({ error: 'DISPOSABLE_EMAIL', message: 'Temporary email is not allowed.' }, 400);
+      }
+    }
+
+    // 🌟 修复 M-7 第三步：查询 trial_claims，该设备是否领过
+    const { data: existingClaim } = await supabaseAdmin
+      .from('trial_claims')
+      .select('fingerprint')
+      .eq('fingerprint', fingerprint)
+      .maybeSingle();
+
+    if (existingClaim) {
+      return c.json({ error: 'ALREADY_CLAIMED', message: 'Device already claimed trial.' }, 400);
+    }
+
+    // 🌟 修复 M-7 第四步：查询 devices 表，该指纹是否已绑定其他账号
+    const { data: existingDevices } = await supabaseAdmin
+      .from('devices')
+      .select('user_id')
+      .eq('fingerprint', fingerprint);
+
+    if (existingDevices && existingDevices.some(d => d.user_id !== user.id)) {
+      return c.json({ error: 'ALREADY_CLAIMED', message: 'Device used by another account.' }, 400);
+    }
+
     // 1. 检查用户当前状态
     const { data: profile } = await supabaseAdmin
       .from('profiles')
@@ -45,8 +83,7 @@ trialRoute.post('/claim-trial', async (c) => {
       params: {}
     });
 
-    // 5. 记录到 trial_claims 表 (修复：使用 fingerprint 且增加错误日志)
-    const fingerprint = c.req.header('X-Device-Fingerprint') || `user_${user.id}`;
+    // 5. 记录到 trial_claims 表
     const { error: claimErr } = await supabaseAdmin.from('trial_claims').insert({
       fingerprint: fingerprint,
       user_id: user.id,
