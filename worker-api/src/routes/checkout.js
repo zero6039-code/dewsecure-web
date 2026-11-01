@@ -4,6 +4,12 @@ import { getSupabaseUser, getSupabaseAdmin } from '../lib/supabase.js';
 
 const checkoutRoute = new Hono();
 
+// 定义合法的 Price ID 白名单
+const ALLOWED_PRICE_IDS = new Set([
+  'price_1UUF9SAB28DjNkOqrt3BX9Dr', // Family
+  'price_1UUF86AB28DjNkOqNGl2YoBN'  // Pro
+]);
+
 // ==========================================
 // 核心业务：创建 Checkout Session
 // ==========================================
@@ -14,7 +20,11 @@ checkoutRoute.post('/checkout', async (c) => {
 
   const token = authHeader.split(' ')[1];
   const { price_id } = await c.req.json();
-  if (!price_id) return c.json({ error: 'Missing price_id' }, 400);
+  
+  // 🌟 修复：严格校验 price_id 是否在白名单内
+  if (!price_id || !ALLOWED_PRICE_IDS.has(price_id)) {
+    return c.json({ error: 'Invalid price_id' }, 400);
+  }
 
   const supabase = getSupabaseUser(c.env, token);
   const { data: { user }, error } = await supabase.auth.getUser();

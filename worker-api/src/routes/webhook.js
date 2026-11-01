@@ -16,7 +16,8 @@ function getSubIdFromInvoice(invoice) {
 function getTierFromPriceId(priceId) {
   if (priceId === 'price_1UUF9SAB28DjNkOqrt3BX9Dr') return 'family';
   if (priceId === 'price_1UUF86AB28DjNkOqNGl2YoBN') return 'pro';
-  return 'pro';
+  // 🌟 修复：遇到未知价格直接抛错，触发 Stripe 重试并报警，绝不默认发 Pro
+  throw new Error(`Unknown or forbidden price ID: ${priceId}`);
 }
 
 webhookRoute.post('/webhook', async (c) => {
