@@ -457,7 +457,7 @@
   "notif_added_120d": "Se han añadido con éxito 120 días de acceso PRO.",
   "notif_used_30d": "El acceso PRO de 30 días ha sido totalmente utilizado.",
   "notif_used_120d": "El acceso PRO de 120 días ha sido totalmente utilizado.",
-  "notif_invite_pending": "¡Felicidades! El usuario que invitaste ({email}) se ha suscrito y pagado. Si no hay reembolso en 14 días, desbloquearás 120 días de acceso PRO.",
+  "notif_invite_pending": "¡Felicidades! El usuario {email} que invitaste se ha suscrito. Si no hay reembolso en 14 días, desbloquearás una recompensa PRO de 120 días. Por favor, espera pacientemente.",
   "notif_upgraded_pro": "🎉 Felicidades, {email} se ha actualizado a Pro.",
   "notif_upgraded_family": "🎉 Felicidades, {email} se ha actualizado a Family.",
   "notif_downgraded_pro": "{email} ha sido degradado a Pro.",
@@ -471,7 +471,7 @@
   "notif_family_device_added": "{email} ha vinculado con éxito el dispositivo: {device}.",
   "notif_family_device_removed": "{email} ha desvinculado el dispositivo: {device}.",
   "notif_device_limit_9": "Has alcanzado el límite de dispositivos (9/9). Gestiona tus dispositivos en el Panel.",
-  "notif_billing_success": "💳 Pago exitoso. El recibo ha sido enviado a tu correo.",
+  "notif_billing_success": "💳 Pago exitoso. Se ha enviado un recibo a su correo electrónico.",
   "notif_new_version_title": "🚀 Nueva versión lanzada",
   "notif_new_version_desc": "La versión {version} ya está disponible. Consulta el registro de cambios.",
   "notif_time_just_now": "Justo ahora",
@@ -524,5 +524,6 @@
   "dash_notif_empty_click": "No quedan notificaciones por eliminar.",
   "notif_family_joined_self": "Te has unido al grupo familiar de {email}.",
   "dash_family_remove_confirm": "¿Estás seguro de que quieres eliminar a este miembro?",
-  "notif_family_removed_self": "Has sido eliminado del grupo familiar de {email}."
+  "notif_family_removed_self": "Has sido eliminado del grupo familiar de {email}.",
+  "notif_refund_success": "💸 Reembolso procesado con éxito. Los derechos han sido revocados."
 }

@@ -456,7 +456,7 @@
   "notif_added_120d": "Akses PRO 120 hari telah berjaya ditambah.",
   "notif_used_30d": "Akses PRO 30 hari telah digunakan sepenuhnya.",
   "notif_used_120d": "Akses PRO 120 hari telah digunakan sepenuhnya.",
-  "notif_invite_pending": "Tahniah! Pengguna yang anda jemput ({email}) telah berjaya melanggan dan membayar. Jika tiada bayaran balik dalam 14 hari, anda akan membuka kunci dan menerima akses PRO 120 hari. Sila tunggu dengan sabar.",
+  "notif_invite_pending": "Tahniah! Pengguna {email} yang anda jemput telah melanggan. Jika tiada bayaran balik dalam masa 14 hari, anda akan membuka ganjaran PRO 120 hari. Sila tunggu dengan sabar.",
   "notif_upgraded_pro": "🎉 Tahniah, {email} telah berjaya dinaik taraf ke Pro.",
   "notif_upgraded_family": "🎉 Tahniah, {email} telah berjaya dinaik taraf ke Family.",
   "notif_downgraded_pro": "{email} telah diturunkan ke Pro.",
@@ -523,5 +523,6 @@
   "dash_notif_empty_click": "Tiada pemberitahuan lagi untuk dipadam.",
   "notif_family_joined_self": "Anda telah berjaya menyertai kumpulan keluarga {email}.",
   "dash_family_remove_confirm": "Adakah anda pasti mahu mengalih keluar ahli ini?",
-  "notif_family_removed_self": "Anda telah dialih keluar daripada kumpulan keluarga {email}."
+  "notif_family_removed_self": "Anda telah dialih keluar daripada kumpulan keluarga {email}.",
+  "notif_refund_success": "💸 Bayaran balik berjaya diproses. Hak telah ditarik balik."
 }

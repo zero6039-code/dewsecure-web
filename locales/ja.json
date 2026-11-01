@@ -457,7 +457,7 @@
   "notif_added_120d": "120日間のPROアクセスが正常に追加されました。",
   "notif_used_30d": "30日間のPROアクセスがすべて使用されました。",
   "notif_used_120d": "120日間のPROアクセスがすべて使用されました。",
-  "notif_invite_pending": "おめでとうございます！招待したユーザー（{email}）がサブスクリプションに登録して支払いました。14日以内に返金がなければ、120日間のPROアクセスがロック解除されます。しばらくお待ちください。",
+  "notif_invite_pending": "おめでとうございます！招待したユーザー {email} が購読しました。14日以内に返金がなければ、120日間のPRO特典が解除されます。しばらくお待ちください。",
   "notif_upgraded_pro": "🎉 おめでとうございます、{email} がProにアップグレードされました。",
   "notif_upgraded_family": "🎉 おめでとうございます、{email} がFamilyにアップグレードされました。",
   "notif_downgraded_pro": "{email} はProにダウングレードされました。",
@@ -471,7 +471,7 @@
   "notif_family_device_added": "{email} がデバイスを正常にバインドしました：{device}",
   "notif_family_device_removed": "{email} がデバイスのバインドを解除しました：{device}",
   "notif_device_limit_9": "デバイスの上限（9/9）に達しました。ダッシュボードでデバイスを管理してください。",
-  "notif_billing_success": "💳 支払いが成功しました。領収書がメールに送信されました。",
+  "notif_billing_success": "💳 お支払いが成功しました。領収書がメールに送信されました。",
   "notif_new_version_title": "🚀 新バージョンリリース",
   "notif_new_version_desc": "バージョン {version} がリリースされました。詳細は変更ログをご覧ください。",
   "notif_time_just_now": "たった今",
@@ -524,5 +524,6 @@
   "dash_notif_empty_click": "削除する通知はもうありません。",
   "notif_family_joined_self": "{email} のファミリーグループに参加しました。",
   "dash_family_remove_confirm": "このメンバーを削除してもよろしいですか？",
-  "notif_family_removed_self": "{email} のファミリーグループから削除されました。"
+  "notif_family_removed_self": "{email} のファミリーグループから削除されました。",
+  "notif_refund_success": "💸 返金処理が完了しました。特典は取り消されました。"
 }

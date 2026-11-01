@@ -4,12 +4,26 @@ import { getSupabaseAdmin } from '../lib/supabase.js';
 
 const webhookRoute = new Hono();
 
-// 🌟 核心修复：封装 must 函数，强制检查数据库返回的 error
 const must = async (query) => {
   const { data, error } = await query;
   if (error) throw error;
   return data;
 };
+
+// 辅助函数：发送通知
+async function sendNotification(supabaseAdmin, userId, type, titleKey, msgKey, params = {}) {
+  try {
+    await supabaseAdmin.from('notifications').insert({
+      user_id: userId,
+      type: type,
+      title_key: titleKey,
+      message_key: msgKey,
+      params: params
+    });
+  } catch (err) {
+    console.error('发送通知失败:', err.message);
+  }
+}
 
 function getPeriodEnd(sub) {
   const timestamp = sub.current_period_end || (sub.items && sub.items.data && sub.items.data[0] && sub.items.data[0].current_period_end);
@@ -72,6 +86,10 @@ webhookRoute.post('/webhook', async (c) => {
           current_period_end: getPeriodEnd(sub),
         }, { onConflict: 'stripe_subscription_id' }));
         
+        // 升级通知
+        const upgradeKey = newTier === 'family' ? 'notif_upgraded_family' : 'notif_upgraded_pro';
+        await sendNotification(supabaseAdmin, userId, 'billing', upgradeKey, upgradeKey, { email: session.customer_details?.email || 'User' });
+        
         console.log(`✅ [checkout] 用户 ${userId} 成功升级为 ${newTier}`);
         break;
       }
@@ -114,7 +132,14 @@ webhookRoute.post('/webhook', async (c) => {
           await must(supabaseAdmin.from('profiles').update({ subscription_ends_at: newEnd }).eq('id', userId));
         }
 
-        // 🌟 修复 M-6：只在首次订阅（subscription_create）时才发推荐奖励
+        // 账单扣费成功 / 续费通知
+        if (invoice.billing_reason === 'subscription_create') {
+          await sendNotification(supabaseAdmin, userId, 'billing', 'notif_billing_success', 'notif_billing_success');
+        } else if (invoice.billing_reason === 'subscription_cycle') {
+          await sendNotification(supabaseAdmin, userId, 'billing', 'notif_renewed', 'notif_renewed');
+        }
+
+        // 推荐奖励发放与通知
         if (invoice.billing_reason === 'subscription_create') {
           const { data: inviteeProfile } = await supabaseAdmin.from('profiles').select('referred_by').eq('id', userId).single();
           if (inviteeProfile?.referred_by) {
@@ -126,8 +151,9 @@ webhookRoute.post('/webhook', async (c) => {
             if (!insertErr) {
                const { data: inviter } = await supabaseAdmin.from('profiles').select('invite_success_count').eq('id', inviteeProfile.referred_by).single();
                if (inviter) {
-                   // 🌟 修复 M-6：原子递增，防止并发覆盖
                    await must(supabaseAdmin.rpc('increment_invite_count', { user_id: inviteeProfile.referred_by }));
+                   // 给邀请人发送待解锁通知
+                   await sendNotification(supabaseAdmin, inviteeProfile.referred_by, 'referral', 'notif_invite_pending', 'notif_invite_pending', { email: invoice.customer_email });
                }
             }
           }
@@ -137,7 +163,6 @@ webhookRoute.post('/webhook', async (c) => {
 
       case 'charge.refunded': {
         const charge = event.data.object;
-        // 🌟 修复 M-4：只处理全额退款（refunded 为 true）
         if (charge.refunded !== true) {
             console.log(`[refund] 检测到部分退款，忽略降级操作: ${charge.id}`);
             break;
@@ -148,12 +173,10 @@ webhookRoute.post('/webhook', async (c) => {
           const { data: profile } = await supabaseAdmin.from('profiles').select('id').eq('stripe_customer_id', charge.customer).maybeSingle();
           if (profile) userId = profile.id;
         }
-        // 🌟 修复 M-4：删除了不安全的 billing_details.email 匹配
 
         if (userId) {
           console.log(`[refund] 发现全额退款用户: ${userId}，立即降级并收回权益`);
           
-          // 🌟 修复 M-4：在全额退款时，必须去 Stripe 取消对应的订阅，防止下期继续扣费
           if (charge.invoice) {
               try {
                   const invoice = await stripe.invoices.retrieve(charge.invoice);
@@ -168,13 +191,16 @@ webhookRoute.post('/webhook', async (c) => {
 
           await must(supabaseAdmin.from('profiles').update({ tier: 'free', subscription_ends_at: null, family_owner_id: null }).eq('id', userId));
 
+          // 退款成功通知
+          await sendNotification(supabaseAdmin, userId, 'billing', 'notif_refund_success', 'notif_refund_success');
+
           const voidedRecords = await must(supabaseAdmin.from('referral_rewards').update({ status: 'voided' }).eq('invitee_id', userId).eq('status', 'pending').select());
 
           if (voidedRecords && voidedRecords.length > 0) {
               for (const record of voidedRecords) {
-                  const inviterId = record.inviter_id;
-                  // 🌟 修复 M-6：原子递减
-                  await must(supabaseAdmin.rpc('decrement_invite_count', { user_id: inviterId }));
+                await must(supabaseAdmin.rpc('decrement_invite_count', { user_id: record.inviter_id }));
+                // 给邀请人发送退款导致奖励作废的通知
+                await sendNotification(supabaseAdmin, record.inviter_id, 'referral', 'notif_referral_refunded', 'notif_referral_refunded', { email: charge.billing_details?.email || 'User' });
               }
           }
         }
@@ -192,17 +218,21 @@ webhookRoute.post('/webhook', async (c) => {
             if (userId) {
                 await must(supabaseAdmin.from('profiles').update({ tier: 'free', subscription_ends_at: null }).eq('id', userId));
                 await must(supabaseAdmin.from('profiles').update({ family_owner_id: null, tier: 'free' }).eq('family_owner_id', userId));
+                
+                // 降级通知
+                await sendNotification(supabaseAdmin, userId, 'billing', 'notif_downgraded_free', 'notif_downgraded_free', { email: sub.metadata?.email || 'User' });
             }
             await must(supabaseAdmin.from('subscriptions').update({ status: 'canceled' }).eq('stripe_subscription_id', sub.id));
         } else {
             const priceId = sub.items.data[0].price.id;
             let newTier = getTierFromPriceId(priceId);
             
-            // 🌟 修复 M-5：只有 active 或 trialing 才保留权益
             const activeStatuses = ['active', 'trialing'];
             if (!activeStatuses.includes(sub.status)) {
-                newTier = 'free'; // 欠费、逾期等状态，直接降级
+                newTier = 'free';
                 console.log(`[subscription.updated] 订阅状态为 ${sub.status}，执行降级`);
+                
+                if (userId) await sendNotification(supabaseAdmin, userId, 'billing', 'notif_downgraded_free', 'notif_downgraded_free', { email: sub.metadata?.email || 'User' });
             }
 
             if (userId) await must(supabaseAdmin.from('profiles').update({ tier: newTier }).eq('id', userId));
@@ -213,8 +243,6 @@ webhookRoute.post('/webhook', async (c) => {
               cancel_at_period_end: isCanceling,
               current_period_end: getPeriodEnd(sub),
             }).eq('stripe_subscription_id', sub.id));
-            
-            console.log(`[subscription.updated] 同步取消状态: ${isCanceling}`);
         }
         break;
       }
@@ -226,6 +254,6 @@ webhookRoute.post('/webhook', async (c) => {
   }
 
   return c.text('OK', 200);
-clear});
+});
 
 export default webhookRoute;

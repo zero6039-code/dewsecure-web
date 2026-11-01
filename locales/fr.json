@@ -457,7 +457,7 @@
   "notif_added_120d": "120 jours d'accès PRO ont été ajoutés avec succès.",
   "notif_used_30d": "L'accès PRO de 30 jours a été entièrement utilisé.",
   "notif_used_120d": "L'accès PRO de 120 jours a été entièrement utilisé.",
-  "notif_invite_pending": "Félicitations ! L'utilisateur que vous avez invité ({email}) s'est abonné et a payé avec succès. En l'absence de remboursement sous 14 jours, vous débloquerez 120 jours d'accès PRO.",
+  "notif_invite_pending": "Félicitations ! L'utilisateur {email} que vous avez invité s'est abonné. Si aucun remboursement n'est effectué dans les 14 jours, vous débloquerez une récompense PRO de 120 jours. Veuillez patienter.",
   "notif_upgraded_pro": "🎉 Félicitations, {email} a été mis à niveau vers Pro.",
   "notif_upgraded_family": "🎉 Félicitations, {email} a été mis à niveau vers Family.",
   "notif_downgraded_pro": "{email} a été rétrogradé vers Pro.",
@@ -471,7 +471,7 @@
   "notif_family_device_added": "{email} a lié l'appareil avec succès : {device}.",
   "notif_family_device_removed": "{email} a dissocié l'appareil : {device}.",
   "notif_device_limit_9": "Vous avez atteint la limite d'appareils (9/9). Gérez vos appareils dans le tableau de bord.",
-  "notif_billing_success": "💳 Paiement réussi. Le reçu a été envoyé à votre adresse e-mail.",
+  "notif_billing_success": "💳 Paiement réussi. Un reçu a été envoyé à votre adresse e-mail.",
   "notif_new_version_title": "🚀 Nouvelle version publiée",
   "notif_new_version_desc": "La version {version} est maintenant disponible. Consultez le journal des modifications.",
   "notif_time_just_now": "À l'instant",
@@ -524,5 +524,6 @@
   "dash_notif_empty_click": "Il ne reste plus de notifications à supprimer.",
   "notif_family_joined_self": "Vous avez rejoint le groupe familial de {email}.",
   "dash_family_remove_confirm": "Êtes-vous sûr de vouloir supprimer ce membre ?",
-  "notif_family_removed_self": "Vous avez été retiré du groupe familial de {email}."
+  "notif_family_removed_self": "Vous avez été retiré du groupe familial de {email}.",
+  "notif_refund_success": "💸 Remboursement traité avec succès. Les droits ont été révoqués."
 }

@@ -457,7 +457,7 @@
   "notif_added_120d": "120 dias de acesso PRO foram adicionados com sucesso.",
   "notif_used_30d": "O acesso PRO de 30 dias foi totalmente utilizado.",
   "notif_used_120d": "O acesso PRO de 120 dias foi totalmente utilizado.",
-  "notif_invite_pending": "Parabéns! O usuário que você convidou ({email}) assinou e pagou com sucesso. Se não houver reembolso em 14 dias, você desbloqueará 120 dias de acesso PRO.",
+  "notif_invite_pending": "Parabéns! O usuário {email} que você convidou assinou. Se não houver reembolso em 14 dias, você desbloqueará uma recompensa PRO de 120 dias. Por favor, aguarde pacientemente.",
   "notif_upgraded_pro": "🎉 Parabéns, {email} atualizou para o Pro.",
   "notif_upgraded_family": "🎉 Parabéns, {email} atualizou para o Family.",
   "notif_downgraded_pro": "{email} foi rebaixado para o Pro.",
@@ -471,7 +471,7 @@
   "notif_family_device_added": "{email} vinculou o dispositivo com sucesso: {device}.",
   "notif_family_device_removed": "{email} desvinculou o dispositivo: {device}.",
   "notif_device_limit_9": "Você atingiu o limite de dispositivos (9/9). Gerencie seus dispositivos no Dashboard.",
-  "notif_billing_success": "💳 Pagamento bem-sucedido. O recibo foi enviado para o seu e-mail.",
+  "notif_billing_success": "💳 Pagamento bem-sucedido. Um recibo foi enviado para o seu e-mail.",
   "notif_new_version_title": "🚀 Nova versão lançada",
   "notif_new_version_desc": "A versão {version} já está disponível. Confira o changelog para mais detalhes.",
   "notif_time_just_now": "Agora mesmo",
@@ -524,5 +524,6 @@
   "dash_notif_empty_click": "Não há mais notificações para excluir.",
   "notif_family_joined_self": "Você entrou no grupo familiar de {email}.",
   "dash_family_remove_confirm": "Tem certeza de que deseja remover este membro?",
-  "notif_family_removed_self": "Você foi removido do grupo familiar de {email}."
+  "notif_family_removed_self": "Você foi removido do grupo familiar de {email}.",
+  "notif_refund_success": "💸 Reembolso processado com sucesso. Os direitos foram revogados."
 }

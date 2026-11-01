@@ -524,5 +524,6 @@
   "dash_notif_empty_click": "已无任何通知信息需要删除。",
   "notif_family_joined_self": "您已成功加入 {email} 的家庭组。",
   "dash_family_remove_confirm": "确定要移出该成员吗？",
-  "notif_family_removed_self": "您已被移出 {email} 的家庭组。"
+  "notif_family_removed_self": "您已被移出 {email} 的家庭组。",
+  "notif_refund_success": "💸 退款已成功处理，相关权益已收回。"
 }
