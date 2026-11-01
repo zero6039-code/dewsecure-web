@@ -20,7 +20,6 @@ setInterval(async () => {
         const { data: { session } } = await window.supabaseClient.auth.getSession();
         
         if (session) {
-            // 如果发现网页端有登录态，且 Token 与上次推送不同，立刻强制覆盖插件
             if (session.access_token !== lastPushedToken) {
                 console.log("🚀 [强制同步] 检测到网页端已登录，正在覆盖插件状态:", session.user.email);
                 
@@ -42,7 +41,6 @@ setInterval(async () => {
                 }
             }
         } else {
-            // 如果网页端退出了，也要通知插件退出（可选，但为了安全建议这样做）
             if (lastPushedToken !== null) {
                 if (window.chrome && chrome.runtime && chrome.runtime.sendMessage) {
                     chrome.runtime.sendMessage(EXTENSION_ID, { type: 'LOGOUT' }, () => {});
@@ -51,7 +49,7 @@ setInterval(async () => {
             }
         }
     } catch (e) {}
-}, 1500); // 从 2 秒缩短到 1.5 秒，提高响应速度
+}, 1500);
 
 // ==========================================
 // 原有的路由拦截与初始化逻辑
@@ -93,15 +91,13 @@ document.addEventListener('DOMContentLoaded', async () => {
         window.swup = new Swup({ containers: ['#swup'] });
         window.swup.hooks.on('page:view', () => {
             routeAndInit();
-            // 🌟 强力保险：延迟 100ms 重新加载当前语言包，确保 Swup 替换的 DOM 被完美翻译
-            setTimeout(() => {
-                const currentLang = localStorage.getItem('preferred_lang') || 'en';
-                if (window.loadLanguage) {
-                    window.loadLanguage(currentLang);
-                } else if (window.translatePage) {
-                    window.translatePage();
-                }
-            }, 100);
+            
+            // 🌟 核心修复：绝不再调用 loadLanguage (因为它包含 await fetch)
+            // 直接调用同步的 translatePage，瞬间替换文本
+            if (window.fallbackTranslations && window.translatePage) {
+                window.translatePage();
+                window.dispatchEvent(new Event('languageChanged')); // 触发依赖此事件的重绘
+            }
         });
     }
 });
