@@ -21,7 +21,11 @@ window.showToast = function(message, type = 'success') {
             z-index: 2147483647 !important; display: flex !important; align-items: center !important; gap: 15px !important;
             opacity: 0 !important; visibility: hidden !important; transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
         `;
-        toast.innerHTML = `<i class="fa-solid ${type === 'error' ? 'fa-circle-exclamation' : 'fa-circle-check'}" style="font-size: 24px; color: ${type === 'error' ? '#f85149' : '#58a6ff'};"></i><span>${message}</span>`;
+        
+        // 🌟 核心修复：改为安全的 DOM 构建
+        toast.innerHTML = `<i class="fa-solid ${type === 'error' ? 'fa-circle-exclamation' : 'fa-circle-check'}" style="font-size: 24px; color: ${type === 'error' ? '#f85149' : '#58a6ff'};"></i><span></span>`;
+        toast.querySelector('span').textContent = message;
+        
         setTimeout(() => { toast.style.setProperty('opacity', '1', 'important'); toast.style.setProperty('visibility', 'visible', 'important'); }, 10);
         setTimeout(() => { toast.style.setProperty('opacity', '0', 'important'); toast.style.setProperty('visibility', 'hidden', 'important'); }, 4000);
     } catch (e) { alert(message); }
@@ -49,10 +53,13 @@ window.showGlassConfirm = function(title, message, onConfirm) {
     const cancelText = t['confirm_cancel'] || '取消';
     const confirmText = t['confirm_ok'] || '确认';
 
+    // 🌟 核心修复：针对 title 和 message 进行安全转义
+    const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+
     modal.innerHTML = `
         <div style="background:rgba(20,20,25,0.85); border:1px solid rgba(255,255,255,0.1); border-radius:16px; padding:24px; width:90%; max-width:320px; box-shadow:0 10px 30px rgba(0,0,0,0.5); transform:scale(0.95); transition:transform 0.2s;">
-            <h3 style="color:#fff; font-size:18px; font-weight:600; margin-top:0; margin-bottom:12px;">${title}</h3>
-            <p style="color:#8b949e; font-size:14px; margin-bottom:24px; line-height:1.5;">${message}</p>
+            <h3 style="color:#fff; font-size:18px; font-weight:600; margin-top:0; margin-bottom:12px;">${esc(title)}</h3>
+            <p style="color:#8b949e; font-size:14px; margin-bottom:24px; line-height:1.5;">${esc(message)}</p>
             <div style="display:flex; gap:10px; justify-content:flex-end;">
                 <button id="glassCancelBtn" class="btn" style="background:transparent; border:1px solid rgba(255,255,255,0.2); color:#c9d1d9; padding:8px 16px; border-radius:8px; cursor:pointer;">${cancelText}</button>
                 <button id="glassConfirmBtn" class="btn btn-danger" style="background:#f85149; border:none; color:#fff; padding:8px 16px; border-radius:8px; cursor:pointer;">${confirmText}</button>
@@ -62,7 +69,6 @@ window.showGlassConfirm = function(title, message, onConfirm) {
 
     document.body.appendChild(modal);
     
-    // 动画
     requestAnimationFrame(() => {
         modal.style.opacity = '1';
         modal.querySelector('div').style.transform = 'scale(1)';

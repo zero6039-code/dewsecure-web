@@ -1,3 +1,5 @@
+const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+
 export async function initFamilyUI(client, profile) {
     const familyCard = document.getElementById('familyCard');
     const listDiv = document.getElementById('familyMembersList');
@@ -34,16 +36,17 @@ export async function initFamilyUI(client, profile) {
                 const isPending = inv.status === 'pending'; 
                 const email = inv.invitee_email || 'Unknown';
                 
+                const safeEmail = esc(email);
                 row.innerHTML = `
                     <div style="color:${isPending ? '#fff' : '#3fb950'}; font-size:14px; font-weight:600; word-break: break-all; flex: 1; min-width: 120px;">
-                        ${email}
+                        ${safeEmail}
                         ${!isPending ? `<span style="font-size:12px; margin-left:8px; background:rgba(63,185,80,0.1); padding:2px 6px; border-radius:4px;">${t['dash_device_active'] || 'Joined'}</span>` : ''}
                     </div>
                     <div style="display:flex; gap:8px; flex-shrink: 0;">
                         ${isPending 
                             ? `<button class="btn" style="background:rgba(88,166,255,0.1); color:#58a6ff; border:1px solid rgba(88,166,255,0.3); padding:6px 12px; font-size:12px; white-space: nowrap;" onclick="navigator.clipboard.writeText('${inviteLink}'); window.showToast('${t['dash_copied'] || 'Copied!'}');">${t['dash_invite_copy'] || '复制链接'}</button>` 
                             : ''}
-                        <button class="btn btn-danger" style="padding:6px 12px; font-size:12px; white-space: nowrap;" onclick="window.removeFamily('${inv.id}', '${email}')">${t['dash_family_member_remove'] || '移除'}</button>
+                        <button class="btn btn-danger" style="padding:6px 12px; font-size:12px; white-space: nowrap;" onclick="window.removeFamily('${inv.id}', this.getAttribute('data-email'))" data-email="${safeEmail}">${t['dash_family_member_remove'] || '移除'}</button>
                     </div>
                 `;
                 listDiv.appendChild(row);
@@ -51,12 +54,17 @@ export async function initFamilyUI(client, profile) {
         }
     } catch (err) {
         console.error("获取家庭组列表失败:", err);
-        listDiv.innerHTML = `<div style="color:#f85149;font-size:14px;text-align:center;">Error: ${err.message}</div>`;
+        listDiv.innerHTML = `<div style="color:#f85149;font-size:14px;text-align:center;">Error: ${esc(err.message)}</div>`;
     }
 
     const handleSendInvite = async () => {
         const email = inputEmail.value.trim().toLowerCase();
-        if(!email || !email.includes('@')) return window.showToast(t['toast_invalid_email'] || 'Invalid Email', 'error');
+        
+        // 🌟 核心修复：加入严格的正则校验，拦截任何非法字符和代码
+        const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+        if(!email || !emailRegex.test(email)) {
+            return window.showToast(t['toast_invalid_email'] || 'Invalid Email Format', 'error');
+        }
         
         btnInvite.disabled = true; 
         const originalText = btnInvite.textContent;
@@ -77,7 +85,6 @@ export async function initFamilyUI(client, profile) {
             await navigator.clipboard.writeText(link);
             window.showToast(t['toast_invite_gen'] || 'Link Copied!');
 
-            // 🌟 插入邀请通知
             await client.from('notifications').insert({
                 user_id: profile.id,
                 type: 'family',
@@ -86,7 +93,6 @@ export async function initFamilyUI(client, profile) {
                 params: { email: email }
             });
             
-            // 🌟 强制刷新右侧通知栏
             if (typeof window.initNotifications === 'function') window.initNotifications();
 
             inputEmail.value = '';
@@ -104,7 +110,6 @@ export async function initFamilyUI(client, profile) {
         if (e.key === 'Enter') { e.preventDefault(); handleSendInvite(); }
     };
 
-    // 🌟 核心修复：添加窗口聚焦监听，子号加入后切回网页自动刷新
     if (!window._familyFocusListenerAdded) {
         window.addEventListener('focus', async () => {
             const { data: { session } } = await client.auth.getSession();
@@ -116,11 +121,9 @@ export async function initFamilyUI(client, profile) {
         window._familyFocusListenerAdded = true;
     }
 
-    // 🌟 核心修复：添加 Supabase 实时订阅（一旦数据库变动，立刻重绘 UI）
     if (!window._familyChannelSubscribed) {
         client.channel('family_updates')
             .on('postgres_changes', { event: '*', schema: 'public', table: 'family_invitations', filter: `owner_id=eq.${profile.id}` }, () => {
-                // 邀请表变动，重新拉取列表
                 client.from('profiles').select('*').eq('id', profile.id).maybeSingle().then(({data}) => {
                     if (data) initFamilyUI(client, data);
                 });
@@ -132,8 +135,6 @@ export async function initFamilyUI(client, profile) {
 
 window.removeFamily = async function(inviteId, email) {
     const t = window.fallbackTranslations || {};
-    
-    // 🌟 修复硬编码的 'Confirm?'
     const confirmMsg = t['dash_family_remove_confirm'] || 'Are you sure you want to remove this member?';
     
     window.showGlassConfirm(t['dash_family_member_remove'] || '移除成员', confirmMsg, async () => {
@@ -141,13 +142,11 @@ window.removeFamily = async function(inviteId, email) {
         const { error } = await client.rpc('remove_family_member', { p_invitee_email: email });
         
         if (!error) {
-            // 🌟 修复硬编码的 'Removed'
             window.showToast(t['dash_leave_success'] || 'Member removed successfully');
             
             const { data: { session } } = await client.auth.getSession();
             const { data: profile } = await client.from('profiles').select('*').eq('id', session.user.id).maybeSingle();
             
-            // 🌟 插入移除通知
             if (profile) {
                 await client.from('notifications').insert({
                     user_id: profile.id,
@@ -156,11 +155,8 @@ window.removeFamily = async function(inviteId, email) {
                     message_key: 'notif_family_removed',
                     params: { email: email }
                 });
-                
-                // 🌟 强制刷新右侧通知栏
                 if (typeof window.initNotifications === 'function') window.initNotifications();
             }
-            
             initFamilyUI(client, profile);
         } else {
             window.showToast('Error: ' + error.message, 'error');
