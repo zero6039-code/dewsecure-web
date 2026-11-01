@@ -41,10 +41,17 @@ checkoutRoute.post('/checkout', async (c) => {
 
   if (existingSubs && existingSubs.length > 0) {
     const currentSub = existingSubs[0];
-    if (currentSub.price_id === price_id) {
-      return c.json({ error: 'ALREADY_SUBSCRIBED', message: 'You already have an active subscription.' }, 400);
+    
+    // 🌟 核心修复：如果用户处于 trialing（试用期），允许他直接发起 Checkout 转正
+    if (currentSub.status === 'trialing') {
+      console.log(`[checkout] 用户 ${user.id} 处于试用期，允许直接发起新订阅`);
+    } else {
+      // 只有真正处于 active（已扣费）状态，才拦截并引导去管理页面
+      if (currentSub.price_id === price_id) {
+        return c.json({ error: 'ALREADY_SUBSCRIBED', message: 'You already have an active subscription.' }, 400);
+      }
+      return c.json({ error: 'UPGRADE_REQUIRED', message: 'Please go to your dashboard to change your plan.' }, 400);
     }
-    return c.json({ error: 'UPGRADE_REQUIRED', message: 'Please go to your dashboard to change your plan.' }, 400);
   }
 
   try {
