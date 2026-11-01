@@ -5,28 +5,6 @@ import { getSupabaseUser, getSupabaseAdmin } from '../lib/supabase.js';
 const checkoutRoute = new Hono();
 
 // ==========================================
-// 🌟 诊断端点：测试 Worker 原生 fetch 能否连通 Stripe
-// ==========================================
-checkoutRoute.get('/test-stripe-connection', async (c) => {
-  try {
-    const res = await fetch('https://api.stripe.com/v1/account', {
-      headers: {
-        'Authorization': `Bearer ${c.env.STRIPE_SECRET_KEY}`,
-        'Content-Type': 'application/x-www-form-urlencoded'
-      }
-    });
-    const text = await res.text();
-    return c.json({ 
-      status: res.status, 
-      ok: res.ok, 
-      body: text.slice(0, 200) 
-    });
-  } catch (err) {
-    return c.json({ error: err.message }, 500);
-  }
-});
-
-// ==========================================
 // 核心业务：创建 Checkout Session
 // ==========================================
 checkoutRoute.post('/checkout', async (c) => {
