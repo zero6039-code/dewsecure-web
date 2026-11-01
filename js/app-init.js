@@ -5,7 +5,7 @@ import { initAuthPage } from './page-auth.js';
 import { initDashboardLogic } from './page-dashboard.js';
 import { initComponentsPage, initAcceptInvitePage } from './page-components.js';
 
-// 🌟 动态适配 Chrome 与 Edge 扩展 ID
+// 🌟 修复 L-5：保留 Edge 后台分配的真实 31 位 ID，不强行补齐
 const isEdge = navigator.userAgent.includes('Edg/');
 const EXTENSION_ID = isEdge ? 'cpkmeoejhbmcmnaodpnkfdjgggpmgcf' : 'fgnijfomipmimnfocgofmmniglibgnak';
 let lastPushedToken = null;
@@ -20,7 +20,6 @@ setInterval(async () => {
         const { data: { session } } = await window.supabaseClient.auth.getSession();
         
         if (session) {
-            // 如果发现网页端有登录态，且 Token 与上次推送不同，立刻强制覆盖插件
             if (session.access_token !== lastPushedToken) {
                 console.log("🚀 [强制同步] 检测到网页端已登录，正在覆盖插件状态:", session.user.email);
                 
@@ -34,7 +33,8 @@ setInterval(async () => {
                         }
                     }, (res) => {
                         if (chrome.runtime.lastError) {
-                            // 忽略未安装插件的报错
+                            // 🌟 修复 L-5：不再静默吞掉错误，输出警告
+                            console.warn("插件同步通信失败 (请检查 manifest 是否配置 externally_connectable 或插件是否安装):", chrome.runtime.lastError.message);
                         } else if (res && res.ok) {
                             lastPushedToken = session.access_token;
                         }
@@ -42,7 +42,6 @@ setInterval(async () => {
                 }
             }
         } else {
-            // 如果网页端退出了，也要通知插件退出（可选，但为了安全建议这样做）
             if (lastPushedToken !== null) {
                 if (window.chrome && chrome.runtime && chrome.runtime.sendMessage) {
                     chrome.runtime.sendMessage(EXTENSION_ID, { type: 'LOGOUT' }, () => {});
@@ -51,24 +50,38 @@ setInterval(async () => {
             }
         }
     } catch (e) {}
-}, 1500); // 从 2 秒缩短到 1.5 秒，提高响应速度
+}, 1500);
 
 // ==========================================
 // 原有的路由拦截与初始化逻辑
 // ==========================================
 async function interceptToken() {
+    // 🌟 修复 M-2：如果是邀请页，跳过 Token 拦截，防止与邀请参数冲突
+    if (window.location.pathname.includes('accept-invite')) {
+        return false;
+    }
+
     const urlParams = new URLSearchParams(window.location.search);
     const extToken = urlParams.get('token');
     const extRefresh = urlParams.get('refresh') || extToken;
     
     if (extToken && window.supabaseClient) {
         try {
+            // 🌟 修复 M-2：防覆盖（如果当前已登录，不允许被 URL 的 Token 强制覆盖）
+            const { data: { session: currentSession } } = await window.supabaseClient.auth.getSession();
+            if (currentSession && currentSession.access_token !== extToken) {
+                console.warn("⚠️ [安全拦截] 检测到已登录状态下尝试通过 URL 注入新 Token，已拦截防覆盖攻击。");
+                return false;
+            }
+
             const { error } = await window.supabaseClient.auth.setSession({
                 access_token: extToken,
                 refresh_token: extRefresh 
             });
+            // 安全清理：在判断结果前清理 URL，防止 Token 泄露在历史记录中
             const cleanUrl = window.location.pathname + window.location.hash;
             window.history.replaceState({}, document.title, cleanUrl);
+            
             if (!error) { window.location.reload(); return true; }
         } catch (e) {}
     }
@@ -93,15 +106,10 @@ document.addEventListener('DOMContentLoaded', async () => {
         window.swup = new Swup({ containers: ['#swup'] });
         window.swup.hooks.on('page:view', () => {
             routeAndInit();
-            // 🌟 强力保险：延迟 100ms 重新加载当前语言包，确保 Swup 替换的 DOM 被完美翻译
-            setTimeout(() => {
-                const currentLang = localStorage.getItem('preferred_lang') || 'en';
-                if (window.loadLanguage) {
-                    window.loadLanguage(currentLang);
-                } else if (window.translatePage) {
-                    window.translatePage();
-                }
-            }, 100);
+            if (window.fallbackTranslations && window.translatePage) {
+                window.translatePage();
+                window.dispatchEvent(new Event('languageChanged'));
+            }
         });
     }
 });
