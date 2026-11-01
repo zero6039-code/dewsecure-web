@@ -1,27 +1,20 @@
 import { Hono } from 'hono';
-import { getStripe } from '../lib/stripe.js';
 import { getSupabaseUser, getSupabaseAdmin } from '../lib/supabase.js';
 
 const checkoutRoute = new Hono();
 
-// 定义合法的 Price ID 白名单
 const ALLOWED_PRICE_IDS = new Set([
   'price_1UUF9SAB28DjNkOqrt3BX9Dr', // Family
   'price_1UUF86AB28DjNkOqNGl2YoBN'  // Pro
 ]);
 
-// ==========================================
-// 核心业务：创建 Checkout Session
-// ==========================================
 checkoutRoute.post('/checkout', async (c) => {
-  const stripe = getStripe(c.env);
   const authHeader = c.req.header('Authorization');
   if (!authHeader?.startsWith('Bearer ')) return c.json({ error: 'Unauthorized' }, 401);
 
   const token = authHeader.split(' ')[1];
   const { price_id } = await c.req.json();
   
-  // 🌟 修复：严格校验 price_id 是否在白名单内
   if (!price_id || !ALLOWED_PRICE_IDS.has(price_id)) {
     return c.json({ error: 'Invalid price_id' }, 400);
   }
@@ -41,12 +34,9 @@ checkoutRoute.post('/checkout', async (c) => {
 
   if (existingSubs && existingSubs.length > 0) {
     const currentSub = existingSubs[0];
-    
-    // 🌟 核心修复：如果用户处于 trialing（试用期），允许他直接发起 Checkout 转正
     if (currentSub.status === 'trialing') {
       console.log(`[checkout] 用户 ${user.id} 处于试用期，允许直接发起新订阅`);
     } else {
-      // 只有真正处于 active（已扣费）状态，才拦截并引导去管理页面
       if (currentSub.price_id === price_id) {
         return c.json({ error: 'ALREADY_SUBSCRIBED', message: 'You already have an active subscription.' }, 400);
       }
@@ -55,25 +45,37 @@ checkoutRoute.post('/checkout', async (c) => {
   }
 
   try {
-    const session = await stripe.checkout.sessions.create({
-      ui_mode: 'embedded_page',
-      mode: 'subscription',
-      line_items: [{ price: price_id, quantity: 1 }],
-      client_reference_id: user.id,
-      customer_email: user.email,
-      subscription_data: { metadata: { user_id: user.id } },
-      metadata: { user_id: user.id },
-      return_url: `${c.env.FRONTEND_URL}/dashboard.html?checkout=success`,
+    // 🌟 使用原生 fetch 替代 Stripe SDK，彻底规避 525 SSL 握手问题
+    const params = new URLSearchParams();
+    params.append('ui_mode', 'embedded_page');
+    params.append('mode', 'subscription');
+    params.append('line_items[0][price]', price_id);
+    params.append('line_items[0][quantity]', '1');
+    params.append('client_reference_id', user.id);
+    params.append('customer_email', user.email);
+    params.append('subscription_data[metadata][user_id]', user.id);
+    params.append('metadata[user_id]', user.id);
+    params.append('return_url', `${c.env.FRONTEND_URL}/dashboard.html?checkout=success`);
+
+    const stripeRes = await fetch('https://api.stripe.com/v1/checkout/sessions', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${c.env.STRIPE_SECRET_KEY.trim()}`,
+        'Content-Type': 'application/x-www-form-urlencoded'
+      },
+      body: params.toString()
     });
 
+    if (!stripeRes.ok) {
+      const errText = await stripeRes.text();
+      console.error('❌ [checkout] Stripe 原生报错:', errText);
+      throw new Error(`Stripe API returned ${stripeRes.status}`);
+    }
+
+    const session = await stripeRes.json();
     return c.json({ clientSecret: session.client_secret });
   } catch (err) {
-    console.error('❌ [checkout] 捕获到 Stripe 报错！');
-    console.error('❌ Message:', err.message);
-    console.error('❌ StatusCode:', err.statusCode);
-    if (err.raw) {
-      console.error('❌ Raw Response:', typeof err.raw === 'string' ? err.raw : JSON.stringify(err.raw, null, 2));
-    }
+    console.error('❌ [checkout] 捕获异常:', err.message);
     return c.json({ error: 'Failed to create checkout session', detail: err.message }, 500);
   }
 });

@@ -7,9 +7,10 @@ let dashboardData = null;
 let currentDashboardClient = null;
 let dashboardNotifs = [];
 
+// 🌟 如果你确认不再需要本地测试，可以直接写死 API_BASE
 const API_BASE = (window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost') 
     ? 'http://127.0.0.1:8787' 
-    : 'https://api.dewsecure.com';
+    : 'https://dev.dewsecure.com';
 
 export async function initDashboardLogic() {
     const client = window.supabaseClient;
@@ -172,6 +173,10 @@ function bindDashboardButtons(currentUser) {
 
 async function renderDashboardTexts() {
     if (!dashboardData) return;
+    
+    // 🌟 核心修复：如果当前页面不存在 Dashboard 的专属元素，直接 return，防止 Swup 跨页渲染报错
+    if (!document.getElementById('inviteCount')) return;
+
     const t = window.fallbackTranslations || {};
     const profile = dashboardData;
 
