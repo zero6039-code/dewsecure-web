@@ -106,9 +106,18 @@ document.addEventListener('DOMContentLoaded', async () => {
         window.swup = new Swup({ containers: ['#swup'] });
         window.swup.hooks.on('page:view', () => {
             routeAndInit();
+<<<<<<< HEAD
             if (window.fallbackTranslations && window.translatePage) {
                 window.translatePage();
                 window.dispatchEvent(new Event('languageChanged'));
+=======
+            
+            // 🌟 核心修复：绝不再调用 loadLanguage (因为它包含 await fetch)
+            // 直接调用同步的 translatePage，瞬间替换文本
+            if (window.fallbackTranslations && window.translatePage) {
+                window.translatePage();
+                window.dispatchEvent(new Event('languageChanged')); // 触发依赖此事件的重绘
+>>>>>>> origin/main
             }
         });
     }

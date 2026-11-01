@@ -102,7 +102,8 @@ export async function initAcceptInvitePage() {
         if (invite.invitee_email.toLowerCase() !== session.user.email.toLowerCase()) {
             let mismatchMsg = t['invite_email_mismatch'] || '该邀请仅限 {invitee} 领取，您当前登录的是 {current}。';
             mismatchMsg = mismatchMsg.replace('{invitee}', invite.invitee_email).replace('{current}', session.user.email);
-            inviteDesc.innerHTML = `<span style="color:#f85149;">${mismatchMsg}</span>`;
+            // 🌟 核心修复：改用 textContent
+            inviteDesc.textContent = mismatchMsg;
             if (btnAcceptInvite) btnAcceptInvite.style.display = 'none';
             return;
         }
@@ -128,7 +129,6 @@ export async function initAcceptInvitePage() {
                     btnAcceptInvite.textContent = t['invite_accept_btn'] || 'Accept & Join';
                     return;
                 }
-                // 🌟 强制写死正确文案，绝不用变量兜底
                 window.showToast('Successfully joined the family group!');
                 setTimeout(() => window.location.href = '/dashboard.html', 1000);
             };

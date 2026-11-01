@@ -17,12 +17,32 @@ export function initAuthPage() {
             sessionStorage.removeItem('pending_family_token');
             return '/accept-invite.html?invite=' + pendingToken;
         }
+        
         // 优先级 2：处理 URL 带的 redirect 参数（如从定价页跳来的）
         const urlParams = new URLSearchParams(window.location.search);
         const redirectPath = urlParams.get('redirect');
+        
         if (redirectPath) {
-            return redirectPath.startsWith('/') ? redirectPath : '/' + redirectPath;
+            // 🌟 核心修复 1：拦截 // 和 /\ 开头的开放重定向
+            if (redirectPath.startsWith('//') || redirectPath.startsWith('/\\')) {
+                return '/dashboard.html';
+            }
+            
+            // 补全前置斜杠
+            let finalPath = redirectPath.startsWith('/') ? redirectPath : '/' + redirectPath;
+            
+            // 🌟 核心修复 2：使用 URL 对象严格校验同源
+            try {
+                const url = new URL(finalPath, window.location.origin);
+                if (url.origin === window.location.origin) {
+                    return url.pathname + url.search + url.hash;
+                }
+            } catch (e) {
+                // 解析失败则降级
+            }
+            return '/dashboard.html';
         }
+        
         // 默认：进入控制台
         return '/dashboard.html';
     }
@@ -95,12 +115,8 @@ export function initAuthPage() {
     emailInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') { e.preventDefault(); btnSendOtp.click(); } });
     otpInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') { e.preventDefault(); btnVerifyOtp.click(); } });
 
-    // 🌟 新增：网页端的高端体验（复制粘贴满 8 位自动提交）
     otpInput.addEventListener('input', (e) => {
-        // 1. 只保留数字，并强制截断到 8 位
         e.target.value = e.target.value.replace(/\D/g, '').slice(0, 8);
-        
-        // 2. 自动提交（给 100ms 缓冲）
         if (e.target.value.length === 8 && !btnVerifyOtp.disabled) {
             setTimeout(() => btnVerifyOtp.click(), 100);
         }

@@ -1,6 +1,8 @@
 // js/notifications.js
 // DewSecure 通知中心模块 (v1.0.9 - 实时推送版)
 
+const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+
 const NOTIF_ICONS = {
     'system': 'fa-solid fa-bullhorn text-blue',
     'billing': 'fa-solid fa-credit-card text-green',
@@ -75,19 +77,17 @@ window.initNotifications = async function() {
         };
     }
 
-    // 🌟 核心新增：开启 Supabase Realtime 实时监听
     if (!window._notifChannelSubscribed && session) {
-        window._notifChannelSubscribed = true; // 防重复订阅锁
+        window._notifChannelSubscribed = true;
         
         window.supabaseClient.channel('notifications_realtime')
             .on('postgres_changes', { 
-                event: '*', // 监听增删改
+                event: '*',
                 schema: 'public', 
                 table: 'notifications', 
                 filter: `user_id=eq.${session.user.id}` 
             }, (payload) => {
                 console.log('⚡ [Realtime] 收到实时通知变动:', payload);
-                // 收到变动后，直接重新跑一遍拉取逻辑，保证数据顺序绝对正确
                 window.initNotifications();
             })
             .subscribe((status, err) => {
@@ -112,7 +112,6 @@ function tryRender(listEl, badgeEl, btnDeleteAll) {
     }
 }
 
-// 🌟 切换语言时立刻重绘
 window.addEventListener('languageChanged', () => {
     const listEl = document.getElementById('notificationList');
     const badgeEl = document.getElementById('unreadBadge');
@@ -135,7 +134,7 @@ function renderEmptyState(listEl, badgeEl, btnDeleteAll) {
     listEl.innerHTML = `<li class="notification-item empty-state" style="text-align:center; color:#8b949e; padding: 30px 0; justify-content: center; display: block;">
         <div>
             <i class="fa-regular fa-bell-slash" style="font-size: 30px; margin-bottom: 10px; display: block; color: #30363d;"></i>
-            ${emptyMsg}
+            ${esc(emptyMsg)}
         </div>
     </li>`;
 }
@@ -191,7 +190,7 @@ function renderNotifications(data, listEl, badgeEl, btnDeleteAll) {
                 });
             }
             
-            divider.innerHTML = `<span style="background: #161b22; padding: 0 10px; position: relative; z-index: 1;">${dateTitle}</span>
+            divider.innerHTML = `<span style="background: #161b22; padding: 0 10px; position: relative; z-index: 1;">${esc(dateTitle)}</span>
                                  <div style="position: absolute; top: 50%; left: 0; right: 0; height: 1px; background: rgba(255,255,255,0.05); z-index: 0;"></div>`;
             listEl.appendChild(divider);
             lastDateStr = dateStr;
@@ -209,7 +208,8 @@ function renderNotifications(data, listEl, badgeEl, btnDeleteAll) {
         if (notif.params && typeof notif.params === 'object') {
             Object.keys(notif.params).forEach(k => {
                 const regex = new RegExp(`\\{${k}\\}`, 'g');
-                const highlight = `<span class="notif-highlight">${notif.params[k]}</span>`;
+                // 🌟 核心修复：params 转义
+                const highlight = `<span class="notif-highlight">${esc(notif.params[k])}</span>`;
                 titleText = titleText.replace(regex, highlight);
                 msgText = msgText.replace(regex, highlight);
             });
@@ -221,7 +221,13 @@ function renderNotifications(data, listEl, badgeEl, btnDeleteAll) {
         const timeStr = formatTime(notif.created_at, t);
         const iconClass = NOTIF_ICONS[notif.type] || NOTIF_ICONS['system'];
         const viewDetailsText = t['notif_view_details'] || 'View Details';
-        const actionHtml = notif.action_url ? `<a href="${notif.action_url}" class="notif-link" style="display:inline-block; margin-top:8px; font-size:13px; color:#58a6ff;">${viewDetailsText} <i class="fa-solid fa-arrow-right"></i></a>` : '';
+        
+        // 🌟 核心修复：action_url 白名单与转义
+        let safeActionUrl = notif.action_url;
+        if (safeActionUrl && !safeActionUrl.startsWith('/') && !safeActionUrl.startsWith('https://')) {
+            safeActionUrl = '#';
+        }
+        const actionHtml = safeActionUrl ? `<a href="${esc(safeActionUrl)}" class="notif-link" style="display:inline-block; margin-top:8px; font-size:13px; color:#58a6ff;">${viewDetailsText} <i class="fa-solid fa-arrow-right"></i></a>` : '';
 
         li.innerHTML = `
             <div class="notif-icon ${notif.type || 'system'}" style="flex-shrink: 0;">
@@ -238,7 +244,6 @@ function renderNotifications(data, listEl, badgeEl, btnDeleteAll) {
             <button class="notif-delete-btn" title="${t['confirm_ok'] || 'Delete'}" style="flex-shrink: 0;"><i class="fa-solid fa-trash-can"></i></button>
         `;
 
-        // 点击条目标为已读
         li.addEventListener('click', async (e) => {
             if (e.target.closest('.notif-delete-btn') || e.target.closest('.notif-link')) return;
             if (!notif.is_read) {
@@ -248,7 +253,6 @@ function renderNotifications(data, listEl, badgeEl, btnDeleteAll) {
             }
         });
 
-        // 点击垃圾桶删除单条
         li.querySelector('.notif-delete-btn').addEventListener('click', async (e) => {
             e.stopPropagation();
             const confirmMsg = t['notif_delete_confirm'] || 'Are you sure you want to delete this notification?';
@@ -276,13 +280,8 @@ function renderNotifications(data, listEl, badgeEl, btnDeleteAll) {
 
             if (typeof window.showGlassConfirm === 'function') {
                 try {
-                    window.showGlassConfirm(
-                        t['confirm_cancel'] || '删除通知', 
-                        confirmMsg, 
-                        executeDelete
-                    );
+                    window.showGlassConfirm(t['confirm_cancel'] || '删除通知', confirmMsg, executeDelete);
                 } catch (err) {
-                    console.error('毛玻璃弹窗异常，降级原生弹窗:', err);
                     if (window.confirm(confirmMsg)) await executeDelete();
                 }
             } else {
