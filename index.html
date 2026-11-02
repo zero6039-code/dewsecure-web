@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DewSecure - Your Device, Your Rules</title>
     <link rel="stylesheet" href="/style.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swup@4/dist/swup.css"> <!-- 🌟 新增 -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swup@4/dist/swup.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="icon" type="image/png" href="/DewSecure.png">
 </head>
@@ -37,13 +37,11 @@
         </div>
     </header>
 
-    <!-- 🌟 新增包裹 -->
     <main id="swup" class="transition-fade">
         <section class="hero">
             <h1 data-i18n="hero_title">你的设备，你的规则。</h1>
             <p data-i18n="hero_desc">融合设备端 AI 与云端联邦学习的内容优化与安全防护引擎。深度阻断恶意追踪与钓鱼威胁，极速加载，为您重塑纯净、安全、高效的上网体验。</p>
             
-            <!-- 🌟 新增：从指南页搬来的副标题 -->
             <p data-i18n="guide_subtitle" style="font-size: 18px; color: #58a6ff; font-weight: 600; margin-top: 15px; margin-bottom: 10px; letter-spacing: 1px;">从安装到极致体验，只需 1 分钟。</p>
 
             <div class="ds-wrap" style="margin-top: 0;">
@@ -54,15 +52,25 @@
                     <div class="ds-icon" data-target="safari" title="Safari"><i class="fa-brands fa-safari"></i></div>
                     <div class="ds-icon" data-target="opera" title="Opera"><i class="fa-brands fa-opera"></i></div>
                     <div class="ds-icon" data-target="yandex" title="Yandex"><i class="fa-brands fa-yandex"></i></div>
+                    
+                    <!-- 🌟 使用 mix-blend-mode 魔法去除白底，完美融入深色背景 -->
+                    <div class="ds-icon" data-target="whale" title="Whale">
+                        <img src="/images/Naver_Whale_icon.jpeg" alt="Whale" style="width: 22px; height: 22px; object-fit: contain; border-radius: 6px; mix-blend-mode: multiply; filter: contrast(1.1);">
+                    </div>
+
                     <div class="ds-icon" data-target="android" title="Android"><i class="fa-brands fa-android"></i></div>
                 </div>
 
                 <div class="ds-box">
-                    <h2 id="ds-title" class="ds-t">重塑纯净、安全的上网体验</h2>
-                    <p id="ds-desc" class="ds-d">融合原生拦截与设备端 AI 引擎，毫秒级阻断恶意追踪与钓鱼威胁。</p>
-                    <a href="javascript:void(0)" id="ds-btn" class="ds-btn" onclick="if(this.textContent.includes('Android') || this.textContent.includes('安卓')) { window.location.href='/android/'; return false; }">
+                    <h2 id="ds-title" class="ds-t" data-i18n="dl_chrome_title">重塑纯净、安全的上网体验</h2>
+                    <p id="ds-desc" class="ds-d" data-i18n="dl_chrome_desc">融合原生拦截与设备端 AI 引擎，毫秒级阻断恶意追踪与钓鱼威胁。</p>
+                    <a href="javascript:void(0)" id="ds-btn" class="ds-btn" onclick="
+                        var txt = this.textContent;
+                        if(txt.includes('Android') || txt.includes('安卓')) { window.location.href='/android/'; return false; }
+                        if(txt.includes('Whale')) { window.location.href='https://store.whale.naver.com/detail/plmmibagiadchppcmaifdbjeacjgppbi'; return false; }
+                    ">
                         <div class="ds-btn-ic" id="ds-btn-icon"><i class="fa-brands fa-chrome"></i></div>
-                        <span id="ds-btn-text">下载 Chrome 扩展</span>
+                        <span id="ds-btn-text" data-i18n="dl_btn_chrome">下载 Chrome 扩展</span>
                     </a>
                 </div>
             </div>
@@ -100,12 +108,44 @@
             </p>
         </footer>
     </main>
-    <!-- 🌟 包裹结束 -->
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.50.5/dist/umd/supabase.js" integrity="sha384-8HXYSNTFkkCTt8kh+CcRiz8onIBVSqWqL6Q0x960/dITz7nnQCQKKYyBY1fqPXmf" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/swup@4.8.1/dist/Swup.umd.js" integrity="sha384-s6N0IzfhKB37PIrwBNB6oclsqfesjGUeyVdouCCW6uCGURwA2Q0ABvulC7FY75eB" crossorigin="anonymous"></script> <!-- 🌟 新增 -->
+    <script src="https://cdn.jsdelivr.net/npm/swup@4.8.1/dist/Swup.umd.js" integrity="sha384-s6N0IzfhKB37PIrwBNB6oclsqfesjGUeyVdouCCW6uCGURwA2Q0ABvulC7FY75eB" crossorigin="anonymous"></script>
     <script src="/js/auth-nav.js"></script>
     <script type="module" src="/js/app-init.js?v=2"></script>
     <script src="/js/i18n.js"></script>
+
+    <!-- 🌟 核心兜底逻辑：解决语言切换重置问题 -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const whaleIcon = document.querySelector('.ds-icon[data-target="whale"]');
+            
+            const applyWhaleState = () => {
+                if (!whaleIcon || !whaleIcon.classList.contains('active')) return;
+                
+                document.getElementById('ds-title').setAttribute('data-i18n', 'dl_whale_title');
+                document.getElementById('ds-desc').setAttribute('data-i18n', 'dl_whale_desc');
+                document.getElementById('ds-btn-text').setAttribute('data-i18n', 'dl_btn_whale');
+                
+                if (window.translatePage) window.translatePage();
+                
+                // 按钮内也应用同样的去白底融合魔法
+                document.getElementById('ds-btn-icon').innerHTML = '<img src="/images/Naver_Whale_icon.jpeg" style="width: 22px; height: 22px; object-fit: contain; border-radius: 6px; mix-blend-mode: multiply; filter: contrast(1.1); vertical-align: middle;">';
+            };
+
+            if (whaleIcon) {
+                whaleIcon.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    document.querySelectorAll('.ds-icon').forEach(el => el.classList.remove('active'));
+                    this.classList.add('active');
+                    applyWhaleState();
+                }, true);
+            }
+
+            window.addEventListener('languageChanged', () => {
+                setTimeout(applyWhaleState, 50);
+            });
+        });
+    </script>
 </body>
 </html>

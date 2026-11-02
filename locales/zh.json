@@ -528,5 +528,8 @@
   "notif_refund_success": "💸 退款已成功处理，相关权益已收回。",
   "login_error_disposable_email": "请勿使用临时邮箱",
   "comp_realtime_threat": "实时威胁情报",
-  "comp_realtime_threat_desc": "动态阻断新出现的钓鱼域名与高级威胁"
+  "comp_realtime_threat_desc": "动态阻断新出现的钓鱼域名与高级威胁",
+  "dl_whale_title": "为 Naver Whale 打造的极致体验",
+  "dl_whale_desc": "专为 Whale 浏览器深度优化，无缝阻断追踪器与钓鱼威胁，畅享极速安全。",
+  "dl_btn_whale": "下载 Whale 扩展"
 }
