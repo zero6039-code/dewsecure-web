@@ -61,8 +61,16 @@ async function interceptToken() {
     }
 
     const urlParams = new URLSearchParams(window.location.search);
-    const extToken = urlParams.get('token');
-    const extRefresh = urlParams.get('refresh') || extToken;
+    
+    // 🔒 H4 修复：优先从 URL 读取，其次从 dashboard.html 注入的 sessionStorage 读取
+    let extToken = urlParams.get('token') || sessionStorage.getItem('ds_handoff_token');
+    let extRefresh = urlParams.get('refresh') || sessionStorage.getItem('ds_handoff_refresh') || extToken;
+
+    // ⚠️ 极其重要：读取后立即销毁 sessionStorage，防止页面 reload 导致无限死循环
+    if (sessionStorage.getItem('ds_handoff_token')) {
+        sessionStorage.removeItem('ds_handoff_token');
+        sessionStorage.removeItem('ds_handoff_refresh');
+    }
     
     if (extToken && window.supabaseClient) {
         try {
