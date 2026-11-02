@@ -18,7 +18,6 @@ modelRoute.get('/download-model', async (c) => {
   const userData = await supabaseVerify.json();
   if (!userData?.id) return c.json({ error: 'Unauthorized: No user id' }, 401);
 
-  // 🌟 修复 M-8：校验用户 Tier，防止免费用户白嫖 AI 模型
   const supabaseAdmin = getSupabaseAdmin(c.env);
   const { data: profile, error: profileErr } = await supabaseAdmin
     .from('profiles')
@@ -39,14 +38,17 @@ modelRoute.get('/download-model', async (c) => {
     return c.json({ error: 'Forbidden: Pro subscription or active trial required' }, 403);
   }
 
-  // 获取 R2 对象
+  const format = c.req.query('format') || 'onnx';
+  const isJson = format === 'json';
+  const modelFileName = isJson ? 'canary/weights.json' : 'canary/classifier_int8.onnx';
+
   const [modelObj, metaObj] = await Promise.all([
-    c.env.R2_BUCKET.get('canary/classifier_int8.onnx'),
+    c.env.R2_BUCKET.get(modelFileName),
     c.env.R2_BUCKET.get('canary/model_meta.json'),
   ]);
+  
   if (!modelObj) return c.json({ error: 'Model not found' }, 404);
 
-  // 🌟 修复 M-8：加入 ETag 缓存机制（304 命中时省流量）
   const etag = modelObj.httpEtag;
   const clientEtag = c.req.header('If-None-Match');
   if (clientEtag === etag) {
@@ -58,21 +60,28 @@ modelRoute.get('/download-model', async (c) => {
     try {
       const meta = JSON.parse(await metaObj.text());
       modelVersion = meta.trainedAt || '';
-      modelSha256 = meta.sha256 || '';
-      modelSignature = meta.signature || '';
+      // 🌟 核心修复：根据文件类型返回对应的哈希和签名
+      if (isJson) {
+        modelSha256 = meta.jsonSha256 || '';
+        modelSignature = meta.jsonSignature || '';
+      } else {
+        modelSha256 = meta.sha256 || '';
+        modelSignature = meta.signature || '';
+      }
     } catch (_) {}
   }
 
   return new Response(modelObj.body, {
     headers: {
-      'Content-Type': 'application/octet-stream',
-      'Content-Disposition': 'attachment; filename="classifier_int8.onnx"',
+      'Content-Type': isJson ? 'application/json' : 'application/octet-stream',
+      'Content-Disposition': `attachment; filename="${isJson ? 'weights.json' : 'classifier_int8.onnx'}"`,
       'Content-Length': String(modelObj.size),
       'ETag': etag,
       'Cache-Control': 'public, max-age=3600',
       'X-Model-Version': modelVersion,
       'X-Model-Sha256': modelSha256,
       'X-Model-Signature': modelSignature,
+      'X-Model-Channel': 'canary', // 修正前端显示的通道名
     },
   });
 });
