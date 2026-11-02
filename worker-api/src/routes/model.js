@@ -41,8 +41,8 @@ modelRoute.get('/download-model', async (c) => {
 
   // 获取 R2 对象
   const [modelObj, metaObj] = await Promise.all([
-    c.env.R2_BUCKET.get('latest/classifier_int8.onnx'),
-    c.env.R2_BUCKET.get('latest/model_meta.json'),
+    c.env.R2_BUCKET.get('canary/classifier_int8.onnx'),
+    c.env.R2_BUCKET.get('canary/model_meta.json'),
   ]);
   if (!modelObj) return c.json({ error: 'Model not found' }, 404);
 
