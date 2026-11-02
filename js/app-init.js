@@ -5,9 +5,9 @@ import { initAuthPage } from './page-auth.js';
 import { initDashboardLogic } from './page-dashboard.js';
 import { initComponentsPage, initAcceptInvitePage } from './page-components.js';
 
-// 🌟 修复 L-5：保留 Edge 后台分配的真实 31 位 ID
+// 🌟 修复 L-5：Edge 后台分配的真实 32 位 ID
 const isEdge = navigator.userAgent.includes('Edg/');
-const EXTENSION_ID = isEdge ? 'cpkmeoejhbmcmnaodpnkfdjgggpmgcf' : 'fgnijfomipmimnfocgofmmniglibgnak';
+const EXTENSION_ID = isEdge ? 'cpkmeoejhbmcmnaodpnkfdjggggpmgcf' : 'fgnijfomipmimnfocgofmmniglibgnak';
 let lastPushedToken = null;
 
 // ==========================================
@@ -33,7 +33,7 @@ setInterval(async () => {
                         }
                     }, (res) => {
                         if (chrome.runtime.lastError) {
-                            // 🌟 修复 L-5：不再静默吞掉错误，输出警告
+                            // 不再静默吞掉错误，输出警告
                             console.warn("插件同步通信失败 (请检查 manifest 是否配置 externally_connectable 或插件是否安装):", chrome.runtime.lastError.message);
                         } else if (res && res.ok) {
                             lastPushedToken = session.access_token;
@@ -56,7 +56,6 @@ setInterval(async () => {
 // 原有的路由拦截与初始化逻辑
 // ==========================================
 async function interceptToken() {
-    // 🌟 修复 M-2：如果是邀请页，跳过 Token 拦截，防止与邀请参数冲突
     if (window.location.pathname.includes('accept-invite')) {
         return false;
     }
@@ -67,7 +66,6 @@ async function interceptToken() {
     
     if (extToken && window.supabaseClient) {
         try {
-            // 🌟 修复 M-2：防覆盖（如果当前已登录，不允许被 URL 的 Token 强制覆盖）
             const { data: { session: currentSession } } = await window.supabaseClient.auth.getSession();
             if (currentSession && currentSession.access_token !== extToken) {
                 console.warn("⚠️ [安全拦截] 检测到已登录状态下尝试通过 URL 注入新 Token，已拦截防覆盖攻击。");
@@ -78,7 +76,6 @@ async function interceptToken() {
                 access_token: extToken,
                 refresh_token: extRefresh 
             });
-            // 安全清理：在判断结果前清理 URL，防止 Token 泄露在历史记录中
             const cleanUrl = window.location.pathname + window.location.hash;
             window.history.replaceState({}, document.title, cleanUrl);
             
