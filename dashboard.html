@@ -4,6 +4,32 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DewSecure - Dashboard</title>
+    <!-- 🔒 H4 修复：安全提取 Hash 中的 Token，防止 URL 泄露 -->
+    <script>
+    (function() {
+        const hash = window.location.hash;
+        if (hash && hash.includes('token=')) {
+            const hashParams = new URLSearchParams(hash.substring(1));
+            const token = hashParams.get('token');
+            const refresh = hashParams.get('refresh');
+            if (token) {
+                // 1. 存入 sessionStorage，供 app-init.js 和 auth-nav.js 读取
+                sessionStorage.setItem('ds_handoff_token', token);
+                if (refresh) sessionStorage.setItem('ds_handoff_refresh', refresh);
+                
+                // 2. 转换为标准的 Supabase OAuth Hash 格式，供原生 SDK 自动接管
+                const supabaseHash = `#access_token=${token}&refresh_token=${refresh || ''}&type=magiclink`;
+                
+                // 3. 立即清理真实地址栏的 Hash，防止用户复制或历史记录泄露
+                window.history.replaceState(null, '', window.location.pathname + window.location.search);
+                
+                // 4. 如果需要，把标准的 hash 塞给后续脚本（或直接靠 sessionStorage 兜底）
+                window.__DS_HANDOFF_TOKEN = token;
+            }
+        }
+    })();
+    </script>
+
     <link rel="stylesheet" href="/style.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swup@4/dist/swup.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
