@@ -525,5 +525,7 @@
   "dash_family_remove_confirm": "Are you sure you want to remove this member?",
   "notif_family_removed_self": "You have been removed from {email}'s family group.",
   "notif_refund_success": "💸 Refund processed successfully. Entitlements have been revoked.",
-  "login_error_disposable_email": "Disposable email addresses are not allowed."
+  "login_error_disposable_email": "Disposable email addresses are not allowed.",
+  "comp_realtime_threat": "Real-time Threat Intel",
+  "comp_realtime_threat_desc": "Dynamically blocks newly emerged phishing domains"
 }

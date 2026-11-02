@@ -526,5 +526,7 @@
   "dash_family_remove_confirm": "Sind Sie sicher, dass Sie dieses Mitglied entfernen möchten?",
   "notif_family_removed_self": "Sie wurden aus der Familiengruppe von {email} entfernt.",
   "notif_refund_success": "💸 Rückerstattung erfolgreich bearbeitet. Berechtigungen wurden entzogen.",
-  "login_error_disposable_email": "Wegwerf-E-Mail-Adressen sind nicht zulässig."
+  "login_error_disposable_email": "Wegwerf-E-Mail-Adressen sind nicht zulässig.",
+  "comp_realtime_threat": "Echtzeit-Bedrohungsinformationen",
+  "comp_realtime_threat_desc": "Blockiert dynamisch neu aufgetauchte Phishing-Domains"
 }
