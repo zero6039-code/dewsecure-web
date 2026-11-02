@@ -15,11 +15,28 @@ trialRoute.post('/claim-trial', async (c) => {
   const supabaseAdmin = getSupabaseAdmin(c.env);
 
   try {
-    // 🌟 修复 M-7 第一步：提取指纹（提前到最开始，用于后续查重）
-    const fingerprint = c.req.header('X-Device-Fingerprint') || `user_${user.id}`;
+    // 🌟 修复 S-01 第一步：指纹格式校验 + 邮箱验证校验
+    let fingerprint = c.req.header('X-Device-Fingerprint') || `user_${user.id}`;
+    // 防止客户端随意传入超长或非法字符
+    if (!/^[a-zA-Z0-9_-]{10,64}$/.test(fingerprint)) {
+      return c.json({ error: 'INVALID_FINGERPRINT', message: 'Device fingerprint format is invalid.' }, 400);
+    }
 
-    // 🌟 修复 M-7 第二步：检查临时邮箱黑名单（直接查表）
-    const emailDomain = (user.email || '').split('@')[1]?.toLowerCase();
+    if (!user.email_confirmed_at) {
+      return c.json({ error: 'EMAIL_NOT_VERIFIED', message: 'Please verify your email before claiming trial.' }, 400);
+    }
+
+    // 🌟 修复 S-01 第二步：邮箱归一化并计算哈希
+    const email = user.email || '';
+    const normalizedEmail = email.toLowerCase()
+      .replace(/\+.*@/, '@') // 去掉 +tag
+      .replace(/^([^@]+)@gmail\.com$/, (m, p1) => p1.replace(/\./g, '') + '@gmail.com'); // Gmail 去点
+
+    const emailHash = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(normalizedEmail))
+      .then(hash => Array.from(new Uint8Array(hash)).map(b => b.toString(16).padStart(2, '0')).join(''));
+
+    // 🌟 修复 S-01 第三步：检查临时邮箱黑名单
+    const emailDomain = email.split('@')[1]?.toLowerCase();
     if (emailDomain) {
       const { data: blockedDomain } = await supabaseAdmin
         .from('disposable_email_domains')
@@ -32,18 +49,7 @@ trialRoute.post('/claim-trial', async (c) => {
       }
     }
 
-    // 🌟 修复 M-7 第三步：查询 trial_claims，该设备是否领过
-    const { data: existingClaim } = await supabaseAdmin
-      .from('trial_claims')
-      .select('fingerprint')
-      .eq('fingerprint', fingerprint)
-      .maybeSingle();
-
-    if (existingClaim) {
-      return c.json({ error: 'ALREADY_CLAIMED', message: 'Device already claimed trial.' }, 400);
-    }
-
-    // 🌟 修复 M-7 第四步：查询 devices 表，该指纹是否已绑定其他账号
+    // 🌟 修复 S-01 第四步：检查 devices 表，该指纹是否已绑定其他账号
     const { data: existingDevices } = await supabaseAdmin
       .from('devices')
       .select('user_id')
@@ -53,46 +59,52 @@ trialRoute.post('/claim-trial', async (c) => {
       return c.json({ error: 'ALREADY_CLAIMED', message: 'Device used by another account.' }, 400);
     }
 
-    // 1. 检查用户当前状态
-    const { data: profile } = await supabaseAdmin
-      .from('profiles')
-      .select('tier, trial_ends_at, subscription_ends_at')
-      .eq('id', user.id)
-      .single();
-
-    // 2. 如果已经是付费用户，或者已经在试用期，或者领过，直接拒绝
-    if (profile.tier !== 'free' || profile.trial_ends_at || profile.subscription_ends_at) {
-      return c.json({ error: 'ALREADY_CLAIMED', message: 'Trial already claimed or not eligible.' }, 400);
-    }
-
-    // 3. 写入 30 天试用
-    const trialEnd = new Date(Date.now() + 30 * 86400000).toISOString();
-    const { error: updateErr } = await supabaseAdmin
-      .from('profiles')
-      .update({ tier: 'trial', trial_ends_at: trialEnd })
-      .eq('id', user.id);
-
-    if (updateErr) throw updateErr;
-
-    // 4. 插入试用激活通知
-    await supabaseAdmin.from('notifications').insert({
-      user_id: user.id,
-      type: 'billing',
-      title_key: 'notif_trial_activated',
-      message_key: 'notif_trial_activated',
-      params: {}
-    });
-
-    // 5. 记录到 trial_claims 表
+    // 🌟 修复 S-01 第五步：先占位，再原子授予（核心修复）
+    // 1. 尝试插入 trial_claims 占位，依赖数据库主键/唯一约束拦截并发
     const { error: claimErr } = await supabaseAdmin.from('trial_claims').insert({
       fingerprint: fingerprint,
       user_id: user.id,
+      email_hash: emailHash,
       claimed_at: new Date().toISOString()
     });
 
     if (claimErr) {
-      console.warn('⚠️ [claim-trial] 写入 trial_claims 失败:', claimErr.message);
-      // 这里不 throw，防止因为统计日志写入失败导致用户拿不到试用
+      if (claimErr.code === '23505') { // 唯一约束冲突 (指纹或邮箱已存在)
+        return c.json({ error: 'ALREADY_CLAIMED', message: 'Device or email already claimed trial.' }, 400);
+      }
+      throw claimErr;
+    }
+
+    // 2. 原子更新 profiles，条件严格限制为未使用过试用的 free 用户
+    const trialEnd = new Date(Date.now() + 30 * 86400000).toISOString();
+    const { data: granted, error: updateErr } = await supabaseAdmin
+      .from('profiles')
+      .update({ tier: 'trial', trial_ends_at: trialEnd })
+      .eq('id', user.id)
+      .eq('tier', 'free')
+      .is('trial_ends_at', null)
+      .is('subscription_ends_at', null)
+      .select('id');
+
+    if (updateErr) throw updateErr;
+
+    if (!granted || granted.length === 0) {
+      // 如果更新失败（说明用户状态已变），则回滚占位记录
+      await supabaseAdmin.from('trial_claims').delete().eq('fingerprint', fingerprint);
+      return c.json({ error: 'ALREADY_CLAIMED', message: 'Not eligible for trial.' }, 400);
+    }
+
+    // 3. 尝试写入通知，失败不阻断主流程
+    try {
+      await supabaseAdmin.from('notifications').insert({
+        user_id: user.id,
+        type: 'billing',
+        title_key: 'notif_trial_activated',
+        message_key: 'notif_trial_activated',
+        params: {}
+      });
+    } catch (notifErr) {
+      console.warn('⚠️ [claim-trial] 通知写入失败:', notifErr.message);
     }
 
     return c.json({ success: true, trial_ends_at: trialEnd });

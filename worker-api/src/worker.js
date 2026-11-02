@@ -14,7 +14,7 @@ const app = new Hono();
 // 🌟 Service Worker 特权请求不需要严格的 Origin 限制
 app.use('*', cors({
   origin: '*',
-  allowHeaders: ['Authorization', 'Content-Type', 'stripe-signature', 'If-None-Match'],
+  allowHeaders: ['Authorization', 'Content-Type', 'stripe-signature', 'If-None-Match', 'X-Model-Version', 'X-Model-Sha256', 'X-Model-Signature', 'X-Model-Channel'],
   allowMethods: ['GET', 'POST', 'OPTIONS'],
   exposeHeaders: ['ETag'],
 }));
