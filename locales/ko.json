@@ -526,5 +526,7 @@
   "dash_family_remove_confirm": "이 구성원을 제거하시겠습니까?",
   "notif_family_removed_self": "{email}님의 패밀리 그룹에서 제거되었습니다.",
   "notif_refund_success": "💸 환불이 성공적으로 처리되었습니다. 권한이 회수되었습니다.",
-  "login_error_disposable_email": "일회용 이메일 주소는 허용되지 않습니다."
+  "login_error_disposable_email": "일회용 이메일 주소는 허용되지 않습니다.",
+  "comp_realtime_threat": "실시간 위협 인텔리전스",
+  "comp_realtime_threat_desc": "새로 등장하는 피싱 도메인을 동적으로 차단합니다"
 }

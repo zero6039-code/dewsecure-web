@@ -526,5 +526,7 @@
   "dash_family_remove_confirm": "Tem certeza de que deseja remover este membro?",
   "notif_family_removed_self": "Você foi removido do grupo familiar de {email}.",
   "notif_refund_success": "💸 Reembolso processado com sucesso. Os direitos foram revogados.",
-  "login_error_disposable_email": "Endereços de e-mail descartáveis não são permitidos."
+  "login_error_disposable_email": "Endereços de e-mail descartáveis não são permitidos.",
+  "comp_realtime_threat": "Inteligência de ameaças em tempo real",
+  "comp_realtime_threat_desc": "Bloqueia dinamicamente domínios de phishing emergentes"
 }

@@ -52,7 +52,6 @@
                             <label data-i18n="login_email_label">电子邮件地址</label>
                             <div class="input-wrapper">
                                 <i class="fa-regular fa-envelope"></i>
-                                <!-- 🌟 强制关闭自动填充 -->
                                 <input type="email" id="emailInput" data-i18n-placeholder="login_email_ph" placeholder="name@example.com" autocomplete="off">
                             </div>
                             <div id="emailError" class="error-msg"></div>
@@ -61,9 +60,9 @@
                         
                         <div class="divider" data-i18n="login_or">或者继续使用</div>
                         <div class="oauth-btns">
-                            <div class="oauth-btn"><i class="fa-brands fa-google"></i></div>
-                            <div class="oauth-btn"><i class="fa-brands fa-github"></i></div>
-                            <div class="oauth-btn"><i class="fa-brands fa-ethereum"></i></div>
+                            <!-- 只保留 Google 按钮，并添加 id -->
+                            <div class="oauth-btn" id="googleLoginBtn"><i class="fa-brands fa-google"></i></div>
+                            <!-- GitHub 和以太坊按钮已隐藏 -->
                         </div>
                         <div class="trial-badge" data-i18n="login_trial">🎁 首次注册即赠 30 天高级版体验</div>
                     </div>
@@ -75,7 +74,6 @@
                             <label data-i18n="login_otp_label">8 位验证码</label>
                             <div class="input-wrapper">
                                 <i class="fa-solid fa-shield-halved"></i>
-                                <!-- 🌟 强制设为 one-time-code，干掉所有浏览器记忆 -->
                                 <input type="text" id="otpInput" maxlength="8" placeholder="12345678" autocomplete="one-time-code" style="letter-spacing: 4px; background: rgba(0,0,0,0.3);">
                             </div>
                             <div id="otpError" class="error-msg"></div>
@@ -90,10 +88,36 @@
         </div>
     </main>
 
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.50.5/dist/umd/supabase.js" integrity="sha384-8HXYSNTFkkCTt8kh+CcRiz8onIBVSqWqL6Q0x960/dITz7nnQCQKKYyBY1fqPXmf" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.50.5/dist/umd/supabase.js" integrity="sha384-8HXYSNTFkkCTt8kh+CcRiz8onIBVSqWqL6Q0x960/dITz7nnQCQKKYyBY1fqPXmf" crossorigin="anonymous"></script> 
     <script src="https://cdn.jsdelivr.net/npm/swup@4.8.1/dist/Swup.umd.js" integrity="sha384-s6N0IzfhKB37PIrwBNB6oclsqfesjGUeyVdouCCW6uCGURwA2Q0ABvulC7FY75eB" crossorigin="anonymous"></script>
     <script src="/js/auth-nav.js"></script>
     <script type="module" src="/js/app-init.js?v=2"></script>
     <script src="/js/i18n.js"></script>
+
+    <!-- Google 登录逻辑 -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const googleBtn = document.getElementById('googleLoginBtn');
+            if (googleBtn) {
+                googleBtn.addEventListener('click', async () => {
+                    const supabaseUrl = 'https://uvbaioqqjqseapcancvi.supabase.co';
+                    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InV2YmFpb3FxanFzZWFwY2FuY3ZpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTI0OTIyODAsImV4cCI6MjEwODA2ODI4MH0.jhEaDHBvp702biC7oqM1oV5YO7rzhvmXFH5pTRF17kQ';
+                    const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+
+                    const { error } = await supabase.auth.signInWithOAuth({
+                        provider: 'google',
+                        options: {
+                            redirectTo: 'https://dewsecure.com/dashboard/'
+                        }
+                    });  
+
+                    if (error) {
+                        console.error('Google login error:', error.message);
+                        alert('Google 登录失败，请稍后重试。');
+                    }
+                });  
+            }      
+        });  
+    </script>
 </body>
 </html>
