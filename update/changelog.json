@@ -1,5 +1,11 @@
 [
-  
+
+  {
+    "date": "November 01, 2026",
+    "version": "v1.2.6",
+    "title": "Cross-Browser Engine & Security Compliance",
+    "content": "This update introduces a massive architectural shift to support multiple browsers seamlessly. We completely removed the heavy WASM and offscreen API dependencies, replacing them with a lightning-fast, purely local JavaScript AI inference engine. This drastically reduces the extension size and guarantees 100% compatibility across Chrome, Edge, Firefox, and Opera. Additionally, we hardened our security posture by completely removing all code obfuscation, removing unused permissions, and fixing critical XSS and URL reporting vulnerabilities to comply with strict store guidelines. The user feedback loop is now fully automated, allowing rapid rule adjustments without breaking your browsing experience."
+  },
   {
     "date": "October 28, 2026",
     "version": "v1.2.5",
