@@ -17,10 +17,10 @@ setInterval(async () => {
     if (!window.supabaseClient) return;
     
     try {
-        // 🌟 核心修复：强制刷新 Token，防止同步给扩展的 Token 已过期导致 401 错误
-        const { data: { session }, error: refreshErr } = await window.supabaseClient.auth.refreshSession();
+        // 🌟 回退：停止无限刷新，Supabase 引擎会自动在适当时机刷新 Token
+        const { data: { session } } = await window.supabaseClient.auth.getSession();
         
-        if (session && !refreshErr) {
+        if (session) {
             if (session.access_token !== lastPushedToken) {
                 console.log("🚀 [强制同步] 检测到网页端已登录，正在覆盖插件状态:", session.user.email);
                 
