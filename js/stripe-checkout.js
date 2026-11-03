@@ -31,7 +31,7 @@ function showPayError(msg) {
 }
 
 async function startCheckout(priceId, planType) {
-    console.log(`🚀 [Checkout] 触发支付流程，套餐: ${planType}, PriceID: ${priceId}`);
+    window.DEBUG_LOG(`🚀 [Checkout] 触发支付流程，套餐: ${planType}, PriceID: ${priceId}`);
     
     const db = getSupabase();
     if (!db) {
@@ -40,17 +40,17 @@ async function startCheckout(priceId, planType) {
     }
 
     try {
-        console.log("⏳ [Checkout] 正在检查用户登录状态...");
+        window.DEBUG_LOG("⏳ [Checkout] 正在检查用户登录状态...");
         const { data: { session }, error } = await db.auth.getSession();
         
         if (error || !session) {
-            console.log("❌ [Checkout] 用户未登录，跳转到登录页...");
+            window.DEBUG_LOG("❌ [Checkout] 用户未登录，跳转到登录页...");
             const redirectUrl = `${window.location.pathname}?autoPay=${planType}`;
             window.location.href = '/login/?redirect=' + encodeURIComponent(redirectUrl);
             return;
         }
 
-        console.log("✅ [Checkout] 已登录，Token 存在。正在向 Worker 请求 Checkout 会话...");
+        window.DEBUG_LOG("✅ [Checkout] 已登录，Token 存在。正在向 Worker 请求 Checkout 会话...");
         
         const res = await fetch(API_BASE + '/api/checkout', {
             method: 'POST',
@@ -62,7 +62,7 @@ async function startCheckout(priceId, planType) {
         });
         
         const data = await res.json();
-        console.log("📦 [Checkout] Worker 响应:", data);
+        window.DEBUG_LOG("📦 [Checkout] Worker 响应:", data);
 
         if (!res.ok) {
             if (data.error === 'ALREADY_SUBSCRIBED' || data.error === 'UPGRADE_REQUIRED') {
@@ -77,7 +77,7 @@ async function startCheckout(priceId, planType) {
             throw new Error(data.message || 'API Error');
         }
 
-        console.log("✅ [Checkout] 成功获取 clientSecret，正在挂载支付表单...");
+        window.DEBUG_LOG("✅ [Checkout] 成功获取 clientSecret，正在挂载支付表单...");
         document.getElementById('checkout-container').style.display = 'block';
         if (checkoutInstance) checkoutInstance.destroy();
         checkoutInstance = await stripe.initEmbeddedCheckout({ clientSecret: data.clientSecret });
@@ -95,12 +95,12 @@ document.addEventListener('click', (e) => {
     const famBtn = e.target.closest('.btn-fam');
 
     if (proBtn) {
-        console.log("🖱️ [DOM] 监听到点击了『高级版』按钮");
+        window.DEBUG_LOG("🖱️ [DOM] 监听到点击了『高级版』按钮");
         e.preventDefault();
         // ⚠️ 请确保这里是你的测试版 Price ID
         startCheckout('price_1UUF86AB28DjNkOqNGl2YoBN', 'pro');
     } else if (famBtn) {
-        console.log("🖱️ [DOM] 监听到点击了『家庭版』按钮");
+        window.DEBUG_LOG("🖱️ [DOM] 监听到点击了『家庭版』按钮");
         e.preventDefault();
         startCheckout('price_1UUF9SAB28DjNkOqrt3BX9Dr', 'fam');
     }
@@ -111,10 +111,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const urlParams = new URLSearchParams(window.location.search);
     const autoPay = urlParams.get('autoPay');
     if (autoPay === 'pro') {
-        console.log("🔄 [AutoPay] 检测到登录跳回，自动触发 Pro 支付");
+        window.DEBUG_LOG("🔄 [AutoPay] 检测到登录跳回，自动触发 Pro 支付");
         startCheckout('price_1UUF86AB28DjNkOqNGl2YoBN', 'pro');
     } else if (autoPay === 'fam') {
-        console.log("🔄 [AutoPay] 检测到登录跳回，自动触发 Family 支付");
+        window.DEBUG_LOG("🔄 [AutoPay] 检测到登录跳回，自动触发 Family 支付");
         startCheckout('price_1UUF9SAB28DjNkOqrt3BX9Dr', 'fam');
     }
 });

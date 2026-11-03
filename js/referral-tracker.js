@@ -22,7 +22,7 @@ export async function trackReferral() {
     try {
         const { error } = await client.rpc('apply_referral', { ref_code: pendingRef });
         if (!error) {
-            console.log('✅ 推广码绑定成功:', pendingRef);
+            window.DEBUG_LOG('✅ 推广码绑定成功:', pendingRef);
             localStorage.removeItem('pending_ref_code'); // 成功后清除
         } else {
             console.warn('⚠️ 推广码绑定失败:', error.message);

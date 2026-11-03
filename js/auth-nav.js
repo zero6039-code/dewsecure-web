@@ -32,10 +32,10 @@ import { esc } from './utils.js';
                         tier: session.user.user_metadata?.tier || 'premium'
                     }
                 }, (response) => { 
-                    if (response && response.ok) console.log("✅ [网页端] 插件登录状态同步成功");
+                    if (response && response.ok) window.DEBUG_LOG("✅ [网页端] 插件登录状态同步成功");
                 });
             } else {
-                console.log("ℹ️ [网页端] 当前为未登录状态，插件端保持原有状态不变。");
+                window.DEBUG_LOG("ℹ️ [网页端] 当前为未登录状态，插件端保持原有状态不变。");
             }
         } catch (e) {
         }

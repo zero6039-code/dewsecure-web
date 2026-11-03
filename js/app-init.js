@@ -76,13 +76,13 @@ document.addEventListener('DOMContentLoaded', async () => {
             // 处理登录和 Token 刷新
             if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED' || event === 'INITIAL_SESSION') {
                 if (session) {
-                    console.log("🚀 [事件同步] 检测到网页端登录/刷新，推送到插件:", session.user?.email);
+                    window.DEBUG_LOG("🚀 [事件同步] 检测到网页端登录/刷新，推送到插件:", session.user?.email);
                     pushAuthStateToExtension(session);
                 }
             } 
             // 处理登出
             else if (event === 'SIGNED_OUT') {
-                console.log("🚪 [事件同步] 检测到网页端登出，通知插件");
+                window.DEBUG_LOG("🚪 [事件同步] 检测到网页端登出，通知插件");
                 clearAuthInExtension();
             }
         });

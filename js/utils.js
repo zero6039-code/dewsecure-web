@@ -1,3 +1,5 @@
+window.DEBUG_MODE = false; // 生产环境默认关闭
+window.DEBUG_LOG = function(...args) { if (window.DEBUG_MODE) { console.log(...args); } };
 export const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 // ==========================================
 // 📁 utils.js

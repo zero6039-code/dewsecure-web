@@ -87,12 +87,12 @@ window.initNotifications = async function() {
                 table: 'notifications', 
                 filter: `user_id=eq.${session.user.id}` 
             }, (payload) => {
-                console.log('⚡ [Realtime] 收到实时通知变动:', payload);
+                window.DEBUG_LOG('⚡ [Realtime] 收到实时通知变动:', payload);
                 window.initNotifications();
             })
             .subscribe((status, err) => {
                 if (status === 'SUBSCRIBED') {
-                    console.log('📡 [Realtime] WebSocket 连接成功！正在等待新通知...');
+                    window.DEBUG_LOG('📡 [Realtime] WebSocket 连接成功！正在等待新通知...');
                 } else if (status === 'CHANNEL_ERROR') {
                     console.error('❌ [Realtime] 连接失败，请检查 Supabase Realtime 是否开启或 RLS 策略', err);
                 }
