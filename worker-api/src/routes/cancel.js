@@ -10,7 +10,11 @@ cancelRoute.post('/cancel', async (c) => {
   if (!authHeader?.startsWith('Bearer ')) return c.json({ error: 'Unauthorized' }, 401);
 
   const token = authHeader.split(' ')[1];
-  const { reason } = await c.req.json();
+  
+  // 🌟 修复 S-06：增加 JSON 解析兜底，防止非法 JSON 导致 500 崩溃
+  const body = await c.req.json().catch(() => ({}));
+  // 🌟 修复 S-06：强制截断为 200 字符，防止 Stripe metadata 超长报错和潜在的存储型 XSS
+  const reason = String(body.reason ?? '').slice(0, 200);
 
   const supabase = getSupabaseUser(c.env, token);
   const { data: { user }, error } = await supabase.auth.getUser();
