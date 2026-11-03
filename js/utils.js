@@ -1,3 +1,4 @@
+export const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 // ==========================================
 // 📁 utils.js
 // 职责：全局通用工具函数（Toast、错误提示等）
@@ -54,7 +55,6 @@ window.showGlassConfirm = function(title, message, onConfirm) {
     const confirmText = t['confirm_ok'] || '确认';
 
     // 🌟 核心修复：针对 title 和 message 进行安全转义
-    const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 
     modal.innerHTML = `
         <div style="background:rgba(20,20,25,0.85); border:1px solid rgba(255,255,255,0.1); border-radius:16px; padding:24px; width:90%; max-width:320px; box-shadow:0 10px 30px rgba(0,0,0,0.5); transform:scale(0.95); transition:transform 0.2s;">

@@ -1,3 +1,4 @@
+import { esc } from './utils.js';
 // js/auth-nav.js
 (function() {
     'use strict';
@@ -13,7 +14,6 @@
     }
     const supabaseClient = window.supabaseClient;
 
-    const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 
     function syncStateToExtension(session) {
         if (!window.chrome || !chrome.runtime || !chrome.runtime.sendMessage) return;

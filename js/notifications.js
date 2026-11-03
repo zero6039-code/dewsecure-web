@@ -1,7 +1,7 @@
 // js/notifications.js
 // DewSecure 通知中心模块 (v1.0.9 - 实时推送版)
 
-const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+import { esc } from './utils.js';
 
 const NOTIF_ICONS = {
     'system': 'fa-solid fa-bullhorn text-blue',
