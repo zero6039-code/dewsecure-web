@@ -33,6 +33,9 @@ jobs:
           cache: 'npm'
           cache-dependency-path: 'worker-api/package-lock.json'
 
+      - name: Check Locales 
+        run: node .github/check-locales.js
+
       - name: Install Worker Dependencies
         # 🌟 修复 S-10：使用 npm ci 确保严格按 package-lock.json 安装
         run: cd worker-api && npm ci
