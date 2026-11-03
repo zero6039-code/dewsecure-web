@@ -15,7 +15,7 @@ export function initAuthPage() {
         const pendingToken = sessionStorage.getItem('pending_family_token');
         if (pendingToken) {
             sessionStorage.removeItem('pending_family_token');
-            return '/accept-invite.html?invite=' + pendingToken;
+            return '/accept-invite.html?invite=' + encodeURIComponent(pendingToken);
         }
         
         // 优先级 2：处理 URL 带的 redirect 参数（如从定价页跳来的）

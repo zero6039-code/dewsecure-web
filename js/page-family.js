@@ -35,8 +35,9 @@ export async function initFamilyUI(client, profile) {
                 const inviteLink = `${window.location.origin}/accept-invite.html?invite=${inv.token}`;
                 const isPending = inv.status === 'pending'; 
                 const email = inv.invitee_email || 'Unknown';
-                
                 const safeEmail = esc(email);
+                
+                // 🌟 修复 S-12：改用 data-* 属性和 class，彻底移除内联 onclick
                 row.innerHTML = `
                     <div style="color:${isPending ? '#fff' : '#3fb950'}; font-size:14px; font-weight:600; word-break: break-all; flex: 1; min-width: 120px;">
                         ${safeEmail}
@@ -44,13 +45,27 @@ export async function initFamilyUI(client, profile) {
                     </div>
                     <div style="display:flex; gap:8px; flex-shrink: 0;">
                         ${isPending 
-                            ? `<button class="btn" style="background:rgba(88,166,255,0.1); color:#58a6ff; border:1px solid rgba(88,166,255,0.3); padding:6px 12px; font-size:12px; white-space: nowrap;" onclick="navigator.clipboard.writeText('${inviteLink}'); window.showToast('${t['dash_copied'] || 'Copied!'}');">${t['dash_invite_copy'] || '复制链接'}</button>` 
+                            ? `<button class="btn family-copy-btn" style="background:rgba(88,166,255,0.1); color:#58a6ff; border:1px solid rgba(88,166,255,0.3); padding:6px 12px; font-size:12px; white-space: nowrap;" data-link="${esc(inviteLink)}">${t['dash_invite_copy'] || '复制链接'}</button>` 
                             : ''}
-                        <button class="btn btn-danger" style="padding:6px 12px; font-size:12px; white-space: nowrap;" onclick="window.removeFamily('${inv.id}', this.getAttribute('data-email'))" data-email="${safeEmail}">${t['dash_family_member_remove'] || '移除'}</button>
+                        <button class="btn btn-danger family-remove-btn" style="padding:6px 12px; font-size:12px; white-space: nowrap;" data-id="${esc(inv.id)}" data-email="${safeEmail}">${t['dash_family_member_remove'] || '移除'}</button>
                     </div>
                 `;
                 listDiv.appendChild(row);
             });
+            
+            // 🌟 修复 S-12：使用事件委托处理点击，避免 HTML 拼接
+            listDiv.onclick = (e) => {
+                const copyBtn = e.target.closest('.family-copy-btn');
+                if (copyBtn) {
+                    navigator.clipboard.writeText(copyBtn.dataset.link);
+                    window.showToast(t['dash_copied'] || 'Copied!');
+                    return;
+                }
+                const removeBtn = e.target.closest('.family-remove-btn');
+                if (removeBtn) {
+                    window.removeFamily(removeBtn.dataset.id, removeBtn.dataset.email);
+                }
+            };
         }
     } catch (err) {
         console.error("获取家庭组列表失败:", err);
@@ -60,7 +75,6 @@ export async function initFamilyUI(client, profile) {
     const handleSendInvite = async () => {
         const email = inputEmail.value.trim().toLowerCase();
         
-        // 🌟 核心修复：加入严格的正则校验，拦截任何非法字符和代码
         const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
         if(!email || !emailRegex.test(email)) {
             return window.showToast(t['toast_invalid_email'] || 'Invalid Email Format', 'error');
