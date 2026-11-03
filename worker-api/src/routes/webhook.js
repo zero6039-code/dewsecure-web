@@ -13,15 +13,16 @@ const must = async (query) => {
 // 辅助函数：发送通知
 async function sendNotification(supabaseAdmin, userId, type, titleKey, msgKey, params = {}) {
   try {
-    await supabaseAdmin.from('notifications').insert({
+    const { error } = await supabaseAdmin.from('notifications').insert({
       user_id: userId,
       type: type,
       title_key: titleKey,
       message_key: msgKey,
       params: params
     });
+    if (error) console.error('发送通知失败:', error.message);
   } catch (err) {
-    console.error('发送通知失败:', err.message);
+    console.error('发送通知抛出异常:', err.message);
   }
 }
 
@@ -34,10 +35,11 @@ function getSubIdFromInvoice(invoice) {
   return invoice.subscription || (invoice.parent && invoice.parent.subscription_details && invoice.parent.subscription_details.subscription);
 }
 
+// 🌟 修复 S-03 问题 2：遇到未知价格返回 null，不再 throw
 function getTierFromPriceId(priceId) {
   if (priceId === 'price_1UUF9SAB28DjNkOqrt3BX9Dr') return 'family';
   if (priceId === 'price_1UUF86AB28DjNkOqNGl2YoBN') return 'pro';
-  throw new Error(`Unknown or forbidden price ID: ${priceId}`);
+  return null; 
 }
 
 webhookRoute.post('/webhook', async (c) => {
@@ -79,6 +81,11 @@ webhookRoute.post('/webhook', async (c) => {
         const priceId = sub.items.data[0].price.id;
         const newTier = getTierFromPriceId(priceId);
         
+        if (!newTier) {
+          console.error(`[checkout] 未知价格 ID: ${priceId}，跳过处理`);
+          break;
+        }
+
         await must(supabaseAdmin.from('profiles').update({ tier: newTier, stripe_customer_id: customerId, family_owner_id: null }).eq('id', userId));
         await must(supabaseAdmin.from('subscriptions').upsert({
           user_id: userId, stripe_subscription_id: subId, stripe_customer_id: customerId,
@@ -95,7 +102,7 @@ webhookRoute.post('/webhook', async (c) => {
 
       case 'invoice.payment_succeeded': {
         const invoice = event.data.object;
-        let subId = getSubIdFromInvoice(invoice);
+        let subId = getSubIdFromInvoice(invoice); // 🌟 修复：统一使用兼容函数
         let userId = null;
         let sub = null;
 
@@ -114,13 +121,18 @@ webhookRoute.post('/webhook', async (c) => {
         if (sub) {
           const priceId = sub.items.data[0].price.id;
           const newTier = getTierFromPriceId(priceId);
+          if (!newTier) {
+             console.error(`[invoice] 未知价格 ID: ${priceId}，跳过处理`);
+             break;
+          }
           await must(supabaseAdmin.from('profiles').update({ tier: newTier }).eq('id', userId));
           await must(supabaseAdmin.from('subscriptions').update({ 
             status: sub.status, price_id: priceId, current_period_end: getPeriodEnd(sub) 
           }).eq('stripe_subscription_id', subId));
         }
 
-        if (invoice.billing_reason === 'subscription_cycle' || invoice.billing_reason === 'manual' || invoice.billing_reason === 'subscription_create') {
+        // 🌟 修复 S-03 问题 4：去掉了 'manual'，仅保留创建和周期续费
+        if (invoice.billing_reason === 'subscription_cycle' || invoice.billing_reason === 'subscription_create') {
           const { data: userProfile } = await supabaseAdmin.from('profiles').select('subscription_ends_at, trial_ends_at').eq('id', userId).single();
           
           let base = new Date();
@@ -176,9 +188,10 @@ webhookRoute.post('/webhook', async (c) => {
           if (charge.invoice) {
               try {
                   const invoice = await stripe.invoices.retrieve(charge.invoice);
-                  if (invoice.subscription) {
-                      await stripe.subscriptions.cancel(invoice.subscription);
-                      console.log(`[refund] 已取消用户 ${userId} 的 Stripe 订阅 ${invoice.subscription}`);
+                  const realSubId = getSubIdFromInvoice(invoice); // 🌟 修复 S-03 问题 1：使用兼容函数
+                  if (realSubId) {
+                      await stripe.subscriptions.cancel(realSubId);
+                      console.log(`[refund] 已取消用户 ${userId} 的 Stripe 订阅 ${realSubId}`);
                   }
               } catch (err) {
                   console.error('❌ [refund] 取消订阅失败:', err.message);
@@ -203,8 +216,13 @@ webhookRoute.post('/webhook', async (c) => {
 
       case 'customer.subscription.updated':
       case 'customer.subscription.deleted': {
-        const sub = event.data.object;
+        let sub = event.data.object;
         const userId = sub.metadata?.user_id;
+        
+        // 🌟 修复 S-03 问题 3：事件乱序。非 deleted 事件，强制向 Stripe 获取最新状态
+        if (event.type === 'customer.subscription.updated') {
+            sub = await stripe.subscriptions.retrieve(sub.id);
+        }
         
         const isCanceling = sub.cancel_at_period_end || (sub.cancel_at !== null && sub.status === 'active') || (sub.canceled_at !== null && sub.status === 'active');
 
@@ -213,7 +231,6 @@ webhookRoute.post('/webhook', async (c) => {
                 await must(supabaseAdmin.from('profiles').update({ tier: 'free', subscription_ends_at: null }).eq('id', userId));
                 await must(supabaseAdmin.from('profiles').update({ family_owner_id: null, tier: 'free' }).eq('family_owner_id', userId));
                 
-                // 🌟 修复：从数据库获取真实的邮箱
                 const { data: dbUser } = await supabaseAdmin.from('profiles').select('email').eq('id', userId).single();
                 const realEmail = dbUser?.email || 'User';
                 
@@ -223,6 +240,10 @@ webhookRoute.post('/webhook', async (c) => {
         } else {
             const priceId = sub.items.data[0].price.id;
             let newTier = getTierFromPriceId(priceId);
+            if (!newTier) {
+                console.error(`[subscription.updated] 未知价格 ID: ${priceId}，跳过更新`);
+                break;
+            }
             
             const activeStatuses = ['active', 'trialing'];
             if (!activeStatuses.includes(sub.status)) {
@@ -230,7 +251,6 @@ webhookRoute.post('/webhook', async (c) => {
                 console.log(`[subscription.updated] 订阅状态为 ${sub.status}，执行降级`);
                 
                 if (userId) {
-                    // 🌟 修复：从数据库获取真实的邮箱
                     const { data: dbUser } = await supabaseAdmin.from('profiles').select('email').eq('id', userId).single();
                     await sendNotification(supabaseAdmin, userId, 'billing', 'notif_downgraded_free', 'notif_downgraded_free', { email: dbUser?.email || 'User' });
                 }
