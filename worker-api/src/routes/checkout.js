@@ -13,7 +13,10 @@ checkoutRoute.post('/checkout', async (c) => {
   if (!authHeader?.startsWith('Bearer ')) return c.json({ error: 'Unauthorized' }, 401);
 
   const token = authHeader.split(' ')[1];
-  const { price_id } = await c.req.json();
+  
+  // 🌟 修复 S-06：增加 JSON 解析兜底，防止非法格式导致 500 崩溃
+  const body = await c.req.json().catch(() => ({}));
+  const price_id = body.price_id;
   
   if (!price_id || !ALLOWED_PRICE_IDS.has(price_id)) {
     return c.json({ error: 'Invalid price_id' }, 400);
@@ -75,8 +78,9 @@ checkoutRoute.post('/checkout', async (c) => {
     const session = await stripeRes.json();
     return c.json({ clientSecret: session.client_secret });
   } catch (err) {
+    // 🌟 修复 S-07：移除 detail 字段，避免内部错误详情泄露给客户端
     console.error('❌ [checkout] 捕获异常:', err.message);
-    return c.json({ error: 'Failed to create checkout session', detail: err.message }, 500);
+    return c.json({ error: 'Failed to create checkout session' }, 500);
   }
 });
 

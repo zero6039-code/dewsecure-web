@@ -3,25 +3,45 @@ name: Deploy API Worker
 on:
   push:
     branches: [ main ]
+    # 🌟 修复 S-10：仅当 Worker 代码或该工作流文件变动时才触发
+    paths:
+      - 'worker-api/**'
+      - '.github/workflows/deploy-worker.yml'
   workflow_dispatch:
+
+# 🌟 修复 S-10：限制 GITHUB_TOKEN 最小权限为只读
+permissions:
+  contents: read
+
+# 🌟 修复 S-10：并发控制，防止多次推送导致部署互相覆盖
+concurrency:
+  group: deploy-api
+  cancel-in-progress: false
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      # 🌟 修复 S-10：锁定 commit SHA（版本 v4.2.2），防止 Tag 被篡改
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
 
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        # 🌟 修复 S-10：锁定 commit SHA（版本 v4.0.3）
+        uses: actions/setup-node@1e60f620b9541d16bece96c5465dc8ee9832be0b
         with:
           node-version: '22'
+          cache: 'npm'
+          cache-dependency-path: 'worker-api/package-lock.json'
 
       - name: Install Worker Dependencies
-        run: cd worker-api && npm install
+        # 🌟 修复 S-10：使用 npm ci 确保严格按 package-lock.json 安装
+        run: cd worker-api && npm ci
 
       - name: Deploy API
         # 强制加上 --config wrangler.toml，确保它只读当前目录的配置
         run: cd worker-api && npx wrangler deploy --config wrangler.toml
         env:
+          # 🌟 修复 S-10：强制非交互模式，防止 CI 挂起
+          CI: true
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
