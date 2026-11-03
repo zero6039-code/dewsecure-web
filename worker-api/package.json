@@ -6,7 +6,7 @@
     "deploy": "wrangler deploy --config wrangler.toml"
   },
   "devDependencies": {
-    "wrangler": "^4.0.0"
+    "wrangler": "^4.156.2"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.118.0",
