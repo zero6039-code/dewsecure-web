@@ -32,11 +32,11 @@ export async function fetchDashboardData(client, currentUser) {
     }
 
     if (sub) {
-        console.log("✅ 成功获取订阅状态:", sub);
+        window.DEBUG_LOG("✅ 成功获取订阅状态:", sub);
         dashboardData.cancel_at_period_end = sub.cancel_at_period_end;
         dashboardData.subscription_status = sub.status;
     } else {
-        console.log("⚠️ 未找到订阅记录，默认设为未取消状态");
+        window.DEBUG_LOG("⚠️ 未找到订阅记录，默认设为未取消状态");
         dashboardData.cancel_at_period_end = false;
         dashboardData.subscription_status = 'none';
     }

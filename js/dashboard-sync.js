@@ -20,7 +20,7 @@ export function pushAuthStateToExtension(session) {
             if (window.chrome.runtime.lastError) {
                 console.warn('⚠️ 推送插件失败:', window.chrome.runtime.lastError.message);
             } else {
-                console.log('✅ 已推送登录态到插件');
+                window.DEBUG_LOG('✅ 已推送登录态到插件');
             }
         });
     } catch (err) {

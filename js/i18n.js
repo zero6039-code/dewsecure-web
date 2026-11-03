@@ -45,7 +45,8 @@ window.translatePage = function() {
         const key = element.getAttribute("data-i18n");
         let targetText = translations[key];
         if (targetText !== undefined && targetText !== null) {
-            if (/<[a-z="']/i.test(targetText)) {
+            // 🌟 核心修复：严格检查是否声明了 HTML 渲染权限，否则一律只当纯文本
+            if (element.hasAttribute("data-i18n-html")) {
                 element.innerHTML = targetText;
             } else {
                 element.textContent = targetText;
