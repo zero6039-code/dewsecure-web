@@ -58,4 +58,58 @@ intelRoute.get('/intel/threat-rules.sig', async (c) => {
   }
 });
 
+// 🚀 新增：百万级二进制过滤器下发
+intelRoute.get('/intel/threat-filter.bin', async (c) => {
+  try {
+    const obj = await c.env.R2_BUCKET.get('intel/threat-filter.bin');
+
+    if (!obj) {
+      return c.json({ error: 'Threat filter not found yet. Run CI first.' }, 404);
+    }
+
+    const etag = obj.httpEtag;
+    const clientEtag = c.req.header('If-None-Match');
+    if (clientEtag === etag) {
+      return new Response(null, { status: 304 });
+    }
+
+    return new Response(obj.body, {
+      headers: {
+        'Content-Type': 'application/octet-stream', // 🚀 必须是二进制流
+        'ETag': etag,
+        'Cache-Control': 'public, max-age=3600'
+      }
+    });
+  } catch (err) {
+    return c.json({ error: 'Failed to fetch threat filter' }, 500);
+  }
+});
+
+// 🚀 新增：二进制过滤器元数据下发
+intelRoute.get('/intel/threat-filter.meta.json', async (c) => {
+  try {
+    const obj = await c.env.R2_BUCKET.get('intel/threat-filter.meta.json');
+
+    if (!obj) {
+      return c.json({ error: 'Threat filter meta not found yet. Run CI first.' }, 404);
+    }
+
+    const etag = obj.httpEtag;
+    const clientEtag = c.req.header('If-None-Match');
+    if (clientEtag === etag) {
+      return new Response(null, { status: 304 });
+    }
+
+    return new Response(obj.body, {
+      headers: {
+        'Content-Type': 'application/json',
+        'ETag': etag,
+        'Cache-Control': 'public, max-age=3600'
+      }
+    });
+  } catch (err) {
+    return c.json({ error: 'Failed to fetch threat filter meta' }, 500);
+  }
+});
+
 export default intelRoute;
