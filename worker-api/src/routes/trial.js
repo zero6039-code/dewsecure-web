@@ -50,6 +50,7 @@ trialRoute.post('/claim-trial', async (c) => {
     }
 
     // 🌟 修复 S-01 第四步：检查 devices 表，该指纹是否已绑定其他账号
+    // devices.user_id 为 NOT NULL，唯一约束为 (user_id, fingerprint)，此判断安全
     const { data: existingDevices } = await supabaseAdmin
       .from('devices')
       .select('user_id')
@@ -86,24 +87,35 @@ trialRoute.post('/claim-trial', async (c) => {
       .is('subscription_ends_at', null)
       .select('id');
 
-    if (updateErr) throw updateErr;
+    // 🌟 修复 N-05②：回滚统一走 rollbackClaim，按 fingerprint + user_id 双条件限定
+    const rollbackClaim = () => supabaseAdmin
+      .from('trial_claims')
+      .delete()
+      .eq('fingerprint', fingerprint)
+      .eq('user_id', user.id);
+
+    if (updateErr) {
+      // 修复 N-05①：更新报错时先回滚占位，避免用户永久被锁
+      await rollbackClaim();
+      throw updateErr;
+    }
 
     if (!granted || granted.length === 0) {
-      // 如果更新失败（说明用户状态已变），则回滚占位记录
-      await supabaseAdmin.from('trial_claims').delete().eq('fingerprint', fingerprint);
+      // 更新未命中行（用户状态已变），回滚占位
+      await rollbackClaim();
       return c.json({ error: 'ALREADY_CLAIMED', message: 'Not eligible for trial.' }, 400);
     }
 
     // 3. 尝试写入通知，失败不阻断主流程
-    try {
-      await supabaseAdmin.from('notifications').insert({
-        user_id: user.id,
-        type: 'billing',
-        title_key: 'notif_trial_activated',
-        message_key: 'notif_trial_activated',
-        params: {}
-      });
-    } catch (notifErr) {
+    // 修复 N-05③：supabase-js 的 insert 返回 { error }，不抛异常
+    const { error: notifErr } = await supabaseAdmin.from('notifications').insert({
+      user_id: user.id,
+      type: 'billing',
+      title_key: 'notif_trial_activated',
+      message_key: 'notif_trial_activated',
+      params: {}
+    });
+    if (notifErr) {
       console.warn('⚠️ [claim-trial] 通知写入失败:', notifErr.message);
     }
 
