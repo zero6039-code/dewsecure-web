@@ -531,5 +531,8 @@
   "comp_realtime_threat_desc": "새로 등장하는 피싱 도메인 및 고급 위협을 동적으로 차단합니다",
   "dl_whale_title": "Naver Whale를 위한 최고의 경험",
   "dl_whale_desc": "Whale 브라우저 전용으로 깊이 최적화되었습니다. 트래커 및 피싱 위협을 원활하게 차단하고 초고속 보안 환경을 즐기십시오.",
-  "dl_btn_whale": "Whale 확장 프로그램 다운로드"
+  "dl_btn_whale": "Whale 확장 프로그램 다운로드",
+  "safari_coming_title": "COMING SOON",
+  "safari_coming_desc": "궁극의 Safari 경험이 곧 찾아옵니다.",
+  "safari_coming_sub": "현재 Safari 확장 프로그램의 기본 아키텍처를 적용하고 있습니다. 기대해 주세요."
 }

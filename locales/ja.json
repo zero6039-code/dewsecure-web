@@ -531,5 +531,8 @@
   "comp_realtime_threat_desc": "新たに出現したフィッシングドメインや高度な脅威を動的にブロックします",
   "dl_whale_title": "Naver Whale のための究極の体験",
   "dl_whale_desc": "Whale ブラウザ専用に深く最適化されています。トラッカーやフィッシングの脅威をシームレスにブロックし、超高速で安全な環境を実現します。",
-  "dl_btn_whale": "Whale 拡張機能をダウンロード"
+  "dl_btn_whale": "Whale 拡張機能をダウンロード",
+  "safari_coming_title": "COMING SOON",
+  "safari_coming_desc": "究極のSafari体験がまもなく登場します。",
+  "safari_coming_sub": "現在、Safari拡張機能の基盤アーキテクチャを適応中です。もうしばらくお待ちください。"
 }
