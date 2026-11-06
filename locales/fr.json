@@ -531,5 +531,8 @@
   "comp_realtime_threat_desc": "Bloque dynamiquement les nouveaux domaines d'hameçonnage et les menaces avancées",
   "dl_whale_title": "Expérience ultime pour Naver Whale",
   "dl_whale_desc": "Profondément optimisé pour le navigateur Whale. Bloquez de manière transparente les trackers et les menaces de phishing.",
-  "dl_btn_whale": "Télécharger l'extension Whale"
+  "dl_btn_whale": "Télécharger l'extension Whale",
+  "safari_coming_title": "COMING SOON",
+  "safari_coming_desc": "L'expérience ultime sur Safari arrive bientôt.",
+  "safari_coming_sub": "Nous adaptons l'architecture sous-jacente de l'extension Safari. Restez à l'écoute."
 }
