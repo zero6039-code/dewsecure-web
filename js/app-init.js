@@ -69,6 +69,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         window.swup = new Swup({ containers: ['#swup'] });
         window.swup.hooks.on('page:view', () => {
             routeAndInit();
+            if (window.location.pathname.includes('/update')) initChangelogPage();
             if (window.fallbackTranslations && window.translatePage) {
                 window.translatePage();
                 window.dispatchEvent(new Event('languageChanged'));
@@ -160,3 +161,69 @@ window.addEventListener('pageshow', (e) => {
         }
     }
 });
+
+// ==========================================
+// 🚀 全局 Changelog 页面逻辑 (兼容 Swup 无刷新跳转)
+// ==========================================
+async function initChangelogPage() {
+    // 1. 加载 Changelog 数据
+    const listEl = document.getElementById('changelog-list');
+    if (listEl) {
+        try {
+            const res = await fetch('/update/changelog.json');
+            if (!res.ok) throw new Error("Fetch failed");
+            const logs = await res.json();
+            let html = '';
+            logs.forEach(log => {
+                html += `<div class="log-entry">
+                    <div class="log-date">${log.date} - ${log.version}</div>
+                    <div class="log-title">${log.title}</div>
+                    <div class="log-content">${log.content}</div>
+                </div>`;
+            });
+            listEl.innerHTML = html;
+        } catch (e) {
+            listEl.innerHTML = '<p style="color:#ff7b72;">Failed to load update data.</p>';
+        }
+    }
+
+    // 2. 同步 Google Translate 语言选择器状态
+    const langSelect = document.getElementById('my-lang-select');
+    if (langSelect) {
+        const hash = window.location.hash;
+        const match = hash.match(/googtrans\(en\|(\w+)\)/);
+        if (match && match[1]) {
+            langSelect.value = match[1];
+        } else {
+            const cookieMatch = document.cookie.match(/googtrans=\/en\/(\w+)/);
+            if (cookieMatch && cookieMatch[1] && cookieMatch[1] !== 'en') {
+                langSelect.value = cookieMatch[1];
+            } else {
+                langSelect.value = 'en';
+            }
+        }
+
+        // 绑定语言切换事件（需要先移除旧的监听器，防止重复绑定）
+        const newSelect = langSelect.cloneNode(true);
+        langSelect.parentNode.replaceChild(newSelect, langSelect);
+        
+        newSelect.addEventListener('change', function() {
+            const lang = this.value;
+            document.cookie = "googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+            document.cookie = "googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; domain=" + window.location.hostname + "; path=/;";
+            if (lang === 'en') {
+                window.location.hash = 'googtrans(en|en)';
+            } else {
+                window.location.hash = `googtrans(en|${lang})`;
+            }
+            window.location.reload();
+        });
+    }
+
+    // 3. 强制修复 body 的 top 样式（防止 Google 翻译栏遮挡）
+    setInterval(() => {
+        if (document.body.style.top !== '0px') {
+            document.body.style.setProperty('top', '0px', 'important');
+        }
+    }, 300);
+}
