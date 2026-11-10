@@ -25,7 +25,11 @@ window.initNotifications = async function() {
     }
 
     const { data: { session } } = await window.supabaseClient.auth.getSession();
-    if (!session) return;
+    if (!session) {
+        // 如果当前没拿到 session，可能是刚跳转过来还没恢复完毕，稍后重试
+        setTimeout(window.initNotifications, 500);
+        return;
+    }
 
     const { data: notifications, error } = await window.supabaseClient
         .from('notifications')
@@ -101,14 +105,12 @@ window.initNotifications = async function() {
 };
 
 function tryRender(listEl, badgeEl, btnDeleteAll) {
-    if (document.documentElement.getAttribute('data-i18n-ready') === 'true' && window.fallbackTranslations) {
-        if (cachedNotifications.length === 0) {
-            renderEmptyState(listEl, badgeEl, btnDeleteAll);
-        } else {
-            renderNotifications(cachedNotifications, listEl, badgeEl, btnDeleteAll);
-        }
+    // 🛡️ 修复：移除对 data-i18n-ready 的强制依赖和无限 setTimeout 轮询
+    // 即便语言包没加载好，也依靠 fallbackTranslations || {} 先渲染英文，等语言切换时再重绘
+    if (cachedNotifications.length === 0) {
+        renderEmptyState(listEl, badgeEl, btnDeleteAll);
     } else {
-        setTimeout(() => tryRender(listEl, badgeEl, btnDeleteAll), 100);
+        renderNotifications(cachedNotifications, listEl, badgeEl, btnDeleteAll);
     }
 }
 
@@ -302,12 +304,5 @@ function formatTime(utcString, t) {
     return `${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}`;
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-    if (document.documentElement.getAttribute('data-i18n-ready') === 'true') {
-        window.initNotifications();
-    } else {
-        window.addEventListener('languageChanged', () => {
-            if (!cachedNotifications.length) window.initNotifications();
-        }, { once: true });
-    }
-});
+// 🛡️ 修复：移除 DOMContentLoaded 依赖，由 app-init.js 在路由进入时主动调用
+

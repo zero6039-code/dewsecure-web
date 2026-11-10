@@ -48,7 +48,13 @@ async function interceptToken() {
 async function routeAndInit() {
     const path = window.location.pathname;
     if (path.includes('/login')) initAuthPage();
-    else if (path.includes('/dashboard')) initDashboardLogic();
+    else if (path.includes('/dashboard')) {
+        initDashboardLogic();
+        // 🛡️ 修复：兼容 Swup 跳转，主动触发通知加载
+        if (typeof window.initNotifications === 'function') {
+            setTimeout(window.initNotifications, 100);
+        }
+    }
     else if (path.includes('accept-invite')) initAcceptInvitePage();
     initComponentsPage();
 }
