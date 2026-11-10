@@ -534,5 +534,8 @@
   "dl_btn_whale": "Télécharger l'extension Whale",
   "safari_coming_title": "COMING SOON",
   "safari_coming_desc": "L'expérience ultime sur Safari arrive bientôt.",
-  "safari_coming_sub": "Nous adaptons l'architecture sous-jacente de l'extension Safari. Restez à l'écoute."
+  "safari_coming_sub": "Nous adaptons l'architecture sous-jacente de l'extension Safari. Restez à l'écoute.",
+  "auth_google_redirecting": "Redirection...",
+  "auth_google_login_failed": "La connexion Google a échoué. Veuillez réessayer plus tard.",
+  "auth_sdk_loading": "Le service est en cours de chargement. Veuillez réessayer plus tard."
 }

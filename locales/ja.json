@@ -534,5 +534,8 @@
   "dl_btn_whale": "Whale 拡張機能をダウンロード",
   "safari_coming_title": "COMING SOON",
   "safari_coming_desc": "究極のSafari体験がまもなく登場します。",
-  "safari_coming_sub": "現在、Safari拡張機能の基盤アーキテクチャを適応中です。もうしばらくお待ちください。"
+  "safari_coming_sub": "現在、Safari拡張機能の基盤アーキテクチャを適応中です。もうしばらくお待ちください。",
+  "auth_google_redirecting": "リダイレクト中...",
+  "auth_google_login_failed": "Google ログインに失敗しました。後でもう一度お試しください。",
+  "auth_sdk_loading": "サービスを読み込み中です。しばらくしてからもう一度お試しください。"
 }

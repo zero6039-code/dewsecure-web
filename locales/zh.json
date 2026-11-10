@@ -534,5 +534,8 @@
   "dl_btn_whale": "下载 Whale 扩展",
   "safari_coming_title": "COMING SOON",
   "safari_coming_desc": "极致安全的 Safari 体验即将到来。",
-  "safari_coming_sub": "我们正在适配 Safari 扩展的底层架构，敬请期待。"
+  "safari_coming_sub": "我们正在适配 Safari 扩展的底层架构，敬请期待。",
+  "auth_google_redirecting": "正在跳转...",
+  "auth_google_login_failed": "Google 登录失败，请稍后重试。",
+  "auth_sdk_loading": "服务加载中，请稍后再试。"
 }

@@ -534,5 +534,8 @@
   "dl_btn_whale": "Muat turun Sambungan Whale",
   "safari_coming_title": "COMING SOON",
   "safari_coming_desc": "Pengalaman Safari yang muktamad akan tiba tidak lama lagi.",
-  "safari_coming_sub": "Kami sedang menyesuaikan seni bina asas sambungan Safari. Nantikan."
+  "safari_coming_sub": "Kami sedang menyesuaikan seni bina asas sambungan Safari. Nantikan.",
+  "auth_google_redirecting": "Mengubah hala...",
+  "auth_google_login_failed": "Log masuk Google gagal, sila cuba lagi nanti.",
+  "auth_sdk_loading": "Perkhidmatan sedang dimuatkan, sila cuba lagi nanti."
 }

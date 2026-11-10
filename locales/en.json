@@ -534,5 +534,8 @@
   "dl_btn_whale": "Download Whale Extension",
   "safari_coming_title": "COMING SOON",
   "safari_coming_desc": "The ultimate Safari experience is coming soon.",
-  "safari_coming_sub": "We are adapting the underlying architecture of the Safari extension. Stay tuned."
+  "safari_coming_sub": "We are adapting the underlying architecture of the Safari extension. Stay tuned.",
+  "auth_google_redirecting": "Redirecting...",
+  "auth_google_login_failed": "Google login failed, please try again later.",
+  "auth_sdk_loading": "Service is loading, please try again later."
 }

@@ -534,5 +534,8 @@
   "dl_btn_whale": "Whale 확장 프로그램 다운로드",
   "safari_coming_title": "COMING SOON",
   "safari_coming_desc": "궁극의 Safari 경험이 곧 찾아옵니다.",
-  "safari_coming_sub": "현재 Safari 확장 프로그램의 기본 아키텍처를 적용하고 있습니다. 기대해 주세요."
+  "safari_coming_sub": "현재 Safari 확장 프로그램의 기본 아키텍처를 적용하고 있습니다. 기대해 주세요.",
+  "auth_google_redirecting": "이동 중...",
+  "auth_google_login_failed": "Google 로그인에 실패했습니다. 나중에 다시 시도해 주세요.",
+  "auth_sdk_loading": "서비스를 불러오는 중입니다. 잠시 후 다시 시도해 주세요."
 }

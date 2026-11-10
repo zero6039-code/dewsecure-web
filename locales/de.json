@@ -534,5 +534,8 @@
   "dl_btn_whale": "Whale-Erweiterung herunterladen",
   "safari_coming_title": "COMING SOON",
   "safari_coming_desc": "Das ultimative Safari-Erlebnis kommt bald.",
-  "safari_coming_sub": "Wir passen die zugrunde liegende Architektur der Safari-Erweiterung an. Bleiben Sie dran."
+  "safari_coming_sub": "Wir passen die zugrunde liegende Architektur der Safari-Erweiterung an. Bleiben Sie dran.",
+  "auth_google_redirecting": "Weiterleitung...",
+  "auth_google_login_failed": "Google-Anmeldung fehlgeschlagen. Bitte versuchen Sie es später erneut.",
+  "auth_sdk_loading": "Dienst wird geladen. Bitte versuchen Sie es später erneut."
 }

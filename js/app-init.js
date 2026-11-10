@@ -112,7 +112,7 @@ document.addEventListener('click', async (e) => {
             client = window.supabase.createClient(supabaseUrl, supabaseKey);
             window.supabaseClient = client;
         } else {
-            console.error('Supabase SDK 尚未加载，请刷新页面重试。');
+            console.error(window.t ? window.t('auth_sdk_loading') : 'Service is loading, please try again later.');
             return;
         }
     }
@@ -121,7 +121,7 @@ document.addEventListener('click', async (e) => {
     if (googleBtn.disabled) return;
     googleBtn.disabled = true;
     const originalHTML = googleBtn.innerHTML;
-    googleBtn.innerHTML = '正在跳转...';
+    googleBtn.innerHTML = window.t ? window.t('auth_google_redirecting') : 'Redirecting...';
 
     try {
         const { error } = await client.auth.signInWithOAuth({
@@ -133,7 +133,7 @@ document.addEventListener('click', async (e) => {
 
         if (error) {
             console.error('Google login error:', error.message);
-            alert('Google 登录失败，请稍后重试。');
+            alert(window.t ? window.t('auth_google_login_failed') : 'Google login failed, please try again later.');
             googleBtn.disabled = false;
             googleBtn.innerHTML = originalHTML;
         }
