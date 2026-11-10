@@ -91,3 +91,55 @@ document.addEventListener('DOMContentLoaded', async () => {
 
 window.addEventListener('load', trackReferral);
 document.addEventListener('swup:page:view', trackReferral);
+
+// ==========================================
+// 🚀 全局 Google 登录逻辑 (兼容 Swup 无刷新跳转)
+// ==========================================
+const supabaseUrl = 'https://uvbaioqqjqseapcancvi.supabase.co';
+// 注意：这里使用与 auth-nav.js 一致的 Publishable Key
+const supabaseKey = 'sb_publishable_xiiA-yt_jRKkzRdkYkoWJA_CVZjNjq8';
+
+document.addEventListener('click', async (e) => {
+    const googleBtn = e.target.closest('#googleLoginBtn');
+    if (!googleBtn) return;
+
+    e.preventDefault();
+
+    // 🛡️ 延迟初始化：如果 window.supabaseClient 没准备好，尝试现场创建
+    let client = window.supabaseClient;
+    if (!client) {
+        if (window.supabase) {
+            client = window.supabase.createClient(supabaseUrl, supabaseKey);
+            window.supabaseClient = client;
+        } else {
+            console.error('Supabase SDK 尚未加载，请刷新页面重试。');
+            return;
+        }
+    }
+
+    // 防止重复点击
+    if (googleBtn.disabled) return;
+    googleBtn.disabled = true;
+    const originalHTML = googleBtn.innerHTML;
+    googleBtn.innerHTML = '正在跳转...';
+
+    try {
+        const { error } = await client.auth.signInWithOAuth({
+            provider: 'google',
+            options: {
+                redirectTo: 'https://dewsecure.com/dashboard/'
+            }
+        });
+
+        if (error) {
+            console.error('Google login error:', error.message);
+            alert('Google 登录失败，请稍后重试。');
+            googleBtn.disabled = false;
+            googleBtn.innerHTML = originalHTML;
+        }
+    } catch (err) {
+        console.error('Google 登录异常:', err);
+        googleBtn.disabled = false;
+        googleBtn.innerHTML = originalHTML;
+    }
+});

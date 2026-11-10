@@ -94,55 +94,6 @@
     <script type="module" src="/js/app-init.js?v=2"></script>
     <script src="/js/i18n.js"></script>
 
-    <!-- Google 登录逻辑 -->
-    <script>
-        // 将 Supabase 客户端创建放在外面，避免每次点击都重复创建
-        const supabaseUrl = 'https://uvbaioqqjqseapcancvi.supabase.co';
-        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InV2YmFpb3FxanFzZWFwY2FuY3ZpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTI0OTIyODAsImV4cCI6MjEwODA2ODI4MH0.jhEaDHBvp702biC7oqM1oV5YO7rzhvmXFH5pTRF17kQ';
-        let supabaseClient = null;
 
-        // 🛡️ 修复：使用事件委托，无论 Swup 怎么替换 DOM，点击都能被捕获
-        document.addEventListener('click', async (e) => {
-            const googleBtn = e.target.closest('#googleLoginBtn');
-            if (!googleBtn) return;
-
-            e.preventDefault();
-
-            // 🛡️ 修复：延迟初始化 Supabase，防止 CDN 还没加载完就执行
-            if (!supabaseClient) {
-                if (!window.supabase) {
-                    console.error('Supabase SDK 尚未加载完成');
-                    return;
-                }
-                supabaseClient = window.supabase.createClient(supabaseUrl, supabaseKey);
-            }
-
-            // 防止重复点击
-            if (googleBtn.disabled) return;
-            googleBtn.disabled = true;
-            const originalHTML = googleBtn.innerHTML;
-            googleBtn.innerHTML = '正在跳转...';
-
-            try {
-                const { error } = await supabaseClient.auth.signInWithOAuth({
-                    provider: 'google',
-                    options: {
-                        redirectTo: 'https://dewsecure.com/dashboard/'
-                    }
-                });
-
-                if (error) {
-                    console.error('Google login error:', error.message);
-                    alert('Google 登录失败，请稍后重试。');
-                    googleBtn.disabled = false;
-                    googleBtn.innerHTML = originalHTML;
-                }
-            } catch (err) {
-                console.error('Google 登录异常:', err);
-                googleBtn.disabled = false;
-                googleBtn.innerHTML = originalHTML;
-            }
-        });
-    </script>
 </body>
 </html>
