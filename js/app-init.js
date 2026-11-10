@@ -56,6 +56,7 @@ async function routeAndInit() {
         }
     }
     else if (path.includes('accept-invite')) initAcceptInvitePage();
+    else if (path.includes('/update')) initChangelogPage();
     initComponentsPage();
 }
 
@@ -69,7 +70,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         window.swup = new Swup({ containers: ['#swup'] });
         window.swup.hooks.on('page:view', () => {
             routeAndInit();
-            if (window.location.pathname.includes('/update')) initChangelogPage();
             if (window.fallbackTranslations && window.translatePage) {
                 window.translatePage();
                 window.dispatchEvent(new Event('languageChanged'));
