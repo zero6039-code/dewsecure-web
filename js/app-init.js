@@ -143,3 +143,14 @@ document.addEventListener('click', async (e) => {
         googleBtn.innerHTML = originalHTML;
     }
 });
+
+// 🛡️ 修复：当用户从 Google 授权页点击“返回”时，通过 BFCache 恢复页面会导致按钮卡死
+window.addEventListener('pageshow', (e) => {
+    if (e.persisted) {
+        const googleBtn = document.getElementById('googleLoginBtn');
+        if (googleBtn) {
+            googleBtn.disabled = false;
+            googleBtn.innerHTML = '<i class="fa-brands fa-google"></i>'; // 恢复默认图标
+        }
+    }
+});

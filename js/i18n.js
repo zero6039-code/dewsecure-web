@@ -2,6 +2,13 @@
 window.currentLang = 'en'; 
 window.fallbackTranslations = {};
 
+// 🌟 暴露全局单键翻译函数，供其他脚本使用
+window.t = function(key) {
+    const translations = window.fallbackTranslations;
+    return (translations && translations[key]) ? translations[key] : key;
+};
+
+
 window.loadLanguage = async function(lang) {
     if (false) {
         alert("该语言正在开发中，目前仅支持中文、英文和马来文。");
