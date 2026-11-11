@@ -68,12 +68,15 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     if (window.Swup) {
         window.swup = new Swup({ containers: ['#swup'] });
-        window.swup.hooks.on('page:view', () => {
+        window.swup.hooks.on('page:view', async () => {
             routeAndInit();
-            if (window.fallbackTranslations && window.translatePage) {
+            // 🛡️ 核心修复：等当前页面的语言包加载完毕后，再渲染，解决首次进入时显示旧语言的问题
+            if (window.loadLanguage && window.currentLang) {
+                await window.loadLanguage(window.currentLang);
+            } else if (window.translatePage) {
                 window.translatePage();
-                window.dispatchEvent(new Event('languageChanged'));
             }
+            window.dispatchEvent(new Event('languageChanged'));
         });
     }
 

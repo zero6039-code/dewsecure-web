@@ -1,13 +1,6 @@
 // js/i18n.js
-window.currentLang = 'en'; 
+window.currentLang = 'en';
 window.fallbackTranslations = {};
-
-// 🌟 暴露全局单键翻译函数，供其他脚本使用
-window.t = function(key) {
-    const translations = window.fallbackTranslations;
-    return (translations && translations[key]) ? translations[key] : key;
-};
-
 
 window.loadLanguage = async function(lang) {
     if (false) {
@@ -16,19 +9,39 @@ window.loadLanguage = async function(lang) {
     }
 
     try {
-        const response = await fetch(`/locales/${lang}.json?v=${new Date().getTime()}`);
-        if (!response.ok) throw new Error(`无法加载语言文件: ${lang}`);
-        const translations = await response.json();
-
-        window.fallbackTranslations = translations;
-        window.currentLang = lang;
+        // 1. 决定当前页面需要加载哪些模块
+        const path = window.location.pathname;
+        let modules = ['common']; // 全局必载
         
+        if (path.includes('/pricing') || path === '/pricing.html') modules.push('pricing');
+        if (path.includes('/guide') || path === '/guide.html') modules.push('guide');
+
+        // 2. 并发拉取所有需要的语言包
+        const fetchPromises = modules.map(mod => {
+            // 决定路径：common 在 /locales/common/，其他的在对应页面目录下
+            const url = mod === 'common' 
+                ? `/locales/common/${lang}.json?v=${Date.now()}`
+                : `/${mod}/locales/${lang}.json?v=${Date.now()}`;
+                
+            return fetch(url)
+                .then(res => res.ok ? res.json() : {})
+                .catch(() => ({}));
+        });
+
+        const dicts = await Promise.all(fetchPromises);
+        
+        // 3. 合并所有字典 (后面的会覆盖前面的，通常无冲突)
+        const mergedTranslations = Object.assign({}, ...dicts);
+
+        window.fallbackTranslations = mergedTranslations;
+        window.currentLang = lang;
+
         // 🌟 调用全局翻译方法
-        window.translatePage();
+        if (window.translatePage) window.translatePage();
 
         localStorage.setItem("preferred_lang", lang);
         updateDropdownUI(lang);
-        
+
         // 解锁全站透明度护盾
         document.documentElement.classList.remove("i18n-loading");
         document.documentElement.setAttribute("data-i18n-ready", "true");
@@ -42,17 +55,16 @@ window.loadLanguage = async function(lang) {
     }
 }
 
-// 🌟 暴露全局翻译函数，供 Swup 和 auth-nav 调用
+// 🌟 暴露全局翻译函数
 window.translatePage = function() {
     const translations = window.fallbackTranslations;
     if (!translations) return;
-    
+
     // 翻译普通文本
     document.querySelectorAll("[data-i18n]").forEach(element => {
         const key = element.getAttribute("data-i18n");
         let targetText = translations[key];
         if (targetText !== undefined && targetText !== null) {
-            // 🌟 核心修复：严格检查是否声明了 HTML 渲染权限，否则一律只当纯文本
             if (element.hasAttribute("data-i18n-html")) {
                 element.innerHTML = targetText;
             } else {
@@ -68,6 +80,12 @@ window.translatePage = function() {
     });
 };
 
+// 🌟 暴露全局单键翻译函数
+window.t = function(key) {
+    const translations = window.fallbackTranslations;
+    return (translations && translations[key]) ? translations[key] : key;
+};
+
 function updateDropdownUI(activeLang) {
     document.querySelectorAll(".lang-option").forEach(option => {
         if (option.getAttribute("data-lang") === activeLang) {
@@ -80,7 +98,6 @@ function updateDropdownUI(activeLang) {
 
 (async () => {
     let defaultLang = localStorage.getItem("preferred_lang") || 'en';
-    
     await loadLanguage(defaultLang);
 
     document.addEventListener('click', (e) => {

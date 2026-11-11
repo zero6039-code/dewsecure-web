@@ -93,13 +93,14 @@
                 </div>
                 <div class="comparison-table">
                     <div class="comp-row comp-table-header">
-                        <div class="comp-feature"></div>
+                        <div class="comp-feature"><strong data-i18n="browser_extensions">Browser Extensions</strong></div>
                         <div class="comp-val text-val" data-i18n="comp_table_free">免费版</div>
                         <div class="comp-val text-val" data-i18n="comp_table_pro">高级版</div>
                         <div class="comp-val text-val" data-i18n="comp_table_fam">家庭版</div>
                     </div>
                     <div class="comp-category" data-i18n="comp_cat_core">核心拦截能力</div>
                     <div class="comp-row"><div class="comp-feature"><strong data-i18n="comp_dnr">DNR 规则拦截</strong><span data-i18n="comp_dnr_desc">利用浏览器原生 API，极速拦截已知恶意域名与广告</span></div><div class="comp-val yes"><i class="fa-solid fa-check"></i></div><div class="comp-val yes"><i class="fa-solid fa-check"></i></div><div class="comp-val yes"><i class="fa-solid fa-check"></i></div></div>
+                      <div class="comp-row"><div class="comp-feature"><strong data-i18n="comp_social_tracker">Block Social Trackers</strong><span data-i18n="comp_social_tracker_desc">Cuts off invisible tracking embedded in social platforms like Facebook/Twitter</span></div><div class="comp-val yes"><i class="fa-solid fa-check"></i></div><div class="comp-val yes"><i class="fa-solid fa-check"></i></div><div class="comp-val yes"><i class="fa-solid fa-check"></i></div></div>
                     <div class="comp-row"><div class="comp-feature"><strong data-i18n="comp_clickjack">防点击劫持（防弹窗）</strong><span data-i18n="comp_clickjack_desc">阻止恶意网站用透明层骗取点击，从源头阻断弹窗</span></div><div class="comp-val yes"><i class="fa-solid fa-check"></i></div><div class="comp-val yes"><i class="fa-solid fa-check"></i></div><div class="comp-val yes"><i class="fa-solid fa-check"></i></div></div>
                     <div class="comp-row"><div class="comp-feature"><strong data-i18n="comp_block_tracker">阻止基础追踪</strong><span data-i18n="comp_block_tracker_desc">拦截各类常规跟踪脚本和隐形追踪像素</span></div><div class="comp-val yes"><i class="fa-solid fa-check"></i></div><div class="comp-val yes"><i class="fa-solid fa-check"></i></div><div class="comp-val yes"><i class="fa-solid fa-check"></i></div></div>
                     <div class="comp-row"><div class="comp-feature"><strong data-i18n="comp_antiblock">反反拦截保护</strong><span data-i18n="comp_antiblock_desc">隐藏拦截器特征，防止网站检测到插件后拒绝提供内容</span></div><div class="comp-val yes"><i class="fa-solid fa-check"></i></div><div class="comp-val yes"><i class="fa-solid fa-check"></i></div><div class="comp-val yes"><i class="fa-solid fa-check"></i></div></div>
@@ -112,7 +113,7 @@
                     <div class="comp-row"><div class="comp-feature"><strong data-i18n="comp_phishing_alert">钓鱼/挖矿实时预警</strong><span data-i18n="comp_phishing_alert_desc">遇到高危网站或静默挖矿脚本时，即时阻断并发出安全警告</span></div><div class="comp-val no"><i class="fa-solid fa-xmark"></i></div><div class="comp-val yes"><i class="fa-solid fa-check"></i></div><div class="comp-val yes"><i class="fa-solid fa-check"></i></div></div>
                     <div class="comp-row"><div class="comp-feature"><strong data-i18n="comp_ai_model_update">AI 模型云端热更新</strong><span data-i18n="comp_ai_model_update_desc">每周自动拉取最新 AI 模型，持续对抗不断变异的恶意脚本</span></div><div class="comp-val no"><i class="fa-solid fa-xmark"></i></div><div class="comp-val yes"><i class="fa-solid fa-check"></i></div><div class="comp-val yes"><i class="fa-solid fa-check"></i></div></div>
                     <div class="comp-row"><div class="comp-feature"><strong data-i18n="comp_custom_rules">跨设备云端同步</strong><span data-i18n="comp_custom_rules_desc">您的白名单、自定义规则与拦截记录可在多台设备间无缝同步</span></div><div class="comp-val no"><i class="fa-solid fa-xmark"></i></div><div class="comp-val yes"><i class="fa-solid fa-check"></i></div><div class="comp-val yes"><i class="fa-solid fa-check"></i></div></div>
-                    <div class="comp-row"><div class="comp-feature"><strong data-i18n="comp_social_tracker">拦截社交追踪</strong><span data-i18n="comp_social_tracker_desc">切断 Facebook/Twitter 等社交平台嵌入网页的隐形追踪</span></div><div class="comp-val no"><i class="fa-solid fa-xmark"></i></div><div class="comp-val yes"><i class="fa-solid fa-check"></i></div><div class="comp-val yes"><i class="fa-solid fa-check"></i></div></div>
+
                     
                     <div class="comp-category" data-i18n="comp_cat_dev">设备与体验</div>
                     <div class="comp-row"><div class="comp-feature"><strong data-i18n="comp_dev_count">设备数量限制</strong></div><div class="comp-val text-val" data-i18n="comp_dev_count_free">无限（本地）</div><div class="comp-val text-val" data-i18n="comp_dev_count_pro">最多 3 台</div><div class="comp-val text-val" data-i18n="comp_dev_count_fam">最多 9 台</div></div>
@@ -120,7 +121,84 @@
                 </div>
             </div>
         </div>
-    </main>
+    
+              
+              <div class="comparison-section" style="margin-top: 60px;">
+                  <div class="comparison-header">
+                      <h2 data-i18n="comp_table_title_android">Android App Comparison</h2>
+                      <p data-i18n="comp_table_sub_android">System-level protection for your mobile device.</p>
+                  </div>
+                  <div class="comparison-table">
+                      <div class="comp-row comp-table-header">
+                          <div class="comp-feature"><strong data-i18n="android_app">Android App</strong></div>
+                          <div class="comp-val text-val" data-i18n="comp_table_free">Free</div>
+                          <div class="comp-val text-val" data-i18n="comp_table_pro">Pro</div>
+                          <div class="comp-val text-val" data-i18n="comp_table_fam">Family</div>
+                      </div>
+                      
+                      <div class="comp-category" data-i18n="comp_cat_core">Core Blocking</div>
+                      
+                      <div class="comp-row">
+                          <div class="comp-feature"><strong data-i18n="comp_dnr">DNR Rule Blocking</strong><span data-i18n="comp_dnr_desc">Blocks known malicious domains, ads & trackers</span></div>
+                          <div class="comp-val yes"><i class="fa-solid fa-check"></i></div>
+                          <div class="comp-val yes"><i class="fa-solid fa-check"></i></div>
+                          <div class="comp-val yes"><i class="fa-solid fa-check"></i></div>
+                      </div>
+                      
+                      <div class="comp-row">
+                          <div class="comp-feature"><strong data-i18n="comp_block_tracker">Block Trackers</strong><span data-i18n="comp_block_tracker_desc">Intercepts tracking scripts and pixels</span></div>
+                          <div class="comp-val yes"><i class="fa-solid fa-check"></i></div>
+                          <div class="comp-val yes"><i class="fa-solid fa-check"></i></div>
+                          <div class="comp-val yes"><i class="fa-solid fa-check"></i></div>
+                      </div>
+
+                      <div class="comp-row">
+                          <div class="comp-feature"><strong data-i18n="comp_social_tracker">Block Social Trackers</strong><span data-i18n="comp_social_tracker_desc">Blocks social media tracking buttons</span></div>
+                          <div class="comp-val yes"><i class="fa-solid fa-check"></i></div>
+                          <div class="comp-val yes"><i class="fa-solid fa-check"></i></div>
+                          <div class="comp-val yes"><i class="fa-solid fa-check"></i></div>
+                      </div>
+
+                      <div class="comp-category" data-i18n="comp_cat_pro" style="color: #d29922;">Pro Features</div>
+                      
+                      <div class="comp-row">
+                          <div class="comp-feature"><strong data-i18n="comp_realtime_threat">Real-time Threat Intel</strong> <span class="pro-badge" style="font-size:10px; padding:2px 4px; vertical-align:middle; margin-left:4px;">PRO</span><span data-i18n="comp_realtime_threat_desc">Dynamically blocks newly emerged phishing domains</span></div>
+                          <div class="comp-val no"><i class="fa-solid fa-xmark"></i></div>
+                          <div class="comp-val yes"><i class="fa-solid fa-check"></i></div>
+                          <div class="comp-val yes"><i class="fa-solid fa-check"></i></div>
+                      </div>
+
+                      <div class="comp-row">
+                          <div class="comp-feature"><strong data-i18n="comp_phishing_ai">AI Phishing Detection</strong> <span class="pro-badge" style="font-size:10px; padding:2px 4px; vertical-align:middle; margin-left:4px;">PRO</span><span data-i18n="comp_phishing_ai_desc">Identifies malicious and phishing domains</span></div>
+                          <div class="comp-val no"><i class="fa-solid fa-xmark"></i></div>
+                          <div class="comp-val yes"><i class="fa-solid fa-check"></i></div>
+                          <div class="comp-val yes"><i class="fa-solid fa-check"></i></div>
+                      </div>
+
+                      <div class="comp-row">
+                          <div class="comp-feature"><strong data-i18n="comp_ai_4class">AI Smart Real-time Detection</strong> <span class="pro-badge" style="font-size:10px; padding:2px 4px; vertical-align:middle; margin-left:4px;">PRO</span><span data-i18n="comp_ai_4class_desc">AI dynamic blocking for zero-day ads</span></div>
+                          <div class="comp-val no"><i class="fa-solid fa-xmark"></i></div>
+                          <div class="comp-val yes"><i class="fa-solid fa-check"></i></div>
+                          <div class="comp-val yes"><i class="fa-solid fa-check"></i></div>
+                      </div>
+
+                      <div class="comp-category" data-i18n="comp_cat_dev">Devices & Experience</div>
+                      <div class="comp-row">
+                          <div class="comp-feature"><strong data-i18n="comp_dev_count">Device Limit</strong></div>
+                          <div class="comp-val text-val" data-i18n="comp_dev_count_free">Unlimited (Local)</div>
+                          <div class="comp-val text-val" data-i18n="comp_dev_count_pro">Up to 3 devices</div>
+                          <div class="comp-val text-val" data-i18n="comp_dev_count_fam">Up to 9 devices</div>
+                      </div>
+                      <div class="comp-row">
+                          <div class="comp-feature"><strong data-i18n="comp_support">Support Priority</strong></div>
+                          <div class="comp-val text-val" data-i18n="comp_support_free">Community</div>
+                          <div class="comp-val text-val" data-i18n="comp_support_pro">Priority Email</div>
+                          <div class="comp-val text-val" data-i18n="comp_support_fam">Priority Email</div>
+                      </div>
+                  </div>
+              </div>
+
+      </main>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.50.5/dist/umd/supabase.js" integrity="sha384-8HXYSNTFkkCTt8kh+CcRiz8onIBVSqWqL6Q0x960/dITz7nnQCQKKYyBY1fqPXmf" crossorigin="anonymous"></script>
     <script src="https://js.stripe.com/v3/"></script>
