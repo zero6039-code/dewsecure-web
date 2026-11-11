@@ -86,5 +86,6 @@
   "android_app": "安卓客户端",
   "browser_extensions": "浏览器扩展",
   "forever": "永久",
-  "year": "年"
+  "year": "年",
+  "comp_dev_count_hint": "(安卓客户端 + 浏览器扩展)"
 }

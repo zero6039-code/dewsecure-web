@@ -86,5 +86,6 @@
   "android_app": "Aplikasi Android",
   "browser_extensions": "Sambungan Pelayar",
   "forever": "selamanya",
-  "year": "tahun"
+  "year": "tahun",
+  "comp_dev_count_hint": "(Aplikasi Android + Sambungan Pelayar)"
 }

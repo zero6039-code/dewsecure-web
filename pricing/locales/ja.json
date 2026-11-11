@@ -86,5 +86,6 @@
   "android_app": "Androidアプリ",
   "browser_extensions": "ブラウザ拡張機能",
   "forever": "永久",
-  "year": "年"
+  "year": "年",
+  "comp_dev_count_hint": "(Androidアプリ + ブラウザ拡張機能)"
 }

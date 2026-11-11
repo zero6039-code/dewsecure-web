@@ -86,5 +86,6 @@
   "android_app": "Android App",
   "browser_extensions": "Browser Extensions",
   "forever": "forever",
-  "year": "year"
+  "year": "year",
+  "comp_dev_count_hint": "(Android App + Browser Extensions)"
 }
