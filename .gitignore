@@ -18,3 +18,7 @@ node_modules/
 *-v2.js
 *-v3.js
 .DS_Store
+
+# Ignore backup files
+*.bak*
+locales_bak_*
