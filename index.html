@@ -8,18 +8,29 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swup@4/dist/swup.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="icon" type="image/png" href="/DewSecure.png">
+    
+    <style>
+        html.i18n-hide-preload body {
+            visibility: hidden !important;
+            opacity: 0 !important;
+        }
+    </style>
+    <script>
+        // 同步执行：在浏览器画第一个像素之前，直接隐身
+        document.documentElement.classList.add('i18n-hide-preload');
+    </script>
 </head>
 <body>
     <header>
         <a href="/index.html" class="logo"><img src="/DewSecure.png" alt="DewSecure"> DewSecure</a>
         <nav>
-            <a href="/index.html" data-i18n="nav_home">首页</a>
-            <a href="/pricing.html" data-i18n="nav_pricing">定价</a>
-            <a href="/pentest/" target="_blank" data-i18n="nav_pentest">安全审计</a>
-            <a href="/update/" data-i18n="nav_update">更新日志</a>
-            <a href="/guide/" data-i18n="nav_guide">使用指南</a>
-            <a href="/about/" data-i18n="nav_about">关于我们</a>
-            <a href="/login/" data-i18n="nav_login">登录</a>
+            <a href="/index.html" data-i18n="nav_home"></a>
+            <a href="/pricing.html" data-i18n="nav_pricing"></a>
+            <a href="/pentest/" target="_blank" data-i18n="nav_pentest"></a>
+            <a href="/update/" data-i18n="nav_update"></a>
+            <a href="/guide/" data-i18n="nav_guide"></a>
+            <a href="/about/" data-i18n="nav_about"></a>
+            <a href="/login/" data-i18n="nav_login"></a>
         </nav>
         <div class="lang-switch">
             <button class="lang-toggle-btn" style="background:none;border:none;color:#cbd5e1;font-size:24px;cursor:pointer;padding:0;">🌐</button>
@@ -39,10 +50,10 @@
 
     <main id="swup" class="transition-fade">
         <section class="hero">
-            <h1 data-i18n="hero_title">你的设备，你的规则。</h1>
-            <p data-i18n="hero_desc">融合设备端 AI 与云端联邦学习的内容优化与安全防护引擎。深度阻断恶意追踪与钓鱼威胁，极速加载，为您重塑纯净、安全、高效的上网体验。</p>
+            <h1 data-i18n="hero_title"></h1>
+            <p data-i18n="hero_desc"></p>
             
-            <p data-i18n="guide_subtitle" style="font-size: 18px; color: #58a6ff; font-weight: 600; margin-top: 15px; margin-bottom: 10px; letter-spacing: 1px;">从安装到极致体验，只需 1 分钟。</p>
+            <p data-i18n="guide_subtitle" style="font-size: 18px; color: #58a6ff; font-weight: 600; margin-top: 15px; margin-bottom: 10px; letter-spacing: 1px;"></p>
 
             <div class="ds-wrap" style="margin-top: 0;">
                 <div class="ds-icons">
@@ -62,8 +73,8 @@
                 </div>
 
                 <div class="ds-box">
-                    <h2 id="ds-title" class="ds-t" data-i18n="dl_chrome_title">重塑纯净、安全的上网体验</h2>
-                    <p id="ds-desc" class="ds-d" data-i18n="dl_chrome_desc">融合原生拦截与设备端 AI 引擎，毫秒级阻断恶意追踪与钓鱼威胁。</p>
+                    <h2 id="ds-title" class="ds-t" data-i18n="dl_chrome_title"></h2>
+                    <p id="ds-desc" class="ds-d" data-i18n="dl_chrome_desc"></p>
                     <a href="javascript:void(0)" id="ds-btn" class="ds-btn" onclick="
                         var txt = this.textContent;
                         if(txt.includes('Android') || txt.includes('安卓')) { window.location.href='/android/'; return false; }
@@ -72,7 +83,7 @@
             if(txt.includes('Safari')) { window.location.href='/safari/'; return false; }
                     ">
                         <div class="ds-btn-ic" id="ds-btn-icon"><i class="fa-brands fa-chrome"></i></div>
-                        <span id="ds-btn-text" data-i18n="dl_btn_chrome">下载 Chrome 扩展</span>
+                        <span id="ds-btn-text" data-i18n="dl_btn_chrome"></span>
                     </a>
                 </div>
             </div>
@@ -80,20 +91,20 @@
 
         <section class="features">
             <div class="grid">
-                <div class="card"><h3 data-i18n="feat_title_1">🧠 智能安全引擎</h3><p data-i18n="feat_desc_1">内置 11 万条精准防御规则，结合设备端 AI 模型，精准拦截恶意钓鱼、追踪器及潜在威胁。</p></div>
-                <div class="card"><h3 data-i18n="feat_title_2">🛡️ 隐私数据不出设备</h3><p data-i18n="feat_desc_2">所有 URL 分析均在本地沙箱完成，零数据上传，我们不收集您的浏览记录，彻底杜绝隐私泄露。</p></div>
-                <div class="card"><h3 data-i18n="feat_title_3">⚡ 极致性能体验</h3><p data-i18n="feat_desc_3">毫秒级本地响应，大幅减少不必要的网络请求，不卡顿、不白屏，让网页加载速度肉眼可见地提升。</p></div>
-                <div class="card"><h3 data-i18n="feat_title_4">🧹 告别视觉噪音</h3><p data-i18n="feat_desc_4">彻底清理弹窗、横幅与视频广告，让你专注网页的核心内容，回归纯粹的浏览体验。</p></div>
-                <div class="card"><h3 data-i18n="feat_title_5">🛡️ 防钓鱼与木马拦截</h3><p data-i18n="feat_desc_5">实时识别并阻断钓鱼网站、恶意重定向以及木马病毒广告，为你构筑坚不可摧的安全防线。</p></div>
-                <div class="card"><h3 data-i18n="feat_title_6">🍪 智能 Cookie 管家</h3><p data-i18n="feat_desc_6">智能拦截烦人的 Cookie 同意横幅，同时精准放行必要配置，确保网站功能正常运转，拒绝一刀切。</p></div>
-                <div class="card"><h3 data-i18n="feat_title_7">⛏️ 拦截恶意挖矿</h3><p data-i18n="feat_desc_7">阻止恶意网页利用您的设备静默挖掘加密货币，节省 CPU 算力与电量消耗，让设备保持冷静流畅。</p></div>
+                <div class="card"><h3 data-i18n="feat_title_1"></h3><p data-i18n="feat_desc_1"></p></div>
+                <div class="card"><h3 data-i18n="feat_title_2"></h3><p data-i18n="feat_desc_2"></p></div>
+                <div class="card"><h3 data-i18n="feat_title_3"></h3><p data-i18n="feat_desc_3"></p></div>
+                <div class="card"><h3 data-i18n="feat_title_4"></h3><p data-i18n="feat_desc_4"></p></div>
+                <div class="card"><h3 data-i18n="feat_title_5"></h3><p data-i18n="feat_desc_5"></p></div>
+                <div class="card"><h3 data-i18n="feat_title_6"></h3><p data-i18n="feat_desc_6"></p></div>
+                <div class="card"><h3 data-i18n="feat_title_7"></h3><p data-i18n="feat_desc_7"></p></div>
             </div>
             
             <div class="transparency-card">
                 <div style="font-size: 28px;">🛡️</div>
                 <div>
-                    <h4 data-i18n="trans_home_title">🤝 我们的透明承诺</h4>
-                    <p data-i18n="trans_home_desc">网络环境瞬息万变，恶意追踪技术持续进化，我们无法保证 100% 的绝对拦截率。受限于平台底层机制，部分应用内广告（如 YouTube App）暂无法拦截。但 DewSecure 会通过 AI 持续学习进化，竭尽全力为您提供最强悍的过滤体验。</p>
+                    <h4 data-i18n="trans_home_title"></h4>
+                    <p data-i18n="trans_home_desc"></p>
                 </div>
             </div>
         </section>
@@ -101,11 +112,11 @@
         <footer class="site-footer">
             <a href="https://github.com/zero6039-code/dewsecure-web" target="_blank" class="footer-github-link">
                 <i class="fa-brands fa-github"></i>
-                <span data-i18n="footer_link">在 GitHub 上查看开源代码</span>
+                <span data-i18n="footer_link"></span>
             </a>
-            <p class="footer-legal"><a href="/privacy.html" data-i18n="footer_privacy">Privacy Policy</a> <span class="footer-sep">·</span> <a href="/terms.html" data-i18n="footer_terms">Terms of Service</a></p>
+            <p class="footer-legal"><a href="/privacy.html" data-i18n="footer_privacy"></a> <span class="footer-sep">·</span> <a href="/terms.html" data-i18n="footer_terms"></a></p>
             <p class="footer-copy">
-                <span data-i18n="footer_text">核心引擎开源，数据绝不出户。</span><br>
+                <span data-i18n="footer_text"></span><br>
                 &copy; 2026 DewSecure. All rights reserved.
             </p>
         </footer>

@@ -8,18 +8,30 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swup@4/dist/swup.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="icon" type="image/png" href="/DewSecure.png">
+<style>
+        /* 防止 i18n 加载期间闪烁 */
+        html.i18n-loading body {
+            opacity: 0 !important;
+            visibility: hidden !important;
+        }
+        html[data-i18n-ready="true"] body {
+            opacity: 1 !important;
+            visibility: visible !important;
+            transition: opacity 0.2s ease-out;
+        }
+    </style>
 </head>
 <body>
     <header>
         <a href="/index.html" class="logo"><img src="/DewSecure.png" alt="DewSecure"> DewSecure</a>
         <nav>
-            <a href="/index.html" data-i18n="nav_home">首页</a>
-            <a href="/pricing.html" data-i18n="nav_pricing">定价</a>
-            <a href="/pentest/" target="_blank" data-i18n="nav_pentest">安全审计</a>
-            <a href="/update/" data-i18n="nav_update">更新日志</a>
-            <a href="/guide/" data-i18n="nav_guide">使用指南</a>
-            <a href="/about/" data-i18n="nav_about">关于我们</a>
-            <a href="/login/" data-i18n="nav_login" style="display:none;">登录</a>
+            <a href="/index.html" data-i18n="nav_home"></a>
+            <a href="/pricing.html" data-i18n="nav_pricing"></a>
+            <a href="/pentest/" target="_blank" data-i18n="nav_pentest"></a>
+            <a href="/update/" data-i18n="nav_update"></a>
+            <a href="/guide/" data-i18n="nav_guide"></a>
+            <a href="/about/" data-i18n="nav_about"></a>
+            <a href="/login/" data-i18n="nav_login" style="display:none;"></a>
         </nav>
         <div class="lang-switch">
             <button class="lang-toggle-btn" style="background:none;border:none;color:#cbd5e1;font-size:24px;cursor:pointer;padding:0;">🌐</button>
@@ -40,48 +52,48 @@
     <main id="swup" class="transition-fade">
         <div class="login-layout">
             <div class="login-left">
-                <h1 data-i18n="login_hero_title">掌控你的数字生活。</h1>
-                <p data-i18n="login_hero_desc">登录以同步您的跨设备白名单、拉取最新 AI 防护模型，并管理您的安全订阅。您的数据始终在本地加密。</p>
+                <h1 data-i18n="login_hero_title"></h1>
+                <p data-i18n="login_hero_desc"></p>
             </div>
             <div class="login-right">
                 <div class="login-card">
                     <div id="step-email">
-                        <h2 data-i18n="login_welcome">欢迎回来</h2>
-                        <p class="sub" data-i18n="login_sub">登录或创建一个新账号以继续。</p>
+                        <h2 data-i18n="login_welcome"></h2>
+                        <p class="sub" data-i18n="login_sub"></p>
                         <div class="input-group">
-                            <label data-i18n="login_email_label">电子邮件地址</label>
+                            <label data-i18n="login_email_label"></label>
                             <div class="input-wrapper">
                                 <i class="fa-regular fa-envelope"></i>
-                                <input type="email" id="emailInput" data-i18n-placeholder="login_email_ph" placeholder="name@example.com" autocomplete="off">
+                                <input type="email" id="emailInput" data-i18n-placeholder="login_email_ph" placeholder="" autocomplete="off">
                             </div>
                             <div id="emailError" class="error-msg"></div>
                         </div>
-                        <button class="btn-login" id="btnSendOtp" data-i18n="login_btn">使用邮箱登录 (OTP)</button>
+                        <button class="btn-login" id="btnSendOtp" data-i18n="login_btn"></button>
                         
-                        <div class="divider" data-i18n="login_or">或者继续使用</div>
+                        <div class="divider" data-i18n="login_or"></div>
                         <div class="oauth-btns">
                             <!-- 只保留 Google 按钮，并添加 id -->
                             <div class="oauth-btn" id="googleLoginBtn"><i class="fa-brands fa-google"></i></div>
                             <!-- GitHub 和以太坊按钮已隐藏 -->
                         </div>
-                        <div class="trial-badge" data-i18n="login_trial">🎁 首次注册即赠 30 天高级版体验</div>
+                        <div class="trial-badge" data-i18n="login_trial"></div>
                     </div>
 
                     <div id="step-otp" class="hidden">
-                        <h2 data-i18n="login_otp_title">输入验证码</h2>
-                        <p class="sub"><span data-i18n="login_otp_sub_prefix">我们已向</span> <strong id="displayEmail"></strong> <span data-i18n="login_otp_sub_suffix">发送了 8 位验证码。</span></p>
+                        <h2 data-i18n="login_otp_title"></h2>
+                        <p class="sub"><span data-i18n="login_otp_sub_prefix"></span> <strong id="displayEmail"></strong> <span data-i18n="login_otp_sub_suffix"></span></p>
                         <div class="input-group">
-                            <label data-i18n="login_otp_label">8 位验证码</label>
+                            <label data-i18n="login_otp_label"></label>
                             <div class="input-wrapper">
                                 <i class="fa-solid fa-shield-halved"></i>
                                 <input type="text" id="otpInput" maxlength="8" placeholder="12345678" autocomplete="one-time-code" style="letter-spacing: 4px; background: rgba(0,0,0,0.3);">
                             </div>
                             <div id="otpError" class="error-msg"></div>
                         </div>
-                        <button class="btn-login" id="btnVerifyOtp" data-i18n="login_btn_verify">验证并登录</button>
+                        <button class="btn-login" id="btnVerifyOtp" data-i18n="login_btn_verify"></button>
                         
-                        <button class="btn-login" id="btnResendOtp" style="background:transparent; color:#58a6ff; margin-top:10px; border: none;" data-i18n="login_btn_resend">重新发送验证码</button>
-                        <button class="btn-login" id="btnBack" style="background:transparent; color:#8b949e; margin-top:10px;" data-i18n="login_btn_back">返回重新输入邮箱</button>
+                        <button class="btn-login" id="btnResendOtp" style="background:transparent; color:#58a6ff; margin-top:10px; border: none;" data-i18n="login_btn_resend"></button>
+                        <button class="btn-login" id="btnBack" style="background:transparent; color:#8b949e; margin-top:10px;" data-i18n="login_btn_back"></button>
                     </div>
                 </div>
             </div>

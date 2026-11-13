@@ -34,6 +34,18 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swup@4/dist/swup.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="icon" type="image/png" href="/DewSecure.png">
+<style>
+        /* 防止 i18n 加载期间闪烁 */
+        html.i18n-loading body {
+            opacity: 0 !important;
+            visibility: hidden !important;
+        }
+        html[data-i18n-ready="true"] body {
+            opacity: 1 !important;
+            visibility: visible !important;
+            transition: opacity 0.2s ease-out;
+        }
+    </style>
 </head>
 <body>
     <div id="page-loader" style="position: fixed; inset: 0; background: #050505; z-index: 99999; display: flex; align-items: center; justify-content: center;">
@@ -44,14 +56,14 @@
     <header>
         <a href="/index.html" class="logo"><img src="/DewSecure.png" alt="DewSecure"> DewSecure</a>
         <nav>
-            <a href="/index.html" data-i18n="nav_home">首页</a>
-            <a href="/pricing.html" data-i18n="nav_pricing">定价</a>
-            <a href="/pentest/" target="_blank" data-i18n="nav_pentest">安全审计</a>
-            <a href="/update/" data-i18n="nav_update">更新日志</a>
-            <a href="/guide/" data-i18n="nav_guide">使用指南</a>
-            <a href="/about/" data-i18n="nav_about">关于我们</a>
-            <a href="/dashboard.html" style="display:none;" data-i18n="nav_dashboard">控制台</a>
-            <a href="/login/" data-i18n="nav_login">登录</a>
+            <a href="/index.html" data-i18n="nav_home"></a>
+            <a href="/pricing.html" data-i18n="nav_pricing"></a>
+            <a href="/pentest/" target="_blank" data-i18n="nav_pentest"></a>
+            <a href="/update/" data-i18n="nav_update"></a>
+            <a href="/guide/" data-i18n="nav_guide"></a>
+            <a href="/about/" data-i18n="nav_about"></a>
+            <a href="/dashboard.html" style="display:none;" data-i18n="nav_dashboard"></a>
+            <a href="/login/" data-i18n="nav_login"></a>
         </nav>
         <div class="lang-switch">
             <button class="lang-toggle-btn" style="background:none;border:none;color:#cbd5e1;font-size:24px;cursor:pointer;padding:0;">🌐</button>
@@ -73,51 +85,51 @@
         <div class="dashboard-container" id="mainContent">
             <div class="left-column">
                 <div class="card">
-                    <h3><i class="fa-solid fa-shield-halved"></i> <span data-i18n="dash_sub_status">当前订阅状态</span></h3>
+                    <h3><i class="fa-solid fa-shield-halved"></i> <span data-i18n="dash_sub_status"></span></h3>
                     <div class="data-row">
-                        <span class="data-label" data-i18n="dash_tier_label">账户等级</span>
+                        <span class="data-label" data-i18n="dash_tier_label"></span>
                         <span id="tierBadge" class="status-badge skeleton-text">加载中...</span>
                     </div>
                     <div class="data-row">
-                        <span class="data-label" data-i18n="dash_days_left">剩余有效天数</span>
+                        <span class="data-label" data-i18n="dash_days_left"></span>
                         <span class="data-value" id="daysLeft">-</span>
                     </div>
                     <div class="data-row">
-                        <span class="data-label" data-i18n="dash_expire_date">到期时间</span>
+                        <span class="data-label" data-i18n="dash_expire_date"></span>
                         <span class="data-value" id="expireDate">-</span>
                     </div>
                     
                     <!-- 🌟 按钮控制区：已注入所有需要的按钮 -->
                     <div style="margin-top: 25px; display: flex; flex-wrap: wrap; gap: 10px;">
-                        <button class="btn btn-primary" id="btnUpgrade" onclick="window.location.href='/pricing.html'" data-i18n="dash_btn_upgrade">升级/续费高级版</button>
+                        <button class="btn btn-primary" id="btnUpgrade" onclick="window.location.href='/pricing.html'" data-i18n="dash_btn_upgrade"></button>
                         
                         <!-- 领取试用按钮 (绿色) -->
-                        <button class="btn hidden" id="btnClaimTrial" style="background:#238636; color:#fff; border:none;" data-i18n="dash_btn_claim_trial">🎁 领取 30 天 Pro 试用</button>
+                        <button class="btn hidden" id="btnClaimTrial" style="background:#238636; color:#fff; border:none;" data-i18n="dash_btn_claim_trial"></button>
                         
                         <!-- 管理订阅按钮 (蓝色) -->
-                        <button class="btn btn-primary hidden" id="btnManageSub" data-i18n="dash_btn_manage">管理订阅</button>
+                        <button class="btn btn-primary hidden" id="btnManageSub" data-i18n="dash_btn_manage"></button>
                         
                         <!-- 取消订阅按钮 (红色) -->
-                        <button class="btn btn-danger hidden" id="btnCancelSub" data-i18n="dash_btn_cancel">取消订阅</button>
+                        <button class="btn btn-danger hidden" id="btnCancelSub" data-i18n="dash_btn_cancel"></button>
                         
                         <!-- 退出家庭组按钮 (红色) -->
-                        <button class="btn btn-danger hidden" id="btnLeaveFamily" data-i18n="dash_btn_leave_family">退出家庭组</button>
+                        <button class="btn btn-danger hidden" id="btnLeaveFamily" data-i18n="dash_btn_leave_family"></button>
                     </div>
                 </div>
 
                 <div class="card hidden" id="deviceCard" style="margin-bottom: 24px;">
-                    <h3><i class="fa-solid fa-laptop"></i> <span data-i18n="dash_device_title">设备管理</span></h3>
+                    <h3><i class="fa-solid fa-laptop"></i> <span data-i18n="dash_device_title"></span></h3>
                     <p style="color:#8b949e; font-size:14px; margin-bottom: 15px;" id="deviceDesc"></p>
                     <div id="deviceSlots" style="display: flex; flex-direction: column; gap: 10px;"></div>
                 </div>
 
                 <div class="card hidden" id="familyCard" style="margin-bottom: 24px;">
-                    <h3><i class="fa-solid fa-users"></i> <span data-i18n="dash_family_title">家庭成员管理</span></h3>
+                    <h3><i class="fa-solid fa-users"></i> <span data-i18n="dash_family_title"></span></h3>
                     <p style="color:#8b949e; font-size:14px; margin-bottom: 15px;" id="familyDesc"></p>
                     
                     <div style="display: flex; gap: 10px; margin-bottom: 15px;">
                         <input type="email" id="familyEmailInput" placeholder="Family member email" data-i18n-placeholder="dash_family_input_ph" style="flex: 1; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; padding: 10px; color: #fff; outline: none;">
-                        <button class="btn btn-primary" id="btnInviteFamily" data-i18n="dash_family_btn_invite">发送邀请</button>
+                        <button class="btn btn-primary" id="btnInviteFamily" data-i18n="dash_family_btn_invite"></button>
                     </div>
 
                     <div id="familyMembersList">
@@ -125,15 +137,15 @@
                 </div>
 
                 <div class="card" id="inviteCard" style="margin-top: 24px;">
-                    <h3><i class="fa-solid fa-gift"></i> <span data-i18n="dash_invite_title">邀请好友，共享免费高级版！</span></h3>
-                    <p style="color:#8b949e; font-size:14px;" data-i18n="dash_invite_desc">邀请好友注册。当他们完成首次真实付费满 14 天后，您将获得额外 120 天高级版奖励！</p>
+                    <h3><i class="fa-solid fa-gift"></i> <span data-i18n="dash_invite_title"></span></h3>
+                    <p style="color:#8b949e; font-size:14px;" data-i18n="dash_invite_desc"></p>
                     <div class="invite-box">
                         <div class="invite-input" id="myInviteCode"></div>
-                        <button class="btn btn-primary" id="btnGenInvite" data-i18n="dash_invite_gen">获取我的专属推广链接</button>
-                        <button class="btn btn-primary hidden" id="btnCopyInvite" style="background:#58a6ff; color:#fff;" data-i18n="dash_invite_copy">复制</button>
+                        <button class="btn btn-primary" id="btnGenInvite" data-i18n="dash_invite_gen"></button>
+                        <button class="btn btn-primary hidden" id="btnCopyInvite" style="background:#58a6ff; color:#fff;" data-i18n="dash_invite_copy"></button>
                     </div>
                     <div style="margin-top: 15px; font-size: 13px; color: #8b949e;">
-                        <span data-i18n="dash_invite_count">已成功邀请人数：</span><span id="inviteCount" style="color:#58a6ff; font-weight:bold;">0</span>
+                        <span data-i18n="dash_invite_count"></span><span id="inviteCount" style="color:#58a6ff; font-weight:bold;">0</span>
                     </div>
                 </div>
             </div>
@@ -145,16 +157,16 @@
                         <!-- 第一行：通知中心标题 -->
                         <h3 style="margin-bottom: 0; display: flex; align-items: center; gap: 8px;">
                             <i class="fa-solid fa-bell"></i> 
-                            <span data-i18n="dash_notif_title">通知中心</span>
+                            <span data-i18n="dash_notif_title"></span>
                         </h3>
                         <!-- 第二行：未读角标（左）与全部删除按钮（右），同一行 -->
                         <div style="display: flex; justify-content: space-between; align-items: center; min-height: 24px;">
                             <span id="unreadBadge" class="status-badge" style="background: #da3633; color: #fff; font-size: 12px; padding: 2px 8px; display: inline-block;">未读 (0)</span>
-                            <button id="btnDeleteAll" class="btn" style="padding: 4px 10px; font-size: 12px; background: transparent; border: 1px solid #30363d; color: #f85149; border-radius: 6px; transition: 0.2s; white-space: nowrap; min-width: 85px; text-align: center;" data-i18n="dash_notif_delete_all">全部删除</button>
+                            <button id="btnDeleteAll" class="btn" style="padding: 4px 10px; font-size: 12px; background: transparent; border: 1px solid #30363d; color: #f85149; border-radius: 6px; transition: 0.2s; white-space: nowrap; min-width: 85px; text-align: center;" data-i18n="dash_notif_delete_all"></button>
                         </div>
                     </div>
                     <ul class="notification-list" id="notificationList" style="flex: 1; overflow-y: auto; padding-right: 5px;">
-                        <li class="notification-item skeleton-text" style="text-align:center;" data-i18n="dash_notif_loading">正在拉取通知...</li>
+                        <li class="notification-item skeleton-text" style="text-align:center;" data-i18n="dash_notif_loading"></li>
                     </ul>
                 </div>
             </div>
@@ -163,14 +175,14 @@
         <!-- 取消订阅确认弹窗 -->
         <div class="modal-overlay" id="cancelModal">
             <div class="modal-content">
-                <h3 data-i18n="dash_cancel_title">确认取消订阅？</h3>
-                <p style="font-size:14px; color:#8b949e; margin-bottom:15px;" data-i18n="dash_cancel_desc">您的订阅将持续有效直到当前周期结束。在此期间，您可以继续享受所有高级功能。</p>
+                <h3 data-i18n="dash_cancel_title"></h3>
+                <p style="font-size:14px; color:#8b949e; margin-bottom:15px;" data-i18n="dash_cancel_desc"></p>
                 <p id="cancelTip" style="font-size:14px; color:#58a6ff; font-weight:bold; margin-bottom:15px;"></p>
-                <p style="font-size:14px; color:#c9d1d9;" data-i18n="dash_cancel_reason">如果不介意，能告诉我们取消的原因吗？(选填)</p>
+                <p style="font-size:14px; color:#c9d1d9;" data-i18n="dash_cancel_reason"></p>
                 <textarea id="cancelReason" placeholder="e.g., Too expensive, missing features..." data-i18n-placeholder="dash_cancel_ph"></textarea>
                 <div class="modal-actions">
-                    <button class="btn" style="background:transparent; color:#8b949e;" id="btnCloseModal" data-i18n="dash_cancel_no">暂不取消</button>
-                    <button class="btn btn-danger" id="btnConfirmCancel" data-i18n="dash_cancel_yes">确认取消</button>
+                    <button class="btn" style="background:transparent; color:#8b949e;" id="btnCloseModal" data-i18n="dash_cancel_no"></button>
+                    <button class="btn btn-danger" id="btnConfirmCancel" data-i18n="dash_cancel_yes"></button>
                 </div>
             </div>
         </div>

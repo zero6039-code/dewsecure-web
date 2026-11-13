@@ -70,9 +70,10 @@ document.addEventListener('DOMContentLoaded', async () => {
         window.swup = new Swup({ containers: ['#swup'] });
         window.swup.hooks.on('page:view', async () => {
             routeAndInit();
-            // 🛡️ 核心修复：等当前页面的语言包加载完毕后，再渲染，解决首次进入时显示旧语言的问题
+            // 🛡️ 等当前页面的语言包加载完毕后，再渲染，解决显示旧语言的问题
             if (window.loadLanguage && window.currentLang) {
-                await window.loadLanguage(window.currentLang);
+                // 传入 false，告诉 i18n.js 不要加透明遮罩，让 Swup 动画顺畅执行
+                await window.loadLanguage(window.currentLang, false);
             } else if (window.translatePage) {
                 window.translatePage();
             }

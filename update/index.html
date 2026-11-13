@@ -8,19 +8,31 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swup@4/dist/swup.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="icon" type="image/png" href="/DewSecure.png">
+<style>
+        /* 防止 i18n 加载期间闪烁 */
+        html.i18n-loading body {
+            opacity: 0 !important;
+            visibility: hidden !important;
+        }
+        html[data-i18n-ready="true"] body {
+            opacity: 1 !important;
+            visibility: visible !important;
+            transition: opacity 0.2s ease-out;
+        }
+    </style>
 </head>
 <body>
     <header>
         <!-- 导航栏代码不动 -->
         <a href="/index.html" class="logo"><img src="/DewSecure.png" alt="DewSecure"> DewSecure</a>
         <nav>
-            <a href="/index.html" data-i18n="nav_home">首页</a>
-            <a href="/pricing.html" data-i18n="nav_pricing">定价</a>
-            <a href="/pentest/" target="_blank" data-i18n="nav_pentest">安全审计</a>
-            <a href="/update/" data-i18n="nav_update">更新日志</a>
-            <a href="/guide/" data-i18n="nav_guide">使用指南</a>
-            <a href="/about/" data-i18n="nav_about">关于我们</a>
-            <a href="/login/" data-i18n="nav_login">登录</a>
+            <a href="/index.html" data-i18n="nav_home"></a>
+            <a href="/pricing.html" data-i18n="nav_pricing"></a>
+            <a href="/pentest/" target="_blank" data-i18n="nav_pentest"></a>
+            <a href="/update/" data-i18n="nav_update"></a>
+            <a href="/guide/" data-i18n="nav_guide"></a>
+            <a href="/about/" data-i18n="nav_about"></a>
+            <a href="/login/" data-i18n="nav_login"></a>
         </nav>
         <div class="lang-switch">
             <button class="lang-toggle-btn" style="background:none;border:none;color:#cbd5e1;font-size:24px;cursor:pointer;padding:0;">🌐</button>

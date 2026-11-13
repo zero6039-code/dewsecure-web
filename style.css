@@ -42,7 +42,7 @@ body {
 a { color: inherit; text-decoration: none; }
 .hidden { display: none !important; }
 
-/* 🌟 核心修复：多语言加载前的全站透明度护盾，彻底杜绝中文残影 */
+/* 🌟 多语言加载前的全站透明度护盾 */
 html.i18n-loading body {
     opacity: 0 !important;
 }
@@ -1004,4 +1004,18 @@ details[open] .accordion-icon {
 .family-input-row button {
     white-space: nowrap;
     flex-shrink: 0;
+}
+
+/* ==========================================
+   🌟 Swup 页面过渡动画 (修复残影和硬切)
+   ========================================== */
+.transition-fade {
+    transition: 0.3s ease-out; /* 动画时长 0.3s */
+    opacity: 1;
+}
+html.is-changing .transition-fade {
+    opacity: 0;
+}
+html.is-animating .transition-fade {
+    opacity: 0;
 }

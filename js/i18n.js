@@ -2,7 +2,11 @@
 window.currentLang = 'en';
 window.fallbackTranslations = {};
 
-window.loadLanguage = async function(lang) {
+window.loadLanguage = async function(lang, showLoading = true) {
+        if (showLoading) {
+            document.documentElement.classList.add("i18n-loading");
+            document.documentElement.removeAttribute("data-i18n-ready");
+        }
     if (false) {
         alert("该语言正在开发中，目前仅支持中文、英文和马来文。");
         return;
@@ -20,8 +24,8 @@ window.loadLanguage = async function(lang) {
         const fetchPromises = modules.map(mod => {
             // 决定路径：common 在 /locales/common/，其他的在对应页面目录下
             const url = mod === 'common' 
-                ? `/locales/common/${lang}.json?v=${Date.now()}`
-                : `/${mod}/locales/${lang}.json?v=${Date.now()}`;
+                ? `/locales/common/${lang}.json`
+                : `/${mod}/locales/${lang}.json`;
                 
             return fetch(url)
                 .then(res => res.ok ? res.json() : {})
@@ -43,15 +47,21 @@ window.loadLanguage = async function(lang) {
         updateDropdownUI(lang);
 
         // 解锁全站透明度护盾
-        document.documentElement.classList.remove("i18n-loading");
-        document.documentElement.setAttribute("data-i18n-ready", "true");
+        if (showLoading) {
+            document.documentElement.classList.remove("i18n-hide-preload");
+            document.documentElement.classList.remove("i18n-loading");
+            document.documentElement.setAttribute("data-i18n-ready", "true");
+        }
 
         window.dispatchEvent(new Event('languageChanged'));
 
     } catch (error) {
         console.error("国际化加载失败:", error);
-        document.documentElement.classList.remove("i18n-loading");
-        document.documentElement.setAttribute("data-i18n-ready", "true");
+        if (showLoading) {
+            document.documentElement.classList.remove("i18n-hide-preload");
+            document.documentElement.classList.remove("i18n-loading");
+            document.documentElement.setAttribute("data-i18n-ready", "true");
+        }
     }
 }
 
