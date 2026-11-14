@@ -16,39 +16,52 @@ async function interceptToken() {
 
     const urlParams = new URLSearchParams(window.location.search);
     
-    let extToken = urlParams.get('token') || sessionStorage.getItem('ds_handoff_token');
-    let extRefresh = urlParams.get('refresh') || sessionStorage.getItem('ds_handoff_refresh') || extToken;
+    // 🌟 核心修复 1：支持解析 # 后面的 Hash 参数
+    const hashStr = window.location.hash.replace(/^#/, '?');
+    const hashParams = new URLSearchParams(hashStr);
+
+    let extToken = urlParams.get('token') || hashParams.get('token') || sessionStorage.getItem('ds_handoff_token');
+    let extRefresh = urlParams.get('refresh') || hashParams.get('refresh') || sessionStorage.getItem('ds_handoff_refresh') || extToken;
+    const isFromApp = urlParams.get('source') === 'app' || hashParams.get('source') === 'app';
+
+    // 🌟 核心修复 2：阅后即焚。只要 URL 里带有 token，立刻清空 URL 地址栏，防止登出死循环
+    if (window.location.search.includes('token=') || window.location.hash.includes('token=')) {
+        window.history.replaceState({}, document.title, window.location.pathname);
+    }
 
     if (sessionStorage.getItem('ds_handoff_token')) {
         sessionStorage.removeItem('ds_handoff_token');
         sessionStorage.removeItem('ds_handoff_refresh');
     }
-    
+
     if (extToken && window.supabaseClient) {
         try {
             const { data: { session: currentSession } } = await window.supabaseClient.auth.getSession();
-            const isFromApp = urlParams.get('source') === 'app';
 
             if (currentSession && currentSession.access_token !== extToken) {
                 if (isFromApp) {
-                    // 🌟 核心修复：如果是 App 跳转过来的，强制踢掉旧账号，允许覆盖
-                    console.log("🔄 检测到 App 免密直通，正在切换账号...");
+                    console.log("🔄 检测到 App 免密直通，正在安全切换账号...");
                     await window.supabaseClient.auth.signOut();
                 } else {
-                    console.warn("⚠️ [安全拦截] 检测到已登录状态下尝试通过 URL 注入新 Token，已拦截防覆盖攻击。");
+                    console.warn("⚠️ [安全拦截] 检测到已登录状态下尝试注入新 Token，已拦截防覆盖攻击。");
                     return false;
                 }
             }
 
             const { error } = await window.supabaseClient.auth.setSession({
                 access_token: extToken,
-                refresh_token: extRefresh 
+                refresh_token: extRefresh
             });
-            const cleanUrl = window.location.pathname + window.location.hash;
-            window.history.replaceState({}, document.title, cleanUrl);
-            
-            if (!error) { window.location.reload(); return true; }
-        } catch (e) {}
+
+            if (!error) { 
+                window.location.reload(); 
+                return true; 
+            } else {
+                console.error("❌ Token 注入失败:", error.message);
+            }
+        } catch (e) {
+            console.error("❌ 免密直通异常:", e);
+        }
     }
     return false;
 }
