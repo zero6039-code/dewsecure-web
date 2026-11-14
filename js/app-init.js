@@ -27,9 +27,17 @@ async function interceptToken() {
     if (extToken && window.supabaseClient) {
         try {
             const { data: { session: currentSession } } = await window.supabaseClient.auth.getSession();
+            const isFromApp = urlParams.get('source') === 'app';
+
             if (currentSession && currentSession.access_token !== extToken) {
-                console.warn("⚠️ [安全拦截] 检测到已登录状态下尝试通过 URL 注入新 Token，已拦截防覆盖攻击。");
-                return false;
+                if (isFromApp) {
+                    // 🌟 核心修复：如果是 App 跳转过来的，强制踢掉旧账号，允许覆盖
+                    console.log("🔄 检测到 App 免密直通，正在切换账号...");
+                    await window.supabaseClient.auth.signOut();
+                } else {
+                    console.warn("⚠️ [安全拦截] 检测到已登录状态下尝试通过 URL 注入新 Token，已拦截防覆盖攻击。");
+                    return false;
+                }
             }
 
             const { error } = await window.supabaseClient.auth.setSession({
