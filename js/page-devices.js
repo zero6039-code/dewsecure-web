@@ -94,6 +94,12 @@ function renderDeviceSlots(devices, maxDevices, currentProfile) {
             else if (rawName.includes('android')) { displayOs = 'Android'; icon = icons.android; }
             else if (rawName.includes('linux')) { displayOs = 'Linux'; icon = icons.linux; }
 
+            // 🌟 核心修复：如果是 Android App，直接显示完整的设备名称
+            let finalDeviceName = `${displayBrowser} on ${displayOs}`;
+            if (displayBrowser === 'Android App' || rawName.includes('android')) {
+                finalDeviceName = d.device_name || 'Android Device';
+            }
+
             const deviceEmail = d.profiles?.email || 'Unknown';
             const displayEmail = deviceEmail === currentProfile.email ? `${deviceEmail} (You)` : deviceEmail;
             const shortFingerprint = d.fingerprint ? `${d.fingerprint.slice(0, 4)}...${d.fingerprint.slice(-4)}` : 'Unknown';
@@ -109,7 +115,7 @@ function renderDeviceSlots(devices, maxDevices, currentProfile) {
                     </div>
 
                     <div style="text-align: right; flex-shrink: 0; margin-right: 15px;">
-                        <div style="color:#c9d1d9; font-size:13px; font-weight:500;">${esc(displayBrowser)} on ${esc(displayOs)}</div>
+                        <div style="color:#c9d1d9; font-size:13px; font-weight:500;">${esc(finalDeviceName)}</div>
                         <div style="color:#58a6ff; font-family: monospace; font-size:11px; margin-top:4px;" title="Device Fingerprint">ID: ${esc(shortFingerprint)}</div>
                     </div>
                 </div>
@@ -145,7 +151,13 @@ window.removeDevice = async function(deviceId) {
                 if (rawName.includes('windows')) displayOs = 'Windows';
                 else if (rawName.includes('macos')) displayOs = 'macOS';
                 else if (rawName.includes('android')) displayOs = 'Android';
-                deviceName = `${deviceToRemove.browser || 'Unknown Browser'} on ${displayOs}`;
+                
+                // 🌟 核心修复：解绑弹窗同样显示具体型号
+                if (deviceToRemove.browser === 'Android App' || rawName.includes('android')) {
+                    deviceName = deviceToRemove.device_name || 'Android Device';
+                } else {
+                    deviceName = `${deviceToRemove.browser || 'Unknown Browser'} on ${displayOs}`;
+                }
             }
 
             currentDevices = currentDevices.filter(d => d.id !== deviceId);
