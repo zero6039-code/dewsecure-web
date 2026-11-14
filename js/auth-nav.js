@@ -87,9 +87,23 @@ import { esc } from './utils.js';
                 <button id="global-logout-btn" data-i18n="nav_logout" style="background: rgba(248, 81, 73, 0.1); color: #f85149; border: 1px solid rgba(248, 81, 73, 0.3); padding: 6px 12px; border-radius: 8px; cursor: pointer; font-size: 13px; white-space: nowrap;">退出</button>
             `;
             
-            document.getElementById('global-logout-btn').onclick = async () => {
-                await supabaseClient.auth.signOut();
-                window.location.href = '/'; 
+                        document.getElementById('global-logout-btn').onclick = async (e) => {
+                e.preventDefault();
+                console.log("⚡ 触发登出...");
+                const btn = e.target;
+                btn.innerText = '...';
+                try {
+                    await supabaseClient.auth.signOut();
+                } catch (err) {
+                    console.error("登出报错，但继续强制清理:", err);
+                } finally {
+                    // 暴力清理所有 Supabase 缓存
+                    Object.keys(localStorage).forEach(key => {
+                        if (key.startsWith('sb-')) localStorage.removeItem(key);
+                    });
+                    // 强制跳转并刷新，绕过 Swup
+                    window.location.replace(window.location.origin + '/');
+                }
             };
         } else {
             const dashLink = header.querySelector('nav a[href="/dashboard.html"]');
