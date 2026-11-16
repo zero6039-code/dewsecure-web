@@ -207,19 +207,36 @@
         window.__DS_HANDOFF_PROCESSING = true;
 
         try {
+            // 1. 尝试清理本地可能残留的无效 Session
+            try {
+                const sbUrl = 'https://uvbaioqqjqseapcancvi.supabase.co';
+                const sbKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InV2YmFpb3FxanFzZWFwY2FuY3ZpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTI0OTIyODAsImV4cCI6MjEwODA2ODI4MH0.jhEaDHBvp702biC7oqM1oV5YO7rzhvmXFH5pTRF17kQ';
+                const cleanClient = supabase.createClient(sbUrl, sbKey, { auth: { persistSession: false } });
+                await cleanClient.auth.signOut();
+                localStorage.removeItem('sb-uvbaioqqjqseapcancvi-auth-token');
+            } catch(e) { console.log('清理旧 Session 跳过:', e); }
+
+            // 2. 请求 Worker 验证 code
             const res = await fetch('https://api.dewsecure.com/api/handoff/verify', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ code })
             });
-            if (!res.ok) throw new Error('Verify API failed: ' + res.status);
+            
+            if (!res.ok) {
+                const errData = await res.json().catch(() => ({}));
+                throw new Error(`API 响应错误 (${res.status}): ${errData.error || '未知错误'}`);
+            }
 
             const data = await res.json();
             if (data.token_hash) {
-                // 初始化独立客户端用于 verifyOtp
                 const supabaseUrl = 'https://uvbaioqqjqseapcancvi.supabase.co';
                 const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InV2YmFpb3FxanFzZWFwY2FuY3ZpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTI0OTIyODAsImV4cCI6MjEwODA2ODI4MH0.jhEaDHBvp702biC7oqM1oV5YO7rzhvmXFH5pTRF17kQ';
-                const tempClient = supabase.createClient(supabaseUrl, supabaseKey);
+                
+                // 使用全新客户端，禁用自动刷新，防止再次触发 refresh_token 失败
+                const tempClient = supabase.createClient(supabaseUrl, supabaseKey, {
+                    auth: { persistSession: true, autoRefreshToken: false, detectSessionInUrl: false }
+                });
                 
                 const { error } = await tempClient.auth.verifyOtp({ 
                     token_hash: data.token_hash, 
@@ -228,15 +245,14 @@
                 
                 if (error) throw error;
                 
-                // 登录成功，清除 URL 并刷新以加载状态
+                // 3. 登录成功，清除 URL 并刷新
                 window.history.replaceState({}, document.title, window.location.pathname);
                 window.location.reload();
             } else {
-                throw new Error('No token_hash returned');
+                throw new Error('Worker 没有返回 token_hash');
             }
         } catch (err) {
             console.error("自动登录失败:", err);
-            // 失败也得清除 URL 中的 code，防止卡死
             window.history.replaceState({}, document.title, window.location.pathname);
             alert("自动登录失败详情: " + (err.message || JSON.stringify(err)));
         }
