@@ -111,7 +111,7 @@ function renderDeviceSlots(devices, maxDevices, currentProfile) {
                     
                     <div style="flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
                         <div style="color:#fff; font-weight:600; font-size:14px;" title="${esc(deviceEmail)}">${esc(displayEmail)}</div>
-                        <div style="color:#8b949e; font-size:12px; margin-top:4px;">${t['dash_device_active'] || 'Active'}: ${new Date(d.last_seen_at || d.created_at).toLocaleDateString()}</div>
+                        <div style="color:#8b949e; font-size:12px; margin-top:4px;">${t['dash_device_active'] || 'Active'}: ${new Date(d.last_seen_at || d.created_at).toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: '2-digit' })}</div>
                     </div>
 
                     <div style="text-align: right; flex-shrink: 0; margin-right: 15px;">
