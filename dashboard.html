@@ -207,7 +207,7 @@
         window.__DS_HANDOFF_PROCESSING = true;
 
         try {
-            const res = await fetch('/api/handoff/verify', {
+            const res = await fetch('https://api.dewsecure.com/api/handoff/verify', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ code })
