@@ -238,7 +238,7 @@
             console.error("自动登录失败:", err);
             // 失败也得清除 URL 中的 code，防止卡死
             window.history.replaceState({}, document.title, window.location.pathname);
-            alert("自动登录失败，请重新尝试或使用邮箱登录。");
+            alert("自动登录失败详情: " + (err.message || JSON.stringify(err)));
         }
     })();
     </script>
