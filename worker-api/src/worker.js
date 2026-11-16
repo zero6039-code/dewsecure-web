@@ -8,6 +8,7 @@ import resumeRoute from './routes/resume.js';
 import portalRoute from './routes/portal.js';
 import trialRoute from './routes/trial.js';
 import intelRoute from './routes/intel.js';
+import handoffRoute from './routes/handoff.js';
 
 const app = new Hono();
 
@@ -59,5 +60,6 @@ app.route('/api', resumeRoute);
 app.route('/api', portalRoute);
 app.route('/api', trialRoute);
 app.route('/api', intelRoute);
+app.route('/api', handoffRoute);
 
 export default app;

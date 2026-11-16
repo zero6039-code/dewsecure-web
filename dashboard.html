@@ -196,5 +196,51 @@
 <script type="module" src="/js/notifications.js?v=1.0.999"></script>
     <!-- 🌟 引入通知中心代码，带版本号防缓存 -->
 
+    <!-- A-06 Web端闭环：通过 code 获取 token_hash 并无感登录 -->
+    <script>
+    (async function() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const code = urlParams.get('code');
+        if (!code) return;
+
+        if (window.__DS_HANDOFF_PROCESSING) return;
+        window.__DS_HANDOFF_PROCESSING = true;
+
+        try {
+            const res = await fetch('/api/handoff/verify', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ code })
+            });
+            if (!res.ok) throw new Error('Verify API failed: ' + res.status);
+
+            const data = await res.json();
+            if (data.token_hash) {
+                // 初始化独立客户端用于 verifyOtp
+                const supabaseUrl = 'https://uvbaioqqjqseapcancvi.supabase.co';
+                const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InV2YmFpb3FxanFzZWFwY2FuY3ZpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTI0OTIyODAsImV4cCI6MjEwODA2ODI4MH0.jhEaDHBvp702biC7oqM1oV5YO7rzhvmXFH5pTRF17kQ';
+                const tempClient = supabase.createClient(supabaseUrl, supabaseKey);
+                
+                const { error } = await tempClient.auth.verifyOtp({ 
+                    token_hash: data.token_hash, 
+                    type: 'magiclink' 
+                });
+                
+                if (error) throw error;
+                
+                // 登录成功，清除 URL 并刷新以加载状态
+                window.history.replaceState({}, document.title, window.location.pathname);
+                window.location.reload();
+            } else {
+                throw new Error('No token_hash returned');
+            }
+        } catch (err) {
+            console.error("自动登录失败:", err);
+            // 失败也得清除 URL 中的 code，防止卡死
+            window.history.replaceState({}, document.title, window.location.pathname);
+            alert("自动登录失败，请重新尝试或使用邮箱登录。");
+        }
+    })();
+    </script>
 </body>
 </html>
